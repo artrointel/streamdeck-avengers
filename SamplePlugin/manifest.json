@@ -1,8 +1,8 @@
 {
   "Actions": [
     {
-      "Icon": "Images/icon",
-      "Name": "SDTools Test",
+      "Icon": "Images/no_image",
+      "Name": "Graphic Sample Plugin",
       "States": [
         {
           "Image": "Images/pluginAction",
@@ -10,21 +10,21 @@
           "FontSize": "12"
         }
       ],
-      "SupportedInMultiActions": true,
-      "Tooltip": "Sample Plugin to Test SDTools",
-      "UUID": "com.test.sdtools.sampleplugin",
+      "SupportedInMultiActions": false,
+      "Tooltip": "Graphic Sample Plugin to test SDGraphic RenderEngine",
+      "UUID": "com.artrointel.graphicsampleplugin",
       "PropertyInspectorPath": "PropertyInspector/Sample.html"
     }
   ],
-  "Author": "BarRaider",
-  "Description": "Sample Plugin to test SDTools",
-  "Name": "SDTools Sample Plugin",
+  "Author": "Artrointel",
+  "Description": "Graphic Sample Plugin to test SDGraphic RenderEngine",
+  "Name": "Graphic Sample Plugin",
   "Icon": "Images/pluginIcon",
-  "URL": "https://barraider.com/",
+  "URL": "https://github.com/artrointel/",
   "Version": "0.1",
-  "CodePath": "com.test.sdtools",
-  "Category": "Test",
-  "CategoryIcon": "Images/categoryIcon",
+  "CodePath": "com.artrointel.graphicsampleplugin",
+  "Category": "GraphicAction",
+  "CategoryIcon": "Images/pluginIcon",
   "OS": [
     {
       "Platform": "windows",

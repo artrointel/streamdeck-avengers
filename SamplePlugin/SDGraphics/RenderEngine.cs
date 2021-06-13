@@ -73,7 +73,7 @@ namespace SDGraphics
             mRenderTimer.Dispose();
             foreach (CanvasRendererBase renderer in mRenderers)
             {
-                renderer.destroy();
+                renderer.onDestroy();
             }
             mCompositedCanvas.mImage.Dispose();
         }
@@ -129,7 +129,7 @@ namespace SDGraphics
             {
                 if(renderer.needToUpdate())
                 {
-                    renderer.onRender(renderer.mDefaultCanvas.mGraphics);
+                    renderer.onRender(renderer.mOffscreenCanvas.mGraphics);
                     mNeedComposition = true;
                 }
             }
@@ -142,7 +142,7 @@ namespace SDGraphics
                 mCompositedCanvas.mGraphics.Clear(Color.Black);
                 foreach (CanvasRendererBase renderer in mRenderers)
                 {
-                    mCompositedCanvas.mGraphics.DrawImage(renderer.mDefaultCanvas.mImage, new Point(0, 0));
+                    mCompositedCanvas.mGraphics.DrawImage(renderer.mOffscreenCanvas.mImage, new Point(0, 0));
                 }
                 return true;
             }

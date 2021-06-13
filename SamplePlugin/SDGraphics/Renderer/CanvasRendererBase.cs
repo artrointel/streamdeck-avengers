@@ -8,16 +8,19 @@ using System.Timers;
 
 namespace SDGraphics
 {
+    /// <summary>
+    /// Base class of the renderer. Override <see cref="onRender(Graphics)"/>
+    /// </summary>
     public abstract class CanvasRendererBase : ICanvasRenderer
     {
-        public SDCanvas mDefaultCanvas { get; }
+        public SDCanvas mOffscreenCanvas { get; }
         private bool mNeedToRender = true;
 
         public CanvasRendererBase(
             int canvasWidth = SDCanvas.DEFAULT_IMAGE_SIZE,
             int canvasHeight = SDCanvas.DEFAULT_IMAGE_SIZE)
         {
-            mDefaultCanvas = SDCanvas.CreateCanvas(canvasWidth, canvasHeight);
+            mOffscreenCanvas = SDCanvas.CreateCanvas(canvasWidth, canvasHeight);
         }
 
         public void invalidate()
@@ -35,9 +38,9 @@ namespace SDGraphics
             mNeedToRender = false;
         }
 
-        public virtual void destroy()
+        public virtual void onDestroy()
         {
-            mDefaultCanvas.mImage.Dispose();
+            mOffscreenCanvas.mImage.Dispose();
         }
     }
 }

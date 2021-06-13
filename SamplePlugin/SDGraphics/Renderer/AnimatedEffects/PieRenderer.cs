@@ -116,10 +116,10 @@ namespace SDGraphics
             mAngleAnimator.pause();
         }
 
-        public override void destroy()
+        public override void onDestroy()
         {
             mAngleAnimator.destroy();
-            base.destroy();
+            base.onDestroy();
         }
     }
 }

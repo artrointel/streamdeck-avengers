@@ -79,11 +79,11 @@ namespace SDGraphics
             // do nothing. it is more natural that not pausing the flash animation.
         }
 
-        public override void destroy()
+        public override void onDestroy()
         {
             mFlashEndAnimator.destroy();
             mFlashStartAnimator.destroy();
-            base.destroy();
+            base.onDestroy();
         }
     }
 }
