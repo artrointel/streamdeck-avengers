@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover">
+    <meta name=apple-mobile-web-app-capable content=yes>
+    <meta name=apple-mobile-web-app-status-bar-style content=black>
+    <title>SamplePlugin Settings</title>
+    <link rel="stylesheet" href="sdpi.css">
+    <script src="sdtools.common.js"></script>
+    <script src="Sample.js"></script>
+</head>
+<body>
+    <div class="sdpi-wrapper">
+        <div class="sdpi-item" id="dvImageSelection">
+            <div class="sdpi-item-label">Base Image </div>
+            <input id="fileInput" type="file" style="display:none;" accept=".jpg, .png, .jpeg, .gif, .bmp, .json" />
+            <button class="sdpi-item-value sdProperty" id="fileDialog" onclick="document.getElementById('fileInput').click();">Select</button>
+            <input class="sdpi-item-value" id="selectedImageFileName" placeholder="select image file" disabled />
+        </div>
+        <div class="sdpi-item" id="dvFunctionSelection">
+            <div class="sdpi-item-label">Functions </div>
+            <button class="sdpi-item-value sdProperty" id="btnFunctionEdit" onclick="onBtnFunctionEditClicked()">Edit</button>
+        </div>
+        <div class="sdpi-item" id="dvEffectSelection">
+            <div class="sdpi-item-label">UI Effects </div>
+            <button class="sdpi-item-value sdProperty" id="btnEffectEdit" onclick="onBtnEffectEditClicked()">Edit</button>
+        </div>
+</body>
+</html>

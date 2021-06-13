@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.28917.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "barraider-sdtools", "barraider-sdtools\barraider-sdtools.csproj", "{DABBD97D-6687-4CBD-A19E-AC9FFA3CEF03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SamplePlugin", "SamplePlugin\SamplePlugin.csproj", "{4635D874-69C0-4010-BE46-77EF92EB1553}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtrointelPlugin", "ArtrointelPlugin\ArtrointelPlugin.csproj", "{4635D874-69C0-4010-BE46-77EF92EB1553}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

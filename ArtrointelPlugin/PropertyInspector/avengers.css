@@ -1,0 +1,11 @@
+.avg-label {
+  text-align: center;
+  flex: 1;
+  font-weight: 600;
+  -webkit-user-select: none;
+}
+
+image.sdpi-item-value {
+    width: 12px;
+    height: 12px;
+}
