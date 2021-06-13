@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SDG
+namespace SDGraphics
 {
     interface IAnimatableRenderer
     {
-        void animate();
+        void animate(bool restart);
+        void pause();
     }
 }

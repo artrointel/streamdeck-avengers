@@ -15,10 +15,10 @@ namespace SamplePlugin
     [PluginActionId("com.test.sdtools.sampleplugin")]
     public class PluginAction : PluginBase
     {
-        SDG.SDGRenderEngine mRenderEngine;
-        SDG.FlashFeedbackRenderer mFlashFeedbackRenderer;
-        SDG.CircleFeedbackRenderer mCircleFeedbackRenderer;
-        SDG.PieRenderer mPieRenderer;
+        SDGraphics.RenderEngine mRenderEngine;
+        SDGraphics.FlashRenderer mFlashFeedbackRenderer;
+        SDGraphics.CircleSpreadRenderer mCircleFeedbackRenderer;
+        SDGraphics.PieRenderer mPieRenderer;
         private class PluginSettings
         {
             public static PluginSettings CreateDefaultSettings()
@@ -69,10 +69,10 @@ namespace SamplePlugin
 
         private void initializeRenderEngine()
         {
-            mRenderEngine = new SDG.SDGRenderEngine(60);
-            mPieRenderer = new SDG.PieRenderer(5);
-            mCircleFeedbackRenderer = new SDG.CircleFeedbackRenderer();
-            mFlashFeedbackRenderer = new SDG.FlashFeedbackRenderer(Color.White);
+            mRenderEngine = new SDGraphics.RenderEngine();
+            mPieRenderer = new SDGraphics.PieRenderer(5, false, true);
+            mCircleFeedbackRenderer = new SDGraphics.CircleSpreadRenderer();
+            mFlashFeedbackRenderer = new SDGraphics.FlashRenderer(Color.White);
 
             //mRenderEngine.addLayerRenderer(new SDG.ImageRenderer("Images/pluginIcon.png"));
             mRenderEngine.addRenderer(mPieRenderer);

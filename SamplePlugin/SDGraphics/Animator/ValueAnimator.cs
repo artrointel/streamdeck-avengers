@@ -5,14 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace SDG
+namespace SDGraphics
 {
     public class ValueAnimator
     {
-        public const int TIMER_TICK_30TPS = 1000 / 30;
+        public const int INTERVAL_30_PER_SEC = 1000 / 30;
         public const int INTERVAL_60_PER_SEC = 1000 / 60;
         public Timer mTimer;
-        public double mTick;
+        public double mInterval;
         public double mTotalDuration;
         public double mCurrentDuration;
 
@@ -22,15 +22,15 @@ namespace SDG
         Action<double, double> mOnValueUpdatedAction;
         Action mOnFinishedAction;
 
-        public ValueAnimator(float from, float to, int durationInMillisecond, double timerTick = TIMER_TICK_30TPS)
+        public ValueAnimator(float from, float to, int durationInMillisecond, double animationInterval = INTERVAL_30_PER_SEC)
         {
             mFromValue = from;
             mToValue = to;
 
             mTotalDuration = durationInMillisecond;
-            mTick = timerTick;
+            mInterval = animationInterval;
 
-            mTimer = new Timer(mTick);
+            mTimer = new Timer(mInterval);
             mTimer.Elapsed += onTimedEvent;
             mTimer.AutoReset = true;
         }
@@ -53,7 +53,7 @@ namespace SDG
             }
             
             // updates current duration
-            mCurrentDuration += mTick;
+            mCurrentDuration += mInterval;
             if(mCurrentDuration > mTotalDuration)
             {   // note that the last value should be mToValue.
                 mCurrentDuration = mTotalDuration;
@@ -64,16 +64,31 @@ namespace SDG
         /// Set animation listener onUpdated and onFinished.
         /// This onUpdated action will be called on every animation event with (animated value, current duration).
         /// </summary>
+        /// <param name="onUpdated"></param>
+        /// <param name="onFinished">called when the animation finished on last animation update time</param>
         public void setAnimationListeners(Action<double, double> onUpdated, Action onFinished = null)
         {
             mOnValueUpdatedAction = onUpdated;
             mOnFinishedAction = onFinished;
         }
 
-        public void start()
+        /// <summary>
+        /// Start the animator. animation will be re-played if restart is true, 
+        /// else it will keep the state of the animation.
+        /// </summary>
+        /// <param name="restart"></param>
+        public void start(bool restart = true)
         {
-            mCurrentDuration = 0;
+            if(restart)
+            {
+                mCurrentDuration = 0;
+            }
             mTimer.Start();
+        }
+
+        public void pause()
+        {
+            mTimer.Stop();
         }
 
         public void stop()
@@ -82,9 +97,10 @@ namespace SDG
             mTimer.Stop();
         }
 
-        public bool isRunning()
+        public void destroy()
         {
-            return mTimer.Enabled;
+            mTimer.Stop();
+            mTimer.Dispose();
         }
     }
 }

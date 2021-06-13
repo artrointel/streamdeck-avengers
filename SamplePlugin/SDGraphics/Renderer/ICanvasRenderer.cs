@@ -5,11 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 
-namespace SDG
+namespace SDGraphics
 {
     interface ICanvasRenderer
     {
         bool needToUpdate();
+
         void onRender(Graphics graphics);
+
+        void destroy();
     }
 }

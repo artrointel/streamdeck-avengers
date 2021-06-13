@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using System.Drawing;
 
 
-namespace SDG
+namespace SDGraphics
 {
-    public class ImageRenderer : SDCanvasRendererBase
+    public class ImageRenderer : CanvasRendererBase
     {
         private String mFilePath;
 
@@ -19,13 +19,13 @@ namespace SDG
 
         public void setImageFile(String filePath)
         {
-            mNeedToRender = true;
             mFilePath = filePath;
+            invalidate();
         }
 
         public override void onRender(Graphics graphics)
         {
-            // TODO any exception?
+            // TODO any exception? ->  fallback image
             Image img = Image.FromFile(mFilePath);
             graphics.DrawImage(img, 0, 0, SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE);
             img.Dispose();

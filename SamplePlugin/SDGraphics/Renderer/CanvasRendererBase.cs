@@ -6,18 +6,23 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Timers;
 
-namespace SDG
+namespace SDGraphics
 {
-    public abstract class SDCanvasRendererBase : ICanvasRenderer
+    public abstract class CanvasRendererBase : ICanvasRenderer
     {
         public SDCanvas mDefaultCanvas { get; }
-        protected bool mNeedToRender = true;
+        private bool mNeedToRender = true;
 
-        public SDCanvasRendererBase(
+        public CanvasRendererBase(
             int canvasWidth = SDCanvas.DEFAULT_IMAGE_SIZE,
             int canvasHeight = SDCanvas.DEFAULT_IMAGE_SIZE)
         {
             mDefaultCanvas = SDCanvas.CreateCanvas(canvasWidth, canvasHeight);
+        }
+
+        public void invalidate()
+        {
+            mNeedToRender = true;
         }
 
         public bool needToUpdate()
@@ -28,6 +33,11 @@ namespace SDG
         public virtual void onRender(Graphics graphics)
         {
             mNeedToRender = false;
+        }
+
+        public virtual void destroy()
+        {
+            mDefaultCanvas.mImage.Dispose();
         }
     }
 }
