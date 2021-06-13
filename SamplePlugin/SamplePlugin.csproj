@@ -80,4 +80,7 @@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="OpenTK" Version="3.2.0" />
+  </ItemGroup>
 </Project>

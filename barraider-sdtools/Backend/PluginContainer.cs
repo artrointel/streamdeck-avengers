@@ -160,6 +160,7 @@ namespace BarRaider.SdTools
                         InitialPayload payload = new InitialPayload(GenerateKeyCoordinates(e.Event.Payload.Coordinates),
                                                                     e.Event.Payload.Settings, e.Event.Payload.State, e.Event.Payload.IsInMultiAction, deviceInfo);
                         instances[e.Event.Context] = (PluginBase)Activator.CreateInstance(supportedActions[e.Event.Action], conn, payload);
+                        Logger.Instance.LogMessage(TracingLevel.DEBUG, instances[e.Event.Context].ToString());
                     }
                     catch (Exception ex)
                     {

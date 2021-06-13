@@ -15,6 +15,10 @@ namespace SamplePlugin
     [PluginActionId("com.test.sdtools.sampleplugin")]
     public class PluginAction : PluginBase
     {
+        SDG.SDGRenderEngine mRenderEngine;
+        SDG.FlashFeedbackRenderer mFlashFeedbackRenderer;
+        SDG.CircleFeedbackRenderer mCircleFeedbackRenderer;
+        SDG.PieRenderer mPieRenderer;
         private class PluginSettings
         {
             public static PluginSettings CreateDefaultSettings()
@@ -59,38 +63,66 @@ namespace SamplePlugin
             Connection.OnPropertyInspectorDidDisappear += Connection_OnPropertyInspectorDidDisappear;
             Connection.OnSendToPlugin += Connection_OnSendToPlugin;
             Connection.OnTitleParametersDidChange += Connection_OnTitleParametersDidChange;
+
+            initializeRenderEngine(); 
+        }
+
+        private void initializeRenderEngine()
+        {
+            mRenderEngine = new SDG.SDGRenderEngine(60);
+            mPieRenderer = new SDG.PieRenderer(5);
+            mCircleFeedbackRenderer = new SDG.CircleFeedbackRenderer();
+            mFlashFeedbackRenderer = new SDG.FlashFeedbackRenderer(Color.White);
+
+            //mRenderEngine.addLayerRenderer(new SDG.ImageRenderer("Images/pluginIcon.png"));
+            mRenderEngine.addRenderer(mPieRenderer);
+            mRenderEngine.addRenderer(mCircleFeedbackRenderer);
+            mRenderEngine.addRenderer(mFlashFeedbackRenderer);
+            mRenderEngine.setRenderingUpdatedListener(async (canvas) =>
+            {
+                await Connection.SetImageAsync(canvas.mImage);
+            });
+            mRenderEngine.run();
         }
 
         private void Connection_OnTitleParametersDidChange(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.TitleParametersDidChange> e)
         {
+            Logger.Instance.LogMessage(TracingLevel.INFO, "KWH Connection_OnTitleParametersDidChange");
         }
 
         private void Connection_OnSendToPlugin(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.SendToPlugin> e)
         {
+            Logger.Instance.LogMessage(TracingLevel.INFO, "KWH Connection_OnSendToPlugin");
         }
 
         private void Connection_OnPropertyInspectorDidDisappear(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.PropertyInspectorDidDisappear> e)
         {
+            Logger.Instance.LogMessage(TracingLevel.INFO, "KWH Connection_OnPropertyInspectorDidDisappear");
         }
 
         private void Connection_OnPropertyInspectorDidAppear(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.PropertyInspectorDidAppear> e)
         {
+            Logger.Instance.LogMessage(TracingLevel.INFO, "KWH Connection_OnPropertyInspectorDidAppear");
         }
 
         private void Connection_OnDeviceDidDisconnect(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.DeviceDidDisconnect> e)
         {
+            Logger.Instance.LogMessage(TracingLevel.INFO, "KWH Connection_OnDeviceDidDisconnect");
         }
 
         private void Connection_OnDeviceDidConnect(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.DeviceDidConnect> e)
         {
+            Logger.Instance.LogMessage(TracingLevel.INFO, "KWH Connection_OnDeviceDidConnect");
         }
 
         private void Connection_OnApplicationDidTerminate(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.ApplicationDidTerminate> e)
         {
+            Logger.Instance.LogMessage(TracingLevel.INFO, "KWH Connection_OnApplicationDidTerminate");
         }
 
         private void Connection_OnApplicationDidLaunch(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.ApplicationDidLaunch> e)
         {
+            Logger.Instance.LogMessage(TracingLevel.INFO, "KWH Connection_OnApplicationDidLaunch");
         }
 
         public override void Dispose()
@@ -109,28 +141,14 @@ namespace SamplePlugin
         public async override void KeyPressed(KeyPayload payload)
         {
             Logger.Instance.LogMessage(TracingLevel.INFO, "Key Pressed");
-            TitleParameters tp = new TitleParameters(new FontFamily("Arial"), FontStyle.Bold, 20, Color.White, true, TitleVerticalAlignment.Middle);
-            using (Image image = Tools.GenerateGenericKeyImage(out Graphics graphics))
-            {
-                graphics.FillRectangle(new SolidBrush(Color.White), 0, 0, image.Width, image.Height);
-                graphics.AddTextPath(tp, image.Height, image.Width, "Test");
-                graphics.Dispose();
-
-                await Connection.SetImageAsync(image);
-            }
+            mCircleFeedbackRenderer.animate();
+            mFlashFeedbackRenderer.animate();
+            mPieRenderer.animate();
         }
 
         public async override void KeyReleased(KeyPayload payload) 
         {
-            TitleParameters tp = new TitleParameters(new FontFamily("Arial"), FontStyle.Bold, 20, Color.White, true, TitleVerticalAlignment.Middle);
-            using (Image image = Tools.GenerateGenericKeyImage(out Graphics graphics))
-            {
-                graphics.FillRectangle(new SolidBrush(Color.White), 0, 0, image.Width, image.Height);
-                graphics.AddTextPath(tp, image.Height, image.Width, "Test", Color.Black, 7);
-                graphics.Dispose();
-
-                await Connection.SetImageAsync(image);
-            }
+            
         }
 
         public override void OnTick() { }
