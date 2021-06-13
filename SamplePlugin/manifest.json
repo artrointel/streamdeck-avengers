@@ -1,11 +1,11 @@
 {
   "Actions": [
     {
-      "Icon": "Images/no_image",
-      "Name": "Graphic Sample Plugin",
+      "Icon": "Images/testIcon",
+      "Name": "Graphic Sample Test Plugin",
       "States": [
         {
-          "Image": "Images/pluginAction",
+          "Image": "Images/testIcon",
           "TitleAlignment": "middle",
           "FontSize": "12"
         }
@@ -17,14 +17,14 @@
     }
   ],
   "Author": "Artrointel",
-  "Description": "Graphic Sample Plugin to test SDGraphic RenderEngine",
-  "Name": "Graphic Sample Plugin",
-  "Icon": "Images/pluginIcon",
+  "Description": "Provides Animated Graphic Action Key with custom control.",
+  "Name": "Graphic Master Key",
+  "Icon": "Images/logo",
   "URL": "https://github.com/artrointel/",
   "Version": "0.1",
   "CodePath": "com.artrointel.graphicsampleplugin",
-  "Category": "GraphicAction",
-  "CategoryIcon": "Images/pluginIcon",
+  "Category": "Avengers Key",
+  "CategoryIcon": "Images/avengersIcon",
   "OS": [
     {
       "Platform": "windows",

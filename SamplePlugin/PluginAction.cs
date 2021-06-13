@@ -19,6 +19,7 @@ namespace ArtrointelPlugin
         SDGraphics.FlashRenderer mFlashFeedbackRenderer;
         SDGraphics.CircleSpreadRenderer mCircleFeedbackRenderer;
         SDGraphics.PieRenderer mPieRenderer;
+        SDGraphics.ImageRenderer mImageRenderer;
         private class PluginSettings
         {
             public static PluginSettings CreateDefaultSettings()
@@ -70,11 +71,12 @@ namespace ArtrointelPlugin
         private void initializeRenderEngine()
         {
             mRenderEngine = new SDGraphics.RenderEngine();
-            mPieRenderer = new SDGraphics.PieRenderer(5, false, true);
+            mPieRenderer = new SDGraphics.PieRenderer(1, false, true);
             mCircleFeedbackRenderer = new SDGraphics.CircleSpreadRenderer();
             mFlashFeedbackRenderer = new SDGraphics.FlashRenderer(Color.White);
+            mImageRenderer = new SDGraphics.ImageRenderer("Images/testIcon.png");
 
-            //mRenderEngine.addLayerRenderer(new SDG.ImageRenderer("Images/pluginIcon.png"));
+            mRenderEngine.addRenderer(mImageRenderer);
             mRenderEngine.addRenderer(mPieRenderer);
             mRenderEngine.addRenderer(mCircleFeedbackRenderer);
             mRenderEngine.addRenderer(mFlashFeedbackRenderer);
