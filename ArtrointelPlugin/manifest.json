@@ -13,7 +13,7 @@
       "SupportedInMultiActions": false,
       "Tooltip": "Graphic Sample Plugin to test SDGraphic RenderEngine",
       "UUID": "com.artrointel.graphicsampleplugin",
-      "PropertyInspectorPath": "PropertyInspector/Sample.html"
+      "PropertyInspectorPath": "PropertyInspector/mainPI.html"
     }
   ],
   "Author": "Artrointel",

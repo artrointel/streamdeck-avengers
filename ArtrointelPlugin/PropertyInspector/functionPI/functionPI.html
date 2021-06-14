@@ -59,6 +59,7 @@
 			background-size: 10%;
 		}
 	</style>
+	<script src="../sdtools.common.js"></script>
 	<script src="functionPI.js"></script>
 </head>
 
@@ -99,80 +100,7 @@
 
 			<p>Clicking the button sends some information to your Property Inspector. Just open the remote-debugger for your Property Inspector and watch the console.</p>
 		</div>
-
 	</div>
-
-	<script>
-
-		window.addEventListener('message',function(ev) {
-			console.log('External window received message:  ', ev.data, typeof ev.data);
-			doSomething(ev.data);
-		},false);
-
-
-		/**
-		 * There are various methods to exchange messages with an external window,
-		 * two of which are illustrated below.
-		 */
-
-		/**
-		 *  A BroadcastChannel can be used to distribute a message to another listener
-		 * on the same origin - e.g. the Property Inspector.
-		 * Advantage here is, you don't need to keep a window-reference in the Property Inspector
-		 * to send/receive data to/from the external window
-		 */
-
-		var bc = new BroadcastChannel('streamdeck_broadcast_message');
-		var j = 0;
-		function loaded() {
-			/**
-			 * Here we listen to an incoming message on the BroadcastChannel, which was
-			 * instantiated a bit earlier (see above)
-			 */
-			bc.onmessage = function (ev) {
-				doSomething(ev.data);
-			};
-
-			setTimeout(() => {
-				// this is just a quick message to Property Inspector (you should see it in the console)
-				window.opener.gotCallbackFromWindow("Message from window: " + new Date().toLocaleTimeString());
-			}, 1000);
-
-		};
-
-		function sendmessage() {
-			/* this one is sent using the BroadcastChannel-API */
-			bc.postMessage("button clicked " +j);
-
-			/**
-			 * You can also use a 'postMessage' event, where you send a message to
-			 * a *globally* available function in the Property Inspector's window.
-			 * In this case: 'gotCallbackFromWindow'.
-			 * */
-
-			window.opener.gotCallbackFromWindow("button clicked (callback) " +j);
-			j++;
-		}
-
-		function doSomething(jsn) {
-			const sm = document.querySelector('#inputs');
-			const ul = document.querySelector('#demoList');
-			if (ul && typeof jsn === 'object') {
-
-				ul.innerHTML = `<li class='title'><div class="key">key</div><div class="value">value</div></li>`;
-				Object.entries(jsn).map(e => {
-					ul.innerHTML += `<li><div class="key">${e[0]}</div><div class="value">${e[1]}</div></li>`;
-				})
-			} 
-
-			sm.innerHTML = '';
-			Object.entries(jsn).map((e, i) => {
-				sm.innerHTML += `<div class="sdpi-item"><div class="sdpi-item-label">${e[0]}</div><input class="sdpi-item-value" type="text" id="_ID${i}" value="${e[1]}"></div>`;
-			})
-		}
-
-	</script>
-	
 </body>
 
 </html>

@@ -5,7 +5,12 @@
   -webkit-user-select: none;
 }
 
-image.sdpi-item-value {
-    width: 12px;
-    height: 12px;
+.avg-input-text {
+    width: 40px;
+    vertical-align: central;
+}
+
+.avg-input-label {
+    width: 40px;
+    vertical-align: central;
 }

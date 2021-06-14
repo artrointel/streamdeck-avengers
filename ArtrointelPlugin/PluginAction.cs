@@ -15,6 +15,7 @@ namespace ArtrointelPlugin
     [PluginActionId("com.artrointel.graphicsampleplugin")]
     public class PluginAction : PluginBase
     {
+        Control.AvengersKeyController mControl;
         SDGraphics.RenderEngine mRenderEngine;
         SDGraphics.FlashRenderer mFlashFeedbackRenderer;
         SDGraphics.CircleSpreadRenderer mCircleFeedbackRenderer;
@@ -65,26 +66,11 @@ namespace ArtrointelPlugin
             Connection.OnSendToPlugin += Connection_OnSendToPlugin;
             Connection.OnTitleParametersDidChange += Connection_OnTitleParametersDidChange;
 
-            initializeRenderEngine(); 
-        }
-
-        private void initializeRenderEngine()
-        {
-            mRenderEngine = new SDGraphics.RenderEngine();
-            mPieRenderer = new SDGraphics.PieRenderer(1, false, true);
-            mCircleFeedbackRenderer = new SDGraphics.CircleSpreadRenderer();
-            mFlashFeedbackRenderer = new SDGraphics.FlashRenderer(Color.White);
-            mImageRenderer = new SDGraphics.ImageRenderer("Images/testIcon.png");
-
-            mRenderEngine.addRenderer(mImageRenderer);
-            mRenderEngine.addRenderer(mPieRenderer);
-            mRenderEngine.addRenderer(mCircleFeedbackRenderer);
-            mRenderEngine.addRenderer(mFlashFeedbackRenderer);
-            mRenderEngine.setRenderingUpdatedListener(async (canvas) =>
+            mControl = new Control.AvengersKeyController();
+            mControl.initializeRenderEngine(async (canvas) =>
             {
                 await Connection.SetImageAsync(canvas.mImage);
             });
-            mRenderEngine.run();
         }
 
         private void Connection_OnTitleParametersDidChange(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.TitleParametersDidChange> e)
@@ -95,6 +81,9 @@ namespace ArtrointelPlugin
         private void Connection_OnSendToPlugin(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.SendToPlugin> e)
         {
             Logger.Instance.LogMessage(TracingLevel.DEBUG, "Plugin Connection_OnSendToPlugin");
+            var ev = e.Event.Payload.Value<String>("mykey");
+            Logger.Instance.LogMessage(TracingLevel.DEBUG, "received payload : " + e.Event.Payload.ToString());
+            Logger.Instance.LogMessage(TracingLevel.DEBUG, "mykey-> " + ev);
         }
 
         private void Connection_OnPropertyInspectorDidDisappear(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.PropertyInspectorDidDisappear> e)
@@ -105,6 +94,7 @@ namespace ArtrointelPlugin
         private void Connection_OnPropertyInspectorDidAppear(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.PropertyInspectorDidAppear> e)
         {
             Logger.Instance.LogMessage(TracingLevel.DEBUG, "Plugin Connection_OnPropertyInspectorDidAppear");
+            // send data to PI
         }
 
         private void Connection_OnDeviceDidDisconnect(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.DeviceDidDisconnect> e)
