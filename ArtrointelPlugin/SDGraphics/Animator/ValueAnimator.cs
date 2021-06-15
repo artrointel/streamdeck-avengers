@@ -9,8 +9,8 @@ namespace SDGraphics
 {
     public class ValueAnimator
     {
-        public const int INTERVAL_30_PER_SEC = 1000 / 30;
-        public const int INTERVAL_60_PER_SEC = 1000 / 60;
+        public const double INTERVAL_30_PER_SEC = 1000 / 30.0;
+        public const double INTERVAL_60_PER_SEC = 1000 / 60.0;
         public Timer mTimer;
         public double mInterval;
         public double mTotalDuration;
