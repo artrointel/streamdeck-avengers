@@ -20,7 +20,7 @@ function buildEffectPayload() {
 	var count = document.getElementsByName('effectItem').length;
 	
 	if (count > 0) {
-		payload['effectCount'] = count;
+		payload['payload_updateEffects'] = count;
 		for (var i = 1; i <= count; i++) {
 			payload['sEffectTrigger' + i] = getSelectValue('sEffectTrigger', i);
 			payload['sEffectType' + i] = getSelectValue('sEffectType', i);

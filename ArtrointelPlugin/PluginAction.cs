@@ -77,10 +77,7 @@ namespace ArtrointelPlugin
         {
             Logger.Instance.LogMessage(TracingLevel.DEBUG, "Plugin Connection_OnSendToPlugin");
             Logger.Instance.LogMessage(TracingLevel.DEBUG, "received payload : " + e.Event.Payload.ToString());
-            if (mController.loadPayload(e.Event.Payload))
-            {
-                mController.updateRenderEngine();
-            };
+            mController.handlePayload(e.Event.Payload);
         }
 
         private void Connection_OnPropertyInspectorDidDisappear(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.PropertyInspectorDidDisappear> e)

@@ -10,7 +10,8 @@ namespace ArtrointelPlugin.Control.Payload
     public class PayloadReader
     {
         // constants from property inspector written in javascript.
-        public const String PAYLOAD_EFFECT_KEY = "effectCount";
+        public const String PAYLOAD_IMAGE_UPDATE_KEY = "payload_updateImage";
+        public const String PAYLOAD_EFFECT_KEY = "payload_updateEffects";
         public const String KEY_EFFECT_TRIGGER = "sEffectTrigger";
         public const String KEY_EFFECT_TYPE = "sEffectType";
         public const String KEY_EFFECT_RGB = "iEffectRGB";
@@ -27,6 +28,12 @@ namespace ArtrointelPlugin.Control.Payload
         {
             int effectCount = payload.Value<int>(PAYLOAD_EFFECT_KEY);
             return effectCount;
+        }
+
+        public static String isImageUpdatePayload(JObject payload)
+        {
+            String base64ImageString = payload.Value<String>(PAYLOAD_IMAGE_UPDATE_KEY);
+            return base64ImageString;
         }
 
         public static ArrayList LoadEffectDataFromPayload(JObject payload, int count)

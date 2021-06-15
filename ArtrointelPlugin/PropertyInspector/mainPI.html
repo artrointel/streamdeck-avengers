@@ -14,9 +14,10 @@
     <div class="sdpi-wrapper">
         <div class="sdpi-item" id="dvImageSelection">
             <div class="sdpi-item-label">Base Image </div>
-            <input id="fileInput" type="file" style="display:none;" accept=".jpg, .png, .jpeg, .gif, .bmp, .json" />
-            <button class="sdpi-item-value sdProperty" id="fileDialog" onclick="document.getElementById('fileInput').click();">Select</button>
-            <input class="sdpi-item-value" id="selectedImageFileName" placeholder="select image file" disabled />
+            <!-- TODO make it work -->
+            <input id="inputFile" type="file" style="display:none;" onchange="onImageUpdated(this)" accept=".jpg, .png, .jpeg, .gif, .bmp, .json" />
+            <button class="sdpi-item-value sdProperty" id="btnSelect" onclick="onSelectImage()">Select</button>
+            <input class="sdpi-item-value" id="iSelectedImageFileName" placeholder="select image file" />
         </div>
         <div class="sdpi-item" id="dvFunctionSelection">
             <div class="sdpi-item-label">Functions </div>
@@ -26,5 +27,6 @@
             <div class="sdpi-item-label">UI Effects </div>
             <button class="sdpi-item-value sdProperty" id="btnEffectEdit" onclick="onBtnEffectEditClicked()">Edit</button>
         </div>
+    </div>
 </body>
 </html>

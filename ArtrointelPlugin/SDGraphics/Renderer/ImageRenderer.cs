@@ -10,27 +10,28 @@ namespace SDGraphics
 {
     public class ImageRenderer : CanvasRendererBase
     {
-        private String mFilePath;
+        private Image mImage;
 
-        public ImageRenderer(String filePath)
+        public ImageRenderer(Image image)
         {
-            setImageFile(filePath);
-        }
-
-        public void setImageFile(String filePath)
-        {
-            mFilePath = filePath;
-            invalidate();
+            mImage = image;
         }
 
         public override void onRender(Graphics graphics)
         {
             // TODO any exception? ->  fallback image
-            Image img = Image.FromFile(mFilePath);
-            graphics.DrawImage(img, 0, 0, SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE);
-            img.Dispose();
+            if(mImage != null)
+            {
+                graphics.DrawImage(mImage, 0, 0, SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE);
+            }
 
             base.onRender(graphics);
+        }
+
+        public override void onDestroy()
+        {
+            mImage.Dispose();
+            base.onDestroy();
         }
     }
 }
