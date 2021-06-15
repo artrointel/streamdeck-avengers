@@ -65,12 +65,14 @@ namespace SDGraphics
         /// </summary>
         public void destroyAll()
         {
+            mOnUpdatedCanvas = null;
             mRenderTimer.Stop();
             mRenderTimer.Dispose();
             foreach (CanvasRendererBase renderer in mRenderers)
             {
                 renderer.onDestroy();
             }
+            mRenderers.Clear();
             mCompositedCanvas.mImage.Dispose();
         }
 
@@ -109,10 +111,16 @@ namespace SDGraphics
                 return false;
             }
         }
+
+        public ArrayList getRenderers()
+        {
+            return mRenderers;
+        }
+
         private void onTimedEvent(object sender, ElapsedEventArgs e)
         {
             doRender();
-            if (doComposite())
+            if (doComposite() && (mOnUpdatedCanvas != null))
             {
                 mOnUpdatedCanvas(mCompositedCanvas);
             }

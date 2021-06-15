@@ -9,18 +9,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ArtrointelPlugin.Control;
 
 namespace ArtrointelPlugin
 {
     [PluginActionId("com.artrointel.graphicsampleplugin")]
     public class PluginAction : PluginBase
     {
-        Control.AvengersKeyController mControl;
-        SDGraphics.RenderEngine mRenderEngine;
-        SDGraphics.FlashRenderer mFlashFeedbackRenderer;
-        SDGraphics.CircleSpreadRenderer mCircleFeedbackRenderer;
-        SDGraphics.PieRenderer mPieRenderer;
-        SDGraphics.ImageRenderer mImageRenderer;
+        AvengersKeyController mController;
         private class PluginSettings
         {
             public static PluginSettings CreateDefaultSettings()
@@ -66,8 +62,7 @@ namespace ArtrointelPlugin
             Connection.OnSendToPlugin += Connection_OnSendToPlugin;
             Connection.OnTitleParametersDidChange += Connection_OnTitleParametersDidChange;
 
-            mControl = new Control.AvengersKeyController();
-            mControl.initializeRenderEngine(async (canvas) =>
+            mController = new AvengersKeyController(async (canvas) =>
             {
                 await Connection.SetImageAsync(canvas.mImage);
             });
@@ -81,9 +76,11 @@ namespace ArtrointelPlugin
         private void Connection_OnSendToPlugin(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.SendToPlugin> e)
         {
             Logger.Instance.LogMessage(TracingLevel.DEBUG, "Plugin Connection_OnSendToPlugin");
-            var ev = e.Event.Payload.Value<String>("mykey");
             Logger.Instance.LogMessage(TracingLevel.DEBUG, "received payload : " + e.Event.Payload.ToString());
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "mykey-> " + ev);
+            if (mController.loadPayload(e.Event.Payload))
+            {
+                mController.updateRenderEngine();
+            };
         }
 
         private void Connection_OnPropertyInspectorDidDisappear(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.PropertyInspectorDidDisappear> e)
@@ -133,9 +130,7 @@ namespace ArtrointelPlugin
         public async override void KeyPressed(KeyPayload payload)
         {
             Logger.Instance.LogMessage(TracingLevel.DEBUG, "Plugin Key Pressed");
-            mCircleFeedbackRenderer.animate();
-            mFlashFeedbackRenderer.animate();
-            mPieRenderer.animate();
+            mController.actionOnKeyPressed();
         }
 
         public async override void KeyReleased(KeyPayload payload) 

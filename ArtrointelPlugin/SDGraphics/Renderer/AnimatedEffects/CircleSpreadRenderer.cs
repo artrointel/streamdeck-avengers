@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SDGraphics;
 using System.Drawing;
+using ArtrointelPlugin.Utils;
 
 namespace SDGraphics
 {
@@ -14,28 +15,22 @@ namespace SDGraphics
     public class CircleSpreadRenderer : CanvasRendererBase, IAnimatableRenderer
     {
         // constants
-        private static Color CIRCLE_COLOR = Color.FromArgb(CIRCLE_ALPHA, Color.White);
-        private const int CIRCLE_ALPHA = 255 / 2 ;
         private const int CIRCLE_START_RADIUS = SDCanvas.DEFAULT_IMAGE_SIZE / 10;
-        private const int ANIM_DURATION = 500;
         
         // input data
         private Color mInputColor;
+        private int mInputDurationInMillisecond;
 
         // for internal logic
         private ValueAnimator mCircleAnimator;
         private Color mAnimCircleColor;
         private Rectangle mRectCircleGeometry;
+        private DelayedTask mDelayedTask;
 
-        public CircleSpreadRenderer()
-        {
-            mInputColor = CIRCLE_COLOR;
-            initialize();
-        }
-
-        public CircleSpreadRenderer(Color color)
+        public CircleSpreadRenderer(Color color, double durationInSecond)
         {           
             mInputColor = color;
+            mInputDurationInMillisecond = (int)(durationInSecond * 1000);
             initialize();
         }
 
@@ -46,7 +41,7 @@ namespace SDGraphics
 
             mCircleAnimator = new ValueAnimator(
                 CIRCLE_START_RADIUS, SDCanvas.DEFAULT_IMAGE_SIZE * 1.42f, // maximum circle radius should be (IMAGE_SIZE * sqrt(2)) to fit the rect.
-                ANIM_DURATION, ValueAnimator.INTERVAL_60_PER_SEC);
+                mInputDurationInMillisecond, ValueAnimator.INTERVAL_60_PER_SEC);
 
             mCircleAnimator.setAnimationListeners((value, duration) => {
                 // circle grows
@@ -55,8 +50,8 @@ namespace SDGraphics
                 mRectCircleGeometry.Width = (int)value * 2;
                 mRectCircleGeometry.Height = (int)value * 2;
                 // circle disappears
-                double progress = duration / ANIM_DURATION;
-                mAnimCircleColor = Color.FromArgb(CIRCLE_ALPHA - (int)(progress * CIRCLE_ALPHA), mInputColor);
+                double progress = duration / mInputDurationInMillisecond;
+                mAnimCircleColor = Color.FromArgb(mInputColor.A - (int)(progress * mInputColor.A), mInputColor);
                 invalidate();
             });
         }
@@ -68,10 +63,25 @@ namespace SDGraphics
             base.onRender(graphics);
         }
 
-        public void animate(bool restart = true)
+        public void animate(double delayInSecond, bool restart)
         {
-            mCircleAnimator.start(restart);
+            if (delayInSecond > 0)
+            {
+                if(mDelayedTask != null)
+                {
+                    mDelayedTask.cancel();
+                }
+                mDelayedTask = new DelayedTask((int)(delayInSecond * 1000), () =>
+                {
+                    mCircleAnimator.start(restart);
+                });
+            }
+            else
+            {
+                mCircleAnimator.start(restart);
+            }
         }
+
 
         public void pause()
         {
@@ -80,6 +90,10 @@ namespace SDGraphics
 
         public override void onDestroy()
         {
+            if(mDelayedTask != null)
+            {
+                mDelayedTask.cancel();
+            }
             mCircleAnimator.destroy();
             base.onDestroy();
         }

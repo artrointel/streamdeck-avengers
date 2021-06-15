@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Drawing;
+using ArtrointelPlugin.Utils;
 
 namespace SDGraphics
 {
@@ -12,39 +14,33 @@ namespace SDGraphics
     /// </summary>
     class FlashRenderer : CanvasRendererBase, IAnimatableRenderer
     {
-        // constants
-        private static Color DEFAULT_COLOR = Color.FromArgb(200, Color.White);
-        private const int FLASH_START_DURATION = 50;
-        private const int FLASH_END_DURATION = FLASH_START_DURATION * 4;
-
         // input data
         private Color mInputColor;
+        private int mInputDurationInMliisecond;
 
         // for internal logic
         private ValueAnimator mFlashStartAnimator;
         private ValueAnimator mFlashEndAnimator;
         private Color mAnimFlashColor;
-
-        public FlashRenderer()
-        {
-            mInputColor = DEFAULT_COLOR;
-            initialize();
-        }
+        private DelayedTask mDelayedTask;
 
         /// <summary>
         /// Flash with the color. alpha value will be used for brightest moment.
         /// </summary>
         /// <param name="color"></param>
-        public FlashRenderer(Color color)
+        public FlashRenderer(Color color, double durationInSecond)
         {
             mInputColor = color;
+            mInputDurationInMliisecond = (int)(durationInSecond * 1000);
             initialize();
         }
 
         private void initialize()
         {
-            mFlashStartAnimator = new ValueAnimator(0, 1, FLASH_START_DURATION, ValueAnimator.INTERVAL_60_PER_SEC);
-            mFlashEndAnimator = new ValueAnimator(1, 0, FLASH_END_DURATION, ValueAnimator.INTERVAL_60_PER_SEC);
+            int flashStartDuration = (int)(mInputDurationInMliisecond * 0.25);
+            int flashEndDuration = (int)(mInputDurationInMliisecond * 0.75);
+            mFlashStartAnimator = new ValueAnimator(0, 1, flashStartDuration, ValueAnimator.INTERVAL_60_PER_SEC);
+            mFlashEndAnimator = new ValueAnimator(1, 0, flashEndDuration, ValueAnimator.INTERVAL_60_PER_SEC);
 
             mFlashStartAnimator.setAnimationListeners((value, duration) => {
                 mAnimFlashColor = Color.FromArgb((int)(mInputColor.A * value), mInputColor);
@@ -68,10 +64,25 @@ namespace SDGraphics
             base.onRender(graphics);
         }
 
-        public void animate(bool restart = true)
+        public void animate(double delayInSecond, bool restart)
         {
-            mFlashEndAnimator.stop();
-            mFlashStartAnimator.start(restart);
+            if (delayInSecond > 0)
+            {
+                if (mDelayedTask != null)
+                {
+                    mDelayedTask.cancel();
+                }
+                mDelayedTask = new DelayedTask((int)(delayInSecond * 1000), () =>
+                {
+                    mFlashEndAnimator.stop();
+                    mFlashStartAnimator.start(restart);
+                });
+            }
+            else
+            {
+                mFlashEndAnimator.stop();
+                mFlashStartAnimator.start(restart);
+            }
         }
 
         public void pause()
@@ -81,6 +92,10 @@ namespace SDGraphics
 
         public override void onDestroy()
         {
+            if (mDelayedTask != null)
+            {
+                mDelayedTask.cancel();
+            }
             mFlashEndAnimator.destroy();
             mFlashStartAnimator.destroy();
             base.onDestroy();

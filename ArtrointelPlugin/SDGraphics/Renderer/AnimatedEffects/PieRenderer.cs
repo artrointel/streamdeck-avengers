@@ -1,17 +1,17 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Drawing;
+using ArtrointelPlugin.Utils;
 
 namespace SDGraphics
 {
     public class PieRenderer : CanvasRendererBase, IAnimatableRenderer
     {
         // constants
-        private const int INITIAL_ALPHA = 255 / 2;
-        private static Color DEFAULT_COLOR = Color.FromArgb(INITIAL_ALPHA, Color.White); // TODO make black
         private const int PIE_RADIUS = (int)((SDCanvas.DEFAULT_IMAGE_SIZE / 2) * 1.42); // pie tightly covers the canvas
 
         // input data
-        private double mInputAnimationDuration; // animation in second
+        private double mInputDurationInSecond; // animation in second
         private Color mInputColor; // color of the pie
         private bool mGrow; // growing or eating the pie
         private bool mClockwise; // animation direction
@@ -23,19 +23,11 @@ namespace SDGraphics
         private Brush mPieBrush;
         private Rectangle mRectPieGeometry;
         Action<Graphics> mRenderPieMethod;
+        private DelayedTask mDelayedTask;
 
-        public PieRenderer(double second, bool grow = true, bool clockwise = true)
+        public PieRenderer(Color color, double durationInSecond, bool grow = true, bool clockwise = true)
         {
-            mInputAnimationDuration = second;
-            mInputColor = DEFAULT_COLOR;
-            mGrow = grow;
-            mClockwise = clockwise;
-            initialize();
-        }
-
-        public PieRenderer(double second, Color color, bool grow = true, bool clockwise = true)
-        {
-            mInputAnimationDuration = second;
+            mInputDurationInSecond = durationInSecond;
             mInputColor = color;
             mGrow = grow;
             mClockwise = clockwise;
@@ -44,9 +36,9 @@ namespace SDGraphics
 
         private void initialize()
         {
-            int animationDuration = (int)(mInputAnimationDuration * 1000.0);
+            int animationDuration = (int)(mInputDurationInSecond * 1000.0);
             // for better performance, animation interval can be loosen.
-            double loosenAnimationInterval = 500.0 * mInputAnimationDuration / 720.0;
+            double loosenAnimationInterval = 500.0 * mInputDurationInSecond / 720.0;
             mAnimatorInterval = 
                 mAnimatorInterval < loosenAnimationInterval ? 
                 loosenAnimationInterval : mAnimatorInterval;
@@ -106,9 +98,23 @@ namespace SDGraphics
             base.onRender(graphics);
         }
 
-        public void animate(bool restart = true)
+        public void animate(double delayInSecond, bool restart)
         {
-            mAngleAnimator.start(restart);
+            if (delayInSecond > 0)
+            {
+                if (mDelayedTask != null)
+                {
+                    mDelayedTask.cancel();
+                }
+                mDelayedTask = new DelayedTask((int)(delayInSecond * 1000), () =>
+                {
+                    mAngleAnimator.start(restart);
+                });
+            }
+            else
+            {
+                mAngleAnimator.start(restart);
+            }
         }
 
         public void pause()
@@ -118,6 +124,10 @@ namespace SDGraphics
 
         public override void onDestroy()
         {
+            if (mDelayedTask != null)
+            {
+                mDelayedTask.cancel();
+            }
             mAngleAnimator.destroy();
             base.onDestroy();
         }
