@@ -17,7 +17,7 @@ namespace ArtrointelPlugin.Utils
             mCts = new CancellationTokenSource();
             mTask = Task.Delay(delayInMillisecond, mCts.Token).ContinueWith(t =>
             {
-                if(task != null)
+                if(task != null && !mCts.Token.IsCancellationRequested)
                 {
                     task();
                 }

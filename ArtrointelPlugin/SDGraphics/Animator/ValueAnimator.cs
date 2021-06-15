@@ -15,9 +15,10 @@ namespace SDGraphics
         public double mInterval;
         public double mTotalDuration;
         public double mCurrentDuration;
-
-        public float mFromValue = 0.0f;
-        public float mToValue = 0.0f;
+        private DateTime mPrevDateTime;
+        
+        public float mFromValue;
+        public float mToValue;
 
         Action<double, double> mOnValueUpdatedAction;
         Action mOnFinishedAction;
@@ -51,10 +52,12 @@ namespace SDGraphics
                 }
                 this.stop();
             }
-            
+
             // updates current duration
-            mCurrentDuration += mInterval;
-            if(mCurrentDuration > mTotalDuration)
+            double diffDuration = (e.SignalTime - mPrevDateTime).TotalMilliseconds;
+            mPrevDateTime = e.SignalTime;
+            mCurrentDuration += diffDuration;
+            if (mCurrentDuration > mTotalDuration)
             {   // note that the last value should be mToValue.
                 mCurrentDuration = mTotalDuration;
             }
@@ -82,6 +85,7 @@ namespace SDGraphics
             if(restart)
             {
                 mCurrentDuration = 0;
+                mPrevDateTime = DateTime.Now;
             }
             mTimer.Start();
         }

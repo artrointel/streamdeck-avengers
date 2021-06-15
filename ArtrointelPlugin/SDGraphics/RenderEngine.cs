@@ -18,7 +18,9 @@ namespace SDGraphics
     /// </summary>
     public class RenderEngine
     {
-        public const int FRAME_RATE = 60;
+        // Aimes to be 60fps as default, but it may not reach to the 60 fps
+        // due to the system performance or due to the timer library.
+        public const int FRAME_RATE_HINT = 60;
 
         private double mFrameDuration;
         private Timer mRenderTimer;
@@ -33,7 +35,7 @@ namespace SDGraphics
         /// It renders and composites per input frameRate.
         /// </summary>
         /// <param name="frameRate"></param>
-        public RenderEngine(int frameRate = FRAME_RATE)
+        public RenderEngine(int frameRate = FRAME_RATE_HINT)
         {
             mFrameDuration = 1000.0 / frameRate;
             mCompositedCanvas = SDCanvas.CreateCanvas();
