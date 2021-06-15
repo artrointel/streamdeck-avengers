@@ -25,7 +25,7 @@ namespace SDGraphics
         Action<Graphics> mRenderPieMethod;
         private DelayedTask mDelayedTask;
 
-        public PieRenderer(Color color, double durationInSecond, bool grow = true, bool clockwise = true)
+        public PieRenderer(Color color, double durationInSecond, bool grow = false, bool clockwise = false)
         {
             mInputDurationInSecond = durationInSecond;
             mInputColor = color;

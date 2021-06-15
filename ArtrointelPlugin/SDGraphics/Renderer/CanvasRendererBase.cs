@@ -14,7 +14,7 @@ namespace SDGraphics
     public abstract class CanvasRendererBase : ICanvasRenderer
     {
         public SDCanvas mOffscreenCanvas { get; }
-        private bool mNeedToRender = true;
+        private bool mNeedToRender = false;
 
         public CanvasRendererBase(
             int canvasWidth = SDCanvas.DEFAULT_IMAGE_SIZE,

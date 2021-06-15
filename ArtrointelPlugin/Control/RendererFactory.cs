@@ -22,7 +22,7 @@ namespace ArtrointelPlugin.Control.Model
             } else if (cfg.mType.Equals(EffectConfig.EType.Pie.ToString()))
             {
                 // TODO Add more cfg data
-                renderer = new PieRenderer(cfg.mColor, cfg.mDuration, true, true);
+                renderer = new PieRenderer(cfg.mColor, cfg.mDuration);
             } else if (cfg.mType.Equals(EffectConfig.EType.ImageBlending.ToString()))
             {
                 // TODO
