@@ -23,7 +23,7 @@ namespace SDGraphics
         public static SDCanvas CreateCanvas(int width = DEFAULT_IMAGE_SIZE, int height = DEFAULT_IMAGE_SIZE)
         {
             Bitmap bitmap = new Bitmap(width, height);
-            var brush = new SolidBrush(Color.Black);
+            var brush = new SolidBrush(Color.Empty);
             Graphics graphics = Graphics.FromImage(bitmap);
             graphics.SmoothingMode = SmoothingMode.AntiAlias;
             graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;

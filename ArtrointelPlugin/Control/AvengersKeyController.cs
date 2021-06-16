@@ -20,7 +20,6 @@ namespace ArtrointelPlugin.Control
         private Action<SDCanvas> mRendererUpdatedListener;
 
         // SDGraphics
-        Image mBaseImage;
         RenderEngine mRenderEngine;
 
         // Configuration data
@@ -32,16 +31,7 @@ namespace ArtrointelPlugin.Control
             mRendererUpdatedListener = rendererUpdatedListener;
             mRenderEngine = CreateRenderEngine(mRendererUpdatedListener);
             mRenderEngine.run();
-            try
-            {
-                mBaseImage = FileIOManager.loadBaseImage();
-                var imageRenderer = new ImageRenderer(mBaseImage);
-                imageRenderer.invalidate();
-                mRenderEngine.addRenderer(imageRenderer);
-            } catch(Exception e)
-            {
-                Logger.Instance.LogMessage(TracingLevel.WARN, "Couldn't load baseImage.");
-            }
+            putBaseImageRenderer();
         }
 
         private static RenderEngine CreateRenderEngine(Action<SDCanvas> rendererUpdatedListener)
@@ -51,12 +41,27 @@ namespace ArtrointelPlugin.Control
             return renderEngine;
         }
 
+        private void putBaseImageRenderer()
+        {
+            try
+            {
+                var imageRenderer = new ImageRenderer(FileIOManager.loadBaseImage());
+                imageRenderer.invalidate();
+                mRenderEngine.addRenderer(imageRenderer);
+            }
+            catch (Exception e)
+            {
+                Logger.Instance.LogMessage(TracingLevel.WARN, "Couldn't load baseImage:" + e.Message);
+            }
+        }
+
         public void handlePayload(JObject payload)
         {
             // Handles Effect payload
             int effectCount = PayloadReader.isEffectPayload(payload);
             if(effectCount > 0)
             {
+                // TODO base image config
                 mEffectConfigurations = PayloadReader.LoadEffectDataFromPayload(payload, effectCount);
                 Logger.Instance.LogMessage(TracingLevel.DEBUG, "detected effect payload.");
                 updateRenderEngine();
@@ -93,16 +98,7 @@ namespace ArtrointelPlugin.Control
         {
             mRenderEngine.destroyAll();
             mRenderEngine = CreateRenderEngine(mRendererUpdatedListener);
-            mBaseImage = FileIOManager.loadBaseImage();
-            if (mBaseImage != null)
-            {
-                var imageRenderer = new ImageRenderer(mBaseImage);
-                imageRenderer.invalidate();
-                //mRenderEngine.addRenderer(imageRenderer);
-            } else
-            {
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "Couldn't read baseImage.");
-            }
+            putBaseImageRenderer();
 
             foreach(EffectConfig effectCfg in mEffectConfigurations)
             {
@@ -116,7 +112,7 @@ namespace ArtrointelPlugin.Control
         public void actionOnKeyPressed()
         {
             // Execute functions
-            
+
             // Animate renderers
             for (int i = 0; i < mEffectConfigurations.Count; i++)
             {
@@ -124,9 +120,11 @@ namespace ArtrointelPlugin.Control
                 if (cfg.mTrigger.Equals(EffectConfig.ETrigger.OnKeyPressed.ToString()))
                 {
                     ArrayList renderers = mRenderEngine.getRenderers();
-                    if (renderers[i] is IAnimatableRenderer)
+
+                    // Workaround: baseImage renderer is at 0
+                    if (renderers[i+1] is IAnimatableRenderer)
                     {
-                        ((IAnimatableRenderer)renderers[i]).animate(cfg.mDelay);
+                        ((IAnimatableRenderer)renderers[i+1]).animate(cfg.mDelay);
                     }
                 }
                 
