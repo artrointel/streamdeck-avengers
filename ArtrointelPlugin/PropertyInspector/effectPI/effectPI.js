@@ -25,10 +25,10 @@ function buildEffectPayload() {
 			payload['sEffectTrigger' + i] = getSelectValue('sEffectTrigger', i);
 			payload['sEffectType' + i] = getSelectValue('sEffectType', i);
 			// TODO
-			payload['iEffectRGB' + i] = getDivValue('iEffectRGB', i);
-			payload['iEffectAlpha' + i] = getDivValue('iEffectAlpha', i);
-			payload['iEffectDelay' + i] = getDivValue('iEffectDelay', i);
-			payload['iEffectDuration' + i] = getDivValue('iEffectDuration', i);
+			payload['iEffectRGB' + i] = getValue('iEffectRGB', i);
+			payload['iEffectAlpha' + i] = getValue('iEffectAlpha', i);
+			payload['iEffectDelay' + i] = getValue('iEffectDelay', i);
+			payload['iEffectDuration' + i] = getValue('iEffectDuration', i);
         }
 		return payload;
 	} else {

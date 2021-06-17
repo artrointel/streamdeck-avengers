@@ -12,12 +12,21 @@ namespace ArtrointelPlugin.Control.Payload
         // constants from property inspector written in javascript.
         public const String PAYLOAD_IMAGE_UPDATE_KEY = "payload_updateImage";
         public const String PAYLOAD_EFFECT_KEY = "payload_updateEffects";
+        public const String PAYLOAD_FUNCTIONS_KEY = "payload_updateFunctions";
+
         public const String KEY_EFFECT_TRIGGER = "sEffectTrigger";
         public const String KEY_EFFECT_TYPE = "sEffectType";
         public const String KEY_EFFECT_RGB = "iEffectRGB";
         public const String KEY_EFFECT_ALPHA = "iEffectAlpha";
         public const String KEY_EFFECT_DELAY = "iEffectDelay";
         public const String KEY_EFFECT_DURATION = "iEffectDuration";
+
+        public const String KEY_FUNCTION_TRIGGER = "sFunctionTrigger";
+        public const String KEY_FUNCTION_TYPE = "sFunctionType";
+        public const String KEY_FUNCTION_DELAY = "iFunctionDelay";
+        public const String KEY_FUNCTION_INTERVAL = "iFunctionInterval"; // in millisecond
+        public const String KEY_FUNCTION_DURATION = "iFunctionDuration";
+        public const String KEY_FUNCTION_METADATA = "iFunctionMetadata"; // handled by the type
 
         private PayloadReader()
         {
@@ -28,6 +37,12 @@ namespace ArtrointelPlugin.Control.Payload
         {
             int effectCount = payload.Value<int>(PAYLOAD_EFFECT_KEY);
             return effectCount;
+        }
+
+        public static int isFunctionPayload(JObject payload)
+        {
+            int functionCount = payload.Value<int>(PAYLOAD_FUNCTIONS_KEY);
+            return functionCount;
         }
 
         public static String isImageUpdatePayload(JObject payload)
@@ -56,6 +71,32 @@ namespace ArtrointelPlugin.Control.Payload
                 }
                 return newEffectList;
             } catch(Exception e)
+            {
+                Logger.Instance.LogMessage(TracingLevel.ERROR, "input effect data is wrong: " + e.ToString());
+            }
+            return null;
+        }
+
+        public static ArrayList LoadFunctionDataFromPayload(JObject payload, int count)
+        {
+            try
+            {
+                ArrayList newFunctionList = new ArrayList();
+                for (int i = 1; i <= count; i++)
+                {
+                    string trigger = payload.Value<string>(KEY_FUNCTION_TRIGGER + i);
+                    string type = payload.Value<string>(KEY_FUNCTION_TYPE + i);
+                    double delay = payload.Value<double>(KEY_FUNCTION_DELAY + i);
+                    double interval = payload.Value<double>(KEY_FUNCTION_INTERVAL + i);
+                    double duration = payload.Value<double>(KEY_FUNCTION_DURATION + i);
+                    string metadata = payload.Value<string>(KEY_FUNCTION_METADATA + i);
+                    newFunctionList.Add(FunctionConfig.Load(
+                        trigger, type, delay, interval, duration, metadata));
+                }
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, "Loaded Payload, count is " + newFunctionList.Count);
+                return newFunctionList;
+            }
+            catch (Exception e)
             {
                 Logger.Instance.LogMessage(TracingLevel.ERROR, "input effect data is wrong: " + e.ToString());
             }

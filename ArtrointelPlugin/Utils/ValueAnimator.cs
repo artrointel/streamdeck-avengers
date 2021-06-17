@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 
-namespace SDGraphics
+namespace ArtrointelPlugin.Utils
 {
     public class ValueAnimator
     {
@@ -75,6 +71,7 @@ namespace SDGraphics
             mOnFinishedAction = onFinished;
         }
 
+        // TODO add enable dispose itself ?
         /// <summary>
         /// Start the animator. animation will be re-played if restart is true, 
         /// else it will keep the state of the animation.

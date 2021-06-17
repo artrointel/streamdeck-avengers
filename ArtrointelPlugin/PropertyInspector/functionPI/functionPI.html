@@ -60,30 +60,40 @@
 		}
 	</style>
 	<script src="../sdtools.common.js"></script>
+	<script src="../payload.common.js"></script>
+	<script src="keyboardMap.js"></script>
 	<script src="functionPI.js"></script>
 </head>
 
-<body onload="loaded()">
+<body>
 	<div class="g"></div>
 
 	<div class="sdpi-wrapper">
 		<div class="sdpi-heading">INFORMATION</div>
 		<div class="wrap">
+
 			<p>
 				You can add or remove your function of the avengers key.
 				Make your functions in the below section and press apply button after done.
 			</p>
-			<p>If any helps, please visit web-site below and make an issue or send an e-mail.</p>
+			<p>Since the program uses Microsoft .Net Framework, install and restart stream deck if the plugin does not work.</p>
+			<p><a href="https://dotnet.microsoft.com/download/dotnet-framework" target="_blank">Install MS .Net Framework</a></p>
+			
 			<p><a href="https://github.com/artrointel/streamdeck-avengers" target="_blank">Open GitHub Page</a></p>
 		</div>
 
-		<!---- Functions ---->
 		<div class="sdpi-heading">Function List</div>
 		<!-- Label -->
 		<div class="sdpi-item">
-			<label class="avg-label">Event Trigger</label>
-			<label class="avg-label">Function</label>
-			<label class="avg-label">Configuration</label>
+			<div class="sdpi-item-value" style="text-align: center;">
+				<label>Trigger</label>
+			</div>
+			<div class="sdpi-item-value" style="text-align: center;">
+				<label>Function</label>
+			</div>
+			<div class="sdpi-item-value" style="text-align: center;">
+				<label>Delay</label>
+			</div>
 		</div>
 		<!-- Function List -->
 		<div id="dvFunctionList"></div>
@@ -93,12 +103,11 @@
 			<button class="sdpi-item-value sdProperty" id="btnAddNewFunction" onclick="onAddNewEvent()">Add New Event</button>
 		</div>
 		<hr />
-		<div class="wrap">
-			<button type="button" value="Apply" onclick="onBtnApplyClicked()">Apply</button>
+		<div class="wrap" style="text-align: right;">
+			<button type="button" value="Confirm" onclick="onBtnApplyClicked()">Apply</button>
 			<button type="button" value="Cancel" onclick="onBtnCancelClicked()">Cancel</button>
-
-
-			<p>Clicking the button sends some information to your Property Inspector. Just open the remote-debugger for your Property Inspector and watch the console.</p>
+			<p>If any helps, please visit web-site below and make an issue or send an e-mail.</p>
+			<p><a href="https://github.com/artrointel/streamdeck-avengers" target="_blank">Open GitHub Page</a></p>
 		</div>
 	</div>
 </body>

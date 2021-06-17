@@ -6,7 +6,6 @@ using System.Timers;
 
 namespace SDGraphics
 {
-
     /// <summary>
     /// RenderEngine is a simple graphic module to make dynamically-animated rendered action icon for the stream deck.
     /// Multiple renderers can be attached to the render engine for the rendering.
@@ -52,6 +51,16 @@ namespace SDGraphics
         public void run()
         {
             mRenderTimer.Start();
+        }
+
+        public bool animateRendererAt(int index, double delayInSecond, bool restart = true)
+        {
+            if (mRenderers[index] is IAnimatableRenderer)
+            {
+                ((IAnimatableRenderer)mRenderers[index]).animate(delayInSecond, restart);
+                return true;
+            }
+            return false;
         }
 
         /// <summary>

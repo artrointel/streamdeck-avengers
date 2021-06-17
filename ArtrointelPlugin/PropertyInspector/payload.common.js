@@ -9,10 +9,10 @@ function getSelectValue(elemId, idx) {
     return selection.options[selection.selectedIndex].value;
 }
 
-function getDivValue(elemId, idx) {
+function getValue(elemId, idx, fallbackValue = 0.0) {
     var dataContainer = document.getElementById(elemId + idx);
     if (dataContainer == null) {
-        alert('dbg wrong data contained' + elemId + idx);
+        return fallbackValue;
     }
     return dataContainer.value;
 }

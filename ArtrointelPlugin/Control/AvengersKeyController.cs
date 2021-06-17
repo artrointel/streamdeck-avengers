@@ -8,6 +8,7 @@ using SDGraphics;
 using ArtrointelPlugin.Control.Model;
 using ArtrointelPlugin.Control.Payload;
 using ArtrointelPlugin.Utils;
+using ArtrointelPlugin.SDFunctions;
 
 namespace ArtrointelPlugin.Control
 {
@@ -22,6 +23,9 @@ namespace ArtrointelPlugin.Control
         // SDGraphics
         RenderEngine mRenderEngine;
 
+        // SDFunctions
+        FunctionExecutor mFunctionExecutor;
+
         // Configuration data
         ArrayList mEffectConfigurations = new ArrayList();
         ArrayList mFunctionConfigurations = new ArrayList();
@@ -30,6 +34,7 @@ namespace ArtrointelPlugin.Control
         {
             mRendererUpdatedListener = rendererUpdatedListener;
             mRenderEngine = CreateRenderEngine(mRendererUpdatedListener);
+            mFunctionExecutor = CreateFunctionExecutor();
             mRenderEngine.run();
             putBaseImageRenderer();
         }
@@ -39,6 +44,11 @@ namespace ArtrointelPlugin.Control
             var renderEngine = new RenderEngine();
             renderEngine.setRenderingUpdatedListener(rendererUpdatedListener);
             return renderEngine;
+        }
+
+        private static FunctionExecutor CreateFunctionExecutor()
+        {
+            return new FunctionExecutor();
         }
 
         private void putBaseImageRenderer()
@@ -64,7 +74,17 @@ namespace ArtrointelPlugin.Control
                 // TODO base image config
                 mEffectConfigurations = PayloadReader.LoadEffectDataFromPayload(payload, effectCount);
                 Logger.Instance.LogMessage(TracingLevel.DEBUG, "detected effect payload.");
-                updateRenderEngine();
+                updateRenderEngineWithConfig();
+                return;
+            }
+
+            // Handles Function payload
+            int functionCount = PayloadReader.isFunctionPayload(payload);
+            if (functionCount > 0)
+            {
+                mFunctionConfigurations = PayloadReader.LoadFunctionDataFromPayload(payload, functionCount);
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, "detected function payload.");
+                updateFunctionExecutorWithConfig();
                 return;
             }
 
@@ -79,7 +99,7 @@ namespace ArtrointelPlugin.Control
                 {
                     if(FileIOManager.saveAsBaseImage(img))
                     {
-                        updateRenderEngine();
+                        updateRenderEngineWithConfig();
                         return;
                     }
                 }
@@ -87,14 +107,12 @@ namespace ArtrointelPlugin.Control
                 {
                     Logger.Instance.LogMessage(TracingLevel.DEBUG, "could'nt read input image");
                 }
-
             }
             // TODO add function read
             Logger.Instance.LogMessage(TracingLevel.WARN, "wrong payload is sent.");
         }
-
-        
-        public void updateRenderEngine()
+                
+        public void updateRenderEngineWithConfig()
         {
             mRenderEngine.destroyAll();
             mRenderEngine = CreateRenderEngine(mRendererUpdatedListener);
@@ -109,9 +127,28 @@ namespace ArtrointelPlugin.Control
             Logger.Instance.LogMessage(TracingLevel.DEBUG, "updated render engine.");
         }
 
+        public void updateFunctionExecutorWithConfig()
+        {
+            mFunctionExecutor.destroyAll();
+            mFunctionExecutor = new FunctionExecutor();
+            foreach (FunctionConfig cfg in mFunctionConfigurations)
+            {
+                var executable = FunctionFactory.CreateExecutable(cfg);
+                mFunctionExecutor.addExecutable(executable);
+            }
+        }
+
         public void actionOnKeyPressed()
         {
             // Execute functions
+            for (int i = 0; i < mFunctionConfigurations.Count; i++)
+            {
+                FunctionConfig cfg = (FunctionConfig) mFunctionConfigurations[i];
+                if (cfg.mTrigger.Equals(FunctionConfig.ETrigger.OnKeyPressed.ToString()))
+                {
+                    mFunctionExecutor.executeFunctionAt(i, cfg.mDelay, cfg.mInterval, cfg.mDuration, cfg.mMetadata);
+                }
+            }
 
             // Animate renderers
             for (int i = 0; i < mEffectConfigurations.Count; i++)
@@ -119,16 +156,15 @@ namespace ArtrointelPlugin.Control
                 EffectConfig cfg = (EffectConfig) mEffectConfigurations[i];
                 if (cfg.mTrigger.Equals(EffectConfig.ETrigger.OnKeyPressed.ToString()))
                 {
-                    ArrayList renderers = mRenderEngine.getRenderers();
-
                     // Workaround: baseImage renderer is at 0
-                    if (renderers[i+1] is IAnimatableRenderer)
-                    {
-                        ((IAnimatableRenderer)renderers[i+1]).animate(cfg.mDelay);
-                    }
+                    mRenderEngine.animateRendererAt(i + 1, cfg.mDelay);
                 }
-                
             }
+        }
+
+        public void actionOnKeyReleased()
+        {
+
         }
     }
 }

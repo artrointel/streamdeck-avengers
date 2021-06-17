@@ -10,6 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ArtrointelPlugin.Control;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace ArtrointelPlugin
 {
