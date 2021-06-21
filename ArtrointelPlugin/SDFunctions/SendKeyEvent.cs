@@ -5,12 +5,43 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ArtrointelPlugin.Utils;
+using BarRaider.SdTools;
 
 namespace ArtrointelPlugin.SDFunctions
 {
     public class SendKeyEvent : DelayedExecutable, IExecutable
     {
+        Action<String> mSendKeyAction;
         ValueAnimator mKeyEventAnimator;
+        Keyboard mKeyboard;
+
+        public SendKeyEvent(bool asciiCode = false)
+        {
+            if (asciiCode)
+            {
+                mKeyboard = new Keyboard();
+                mSendKeyAction = (ascNumbers) =>
+                {
+                    string[] ascs = ascNumbers.Split(' ');
+                    short[] ascii = new short[ascs.Length - 1]; // empty string on last index of ascNumbers
+
+                    for (int i = 0; i < ascii.Length; i++)
+                    {
+                        ascii[i] = short.Parse(ascs[i]);
+                    }
+                    
+                    mKeyboard.Send(ascii);
+                };
+            }
+            else
+            {
+                mSendKeyAction = (text) =>
+                {
+                    SendKeys.SendWait("(" + text + ")");
+                };
+            }
+        }
+
         public void execute(double delayInSecond, double intervalInSecond, double durationInSecond,
             bool restart, string metadata)
         {
@@ -46,7 +77,7 @@ namespace ArtrointelPlugin.SDFunctions
         {
             if (durationInMillisecond == 0)
             {
-                SendKeys.SendWait(metadata);
+                mSendKeyAction(metadata);
                 return;
             }
             else
@@ -57,14 +88,16 @@ namespace ArtrointelPlugin.SDFunctions
                 return;
             }
         }
+
         private void buildKeyEventAnimator(double intervalInMillisecond, int durationInMillisecond, string keyString)
         {
             // ValueAnimator was not intended to use like this, but it makes quite simple
             mKeyEventAnimator = new ValueAnimator(0, 1, durationInMillisecond, intervalInMillisecond);
             mKeyEventAnimator.setAnimationListeners((v, duration) =>
             {
-                SendKeys.SendWait(keyString);
+                mSendKeyAction(keyString);
             });
         }
+
     }
 }

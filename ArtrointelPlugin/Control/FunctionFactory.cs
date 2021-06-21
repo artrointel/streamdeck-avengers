@@ -35,7 +35,7 @@ namespace ArtrointelPlugin.Control
             }
             else if (cfg.mType.Equals(FunctionConfig.EType.Keycode.ToString()))
             {
-                e = new SendKeyEvent(); // todo
+                e = new SendKeyEvent(true); // todo
             }
             return e;
         }
