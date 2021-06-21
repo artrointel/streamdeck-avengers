@@ -64,8 +64,12 @@ namespace ArtrointelPlugin.Control
             return true;
         }
 
-        public static Image loadBaseImage()
+        public static Image loadBaseImage(string path = null)
         {
+            if(path != null)
+            {
+                return Image.FromFile(path);
+            }
             return Image.FromFile(getBaseImagePath());
         }
         

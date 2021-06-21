@@ -4,26 +4,17 @@
 
 function onImageUpdated(e) {
     var input = document.getElementById('inputFile');
-    var fReader = new FileReader();
-    fReader.readAsDataURL(input.files[0]);
-    fReader.onloadend = function (event) {
+    var label = document.getElementById('iSelectedImageFileName');
+    label.value = input.files[0].name;
 
-        var label = document.getElementById('iSelectedImageFileName');
-        label.value = input.files[0].name;
-
-        /* TODO make possible to send an image file from html.
-        var preview = document.getElementById('testImage');
-        preview.src = event.target.result;
-        var payload = buildImageUpdatePayload(event.target.result);
-        sendPayloadToPlugin(payload);
-        */
-    }
+    var inputUri = decodeURIComponent(input.value.replace(/^C:\\fakepath\\/, ''));
+    var payload = buildImageUpdatePayload(inputUri);
+    sendPayloadToPlugin(payload);
 }
 
-function buildImageUpdatePayload(base64img) {
+function buildImageUpdatePayload(path) {
     var payload = {};
-    payload['payload_updateImage'] = base64img;
-    alert(base64img);
+    payload['payload_updateImage'] = path;
     return payload;
 }
 
