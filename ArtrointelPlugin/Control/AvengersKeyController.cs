@@ -30,6 +30,9 @@ namespace ArtrointelPlugin.Control
         ArrayList mEffectConfigurations = new ArrayList();
         ArrayList mFunctionConfigurations = new ArrayList();
 
+        // TODO update image in future.
+        string mBaseImagePath;
+
         public AvengersKeyController(Action<SDCanvas> rendererUpdatedListener)
         {
             mRendererUpdatedListener = rendererUpdatedListener;
@@ -55,7 +58,7 @@ namespace ArtrointelPlugin.Control
         {
             try
             {
-                var imageRenderer = new ImageRenderer(FileIOManager.loadBaseImage());
+                var imageRenderer = new ImageRenderer(FileIOManager.loadBaseImage(mBaseImagePath));
                 imageRenderer.invalidate();
                 mRenderEngine.addRenderer(imageRenderer);
             }
@@ -71,7 +74,6 @@ namespace ArtrointelPlugin.Control
             int effectCount = PayloadReader.isEffectPayload(payload);
             if(effectCount > 0)
             {
-                // TODO base image config
                 mEffectConfigurations = PayloadReader.LoadEffectDataFromPayload(payload, effectCount);
                 Logger.Instance.LogMessage(TracingLevel.DEBUG, "detected effect payload.");
                 updateRenderEngineWithConfig();
@@ -90,26 +92,15 @@ namespace ArtrointelPlugin.Control
 
             // Handles Image update payload
             // TODO handle input file extension
-            String base64Image = PayloadReader.isImageUpdatePayload(payload);
-            if(base64Image != null)
+            String imgPath = PayloadReader.isImageUpdatePayload(payload);
+            if (imgPath != null && File.Exists(imgPath))
             {
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "detected update image payload.");
-                Image img = Tools.Base64StringToImage(base64Image);
-                if (img != null)
-                {
-                    if(FileIOManager.saveAsBaseImage(img))
-                    {
-                        updateRenderEngineWithConfig();
-                        return;
-                    }
-                }
-                else
-                {
-                    Logger.Instance.LogMessage(TracingLevel.DEBUG, "could'nt read input image");
-                }
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, "detected update image payload, " + imgPath);
+                mBaseImagePath = imgPath;
+                updateRenderEngineWithConfig();
             }
             // TODO add function read
-            Logger.Instance.LogMessage(TracingLevel.WARN, "wrong payload is sent.");
+            Logger.Instance.LogMessage(TracingLevel.WARN, "failed to handle payload.");
         }
                 
         public void updateRenderEngineWithConfig()

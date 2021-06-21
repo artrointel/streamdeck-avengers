@@ -4,7 +4,6 @@
     }
 }
 
-
 function onBtnApplyClicked() {
 	// process saving all changes
 	var payload = buildFunctionPayload();
