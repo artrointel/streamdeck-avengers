@@ -98,6 +98,7 @@ function loadConfiguration(payload) {
     }
 }
 
+// unsed function
 function setSettings() {
     var payload = {};
     var elements = document.getElementsByClassName("sdProperty");

@@ -14,102 +14,67 @@ namespace ArtrointelPlugin.Control
 {
     /// <summary>
     /// Controller of the avengers key.
-    /// It controls UI Animation and functions to be executed.
+    /// It controls icon rendering and functions to be executed.
     /// </summary>
     public class AvengersKeyController
     {
+        #region Internal Members
         private Action<SDCanvas> mRendererUpdatedListener;
 
-        // SDGraphics
-        RenderEngine mRenderEngine;
+        // Render engine to render user-customized effects
+        private RenderEngine mRenderEngine;
 
-        // SDFunctions
-        FunctionExecutor mFunctionExecutor;
+        // Executor of user-customized functions
+        private FunctionExecutor mFunctionExecutor;
 
-        // Configuration data
-        ArrayList mEffectConfigurations = new ArrayList();
-        ArrayList mFunctionConfigurations = new ArrayList();
+        // Configuration data created by user (i.e settings).
+        AvengersKeySettings mSettings;
+        #endregion
 
-        // TODO update image in future.
-        string mBaseImagePath;
-
-        public AvengersKeyController(Action<SDCanvas> rendererUpdatedListener)
+        public AvengersKeyController(JObject settings, Action<SDCanvas> rendererUpdatedListener)
         {
+            mSettings = AvengersKeySettings.LoadFrom(settings);
             mRendererUpdatedListener = rendererUpdatedListener;
-            mRenderEngine = CreateRenderEngine(mRendererUpdatedListener);
-            mFunctionExecutor = CreateFunctionExecutor();
-            mRenderEngine.run();
-            putBaseImageRenderer();
+
+            initializeRenderEngine();
+            initializeFunctionExecutor();
+
+            mRenderEngine.run();            
         }
 
-        private static RenderEngine CreateRenderEngine(Action<SDCanvas> rendererUpdatedListener)
+        #region Internal Creators
+        private void initializeFunctionExecutor()
         {
-            var renderEngine = new RenderEngine();
-            renderEngine.setRenderingUpdatedListener(rendererUpdatedListener);
-            return renderEngine;
-        }
-
-        private static FunctionExecutor CreateFunctionExecutor()
-        {
-            return new FunctionExecutor();
-        }
-
-        private void putBaseImageRenderer()
-        {
-            try
+            if (mFunctionExecutor != null)
             {
-                var imageRenderer = new ImageRenderer(FileIOManager.loadBaseImage(mBaseImagePath));
-                imageRenderer.invalidate();
-                mRenderEngine.addRenderer(imageRenderer);
+                mFunctionExecutor.destroyAll();
             }
-            catch (Exception e)
+            mFunctionExecutor = new FunctionExecutor();
+            foreach (FunctionConfig cfg in mSettings.FunctionConfigurations)
             {
-                Logger.Instance.LogMessage(TracingLevel.WARN, "Couldn't load baseImage:" + e.Message);
+                var executable = FunctionFactory.CreateExecutable(cfg);
+                mFunctionExecutor.addExecutable(executable);
             }
         }
 
-        public void handlePayload(JObject payload)
+        private void initializeRenderEngine()
         {
-            // Handles Effect payload
-            int effectCount = PayloadReader.isEffectPayload(payload);
-            if(effectCount > 0)
+            if (mRenderEngine != null)
             {
-                mEffectConfigurations = PayloadReader.LoadEffectDataFromPayload(payload, effectCount);
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "detected effect payload.");
-                updateRenderEngineWithConfig();
-                return;
+                mRenderEngine.destroyAll();
             }
-
-            // Handles Function payload
-            int functionCount = PayloadReader.isFunctionPayload(payload);
-            if (functionCount > 0)
+            mRenderEngine = new RenderEngine();
+            mRenderEngine.setRenderingUpdatedListener(mRendererUpdatedListener);
+            Image baseImage = FileIOManager.LoadBase64(mSettings.Base64ImageString);
+            if (baseImage == null)
             {
-                mFunctionConfigurations = PayloadReader.LoadFunctionDataFromPayload(payload, functionCount);
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "detected function payload.");
-                updateFunctionExecutorWithConfig();
-                return;
+                baseImage = FileIOManager.LoadFallbackImage();
             }
+            var imageRenderer = new ImageRenderer(baseImage);
+            imageRenderer.invalidate();
+            mRenderEngine.addRenderer(imageRenderer);
 
-            // Handles Image update payload
-            // TODO handle input file extension
-            String imgPath = PayloadReader.isImageUpdatePayload(payload);
-            if (imgPath != null && File.Exists(imgPath))
-            {
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "detected update image payload, " + imgPath);
-                mBaseImagePath = imgPath;
-                updateRenderEngineWithConfig();
-            }
-            // TODO add function read
-            Logger.Instance.LogMessage(TracingLevel.WARN, "failed to handle payload.");
-        }
-                
-        public void updateRenderEngineWithConfig()
-        {
-            mRenderEngine.destroyAll();
-            mRenderEngine = CreateRenderEngine(mRendererUpdatedListener);
-            putBaseImageRenderer();
-
-            foreach(EffectConfig effectCfg in mEffectConfigurations)
+            foreach (EffectConfig effectCfg in mSettings.EffectConfigurations)
             {
                 var renderer = RendererFactory.CreateRenderer(effectCfg);
                 mRenderEngine.addRenderer(renderer);
@@ -117,24 +82,54 @@ namespace ArtrointelPlugin.Control
             mRenderEngine.run();
             Logger.Instance.LogMessage(TracingLevel.DEBUG, "updated render engine.");
         }
+        #endregion
 
-        public void updateFunctionExecutorWithConfig()
+        /// <summary>
+        /// Handles payload.
+        /// </summary>
+        /// <param name="payload"></param>
+        /// <returns>true if handled the payload, else false</returns>
+        public bool handlePayload(JObject payload)
         {
-            mFunctionExecutor.destroyAll();
-            mFunctionExecutor = new FunctionExecutor();
-            foreach (FunctionConfig cfg in mFunctionConfigurations)
+            // Handles Effect payload
+            int effectCount = PayloadReader.isEffectPayload(payload);
+            if(effectCount > 0)
             {
-                var executable = FunctionFactory.CreateExecutable(cfg);
-                mFunctionExecutor.addExecutable(executable);
+                mSettings.EffectConfigurations = PayloadReader.LoadEffectDataFromPayload(payload, effectCount);
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, "detected effect payload.");
+                initializeRenderEngine();
+                return true;
             }
-        }
 
+            // Handles Function payload
+            int functionCount = PayloadReader.isFunctionPayload(payload);
+            if (functionCount > 0)
+            {
+                mSettings.FunctionConfigurations = PayloadReader.LoadFunctionDataFromPayload(payload, functionCount);
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, "detected function payload.");
+                initializeFunctionExecutor();
+                return true;
+            }
+
+            // Handles Image update payload
+            String imgPath = PayloadReader.isImageUpdatePayload(payload);
+            if (imgPath != null && File.Exists(imgPath))
+            {
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, "detected update image payload, " + imgPath);
+                mSettings.Base64ImageString = FileIOManager.ProcessImageToBase64(imgPath);
+                initializeRenderEngine();
+                return true;
+            }
+
+            return false;
+        }
+        
         public void actionOnKeyPressed()
         {
             // Execute functions
-            for (int i = 0; i < mFunctionConfigurations.Count; i++)
+            for (int i = 0; i < mSettings.FunctionConfigurations.Count; i++)
             {
-                FunctionConfig cfg = (FunctionConfig) mFunctionConfigurations[i];
+                FunctionConfig cfg = (FunctionConfig)mSettings.FunctionConfigurations[i];
                 if (cfg.mTrigger.Equals(FunctionConfig.ETrigger.OnKeyPressed.ToString()))
                 {
                     mFunctionExecutor.executeFunctionAt(i, cfg.mDelay, cfg.mInterval, cfg.mDuration, cfg.mMetadata);
@@ -142,12 +137,12 @@ namespace ArtrointelPlugin.Control
             }
 
             // Animate renderers
-            for (int i = 0; i < mEffectConfigurations.Count; i++)
+            for (int i = 0; i < mSettings.EffectConfigurations.Count; i++)
             {
-                EffectConfig cfg = (EffectConfig) mEffectConfigurations[i];
+                EffectConfig cfg = (EffectConfig)mSettings.EffectConfigurations[i];
                 if (cfg.mTrigger.Equals(EffectConfig.ETrigger.OnKeyPressed.ToString()))
                 {
-                    // Workaround: baseImage renderer is at 0
+                    // image renderer is always at 0
                     mRenderEngine.animateRendererAt(i + 1, cfg.mDelay);
                 }
             }
@@ -156,6 +151,11 @@ namespace ArtrointelPlugin.Control
         public void actionOnKeyReleased()
         {
 
+        }
+
+        public AvengersKeySettings getSettings()
+        {
+            return mSettings;
         }
     }
 }

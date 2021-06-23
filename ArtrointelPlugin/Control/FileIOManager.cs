@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
+using BarRaider.SdTools;
 
 
 namespace ArtrointelPlugin.Control
@@ -15,21 +16,21 @@ namespace ArtrointelPlugin.Control
         // For resource directories
         public const String RES_DIR = "Res";
         public const String IMAGE_DIR = "Images";
-        public const String BASE_IMAGE_NAME = "baseImage.png";
+        public const String BASE_IMAGE_NAME = "avengersIcon.png";
 
-        public static String getBaseImagePath()
+        public static String getFallbackImagePath()
         {
             var Sep = System.IO.Path.DirectorySeparatorChar;
             return RES_DIR + Sep + IMAGE_DIR + Sep + BASE_IMAGE_NAME;
         }
 
         /// <summary>
-        /// Save as base image to png file. it will be resized.
+        /// Returns new image to fit the stream deck icon, 144x144
         /// </summary>
         /// <param name="imgToResize"></param>
         /// <returns></returns>
         // https://www.c-sharpcorner.com/UploadFile/ishbandhu2009/resize-an-image-in-C-Sharp/
-        public static bool saveAsBaseImage(Image imgToResize)
+        public static Image ResizeImage(Image imgToResize)
         {
             Size size = new Size(144, 144);
 
@@ -50,7 +51,6 @@ namespace ArtrointelPlugin.Control
                 nPercent = nPercentW;
             // New Width
             int destWidth = (int)(sourceWidth * nPercent);
-
             // New Height
             int destHeight = (int)(sourceHeight * nPercent);
             Bitmap bmp = new Bitmap(destWidth, destHeight);
@@ -59,19 +59,44 @@ namespace ArtrointelPlugin.Control
             // Draw image with new width and height  
             graphics.DrawImage(imgToResize, 0, 0, destWidth, destHeight);
             graphics.Dispose();
-
-            bmp.Save(getBaseImagePath(), ImageFormat.Png);
-            return true;
+            return bmp;
         }
 
-        public static Image loadBaseImage(string path = null)
+        /// <summary>
+        /// load and resizes the input image to 144x144.
+        /// if any fails, falls back to the default image.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>base64image</returns>
+        public static string ProcessImageToBase64(String path)
         {
-            if(path != null)
+            string base64 = null;
+            try
             {
-                return Image.FromFile(path);
+                Image img = Image.FromFile(path);
+                base64 = Tools.ImageToBase64(ResizeImage(img), false);
+                img.Dispose();
             }
-            return Image.FromFile(getBaseImagePath());
+            catch (Exception e)
+            {
+                Logger.Instance.LogMessage(TracingLevel.ERROR, "Cannot read the image:" + path + ", " + e.Message);
+            }
+            return base64;
         }
-        
+
+        public static Image LoadBase64(string base64ImageString)
+        {
+            return Tools.Base64StringToImage(base64ImageString);
+        }
+
+        public static Image LoadFallbackImage()
+        {
+            return Image.FromFile(getFallbackImagePath());
+        }
+
+        public static string LoadFallbackBase64Image()
+        {
+            return Tools.ImageToBase64(LoadFallbackImage(), false);
+        }
     }
 }

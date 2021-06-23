@@ -16,15 +16,15 @@
             <div class="sdpi-item-label">Base Image </div>
             <input id="inputFile" type="file" style="display:none;" onchange="onImageUpdated(this)" accept=".jpg, .png, .jpeg, .gif, .bmp, .json" />
             <button class="sdpi-item-value" id="btnSelect" onclick="onSelectImage()">Select</button>
-            <input class="sdpi-item-value" id="iSelectedImageFileName" placeholder="select image file" />
+            <input class="sdpi-item-value" id="iBaseImageFile" placeholder="select image file" disabled/>
         </div>
         <div class="sdpi-item" id="dvFunctionSelection">
             <div class="sdpi-item-label">Functions </div>
-            <button class="sdpi-item-value sdProperty" id="btnFunctionEdit" onclick="onBtnFunctionEditClicked()">Edit</button>
+            <button class="sdpi-item-value" id="btnFunctionEdit" onclick="onBtnFunctionEditClicked()">Edit</button>
         </div>
         <div class="sdpi-item" id="dvEffectSelection">
             <div class="sdpi-item-label">UI Effects </div>
-            <button class="sdpi-item-value sdProperty" id="btnEffectEdit" onclick="onBtnEffectEditClicked()">Edit</button>
+            <button class="sdpi-item-value" id="btnEffectEdit" onclick="onBtnEffectEditClicked()">Edit</button>
         </div>
     </div>
 </body>

@@ -188,6 +188,7 @@ function createPlaySoundOptionsDiv(idx) {
 		 </div><hr id="dOptionsHr${idx}">`;
 	return openOptionDiv;
 }
+
 var idx = 1;
 
 function onAddNewEvent() {

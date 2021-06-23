@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using Newtonsoft.Json;
 
 namespace ArtrointelPlugin.Control.Model
 {
@@ -12,9 +13,10 @@ namespace ArtrointelPlugin.Control.Model
         public enum ETrigger { OnKeyPressed, OnKeyReleased };
         public enum EType { ImageBlending, Flash, CircleSpread, Pie, BorderWave };
 
-        public String mTrigger;
-        public String mType;
-        public Color mColor;
+        public string mTrigger;
+        public string mType;
+        public string mHexRgb;
+        public string mAlpha;
         public double mDelay;
         public double mDuration;
 
@@ -23,12 +25,18 @@ namespace ArtrointelPlugin.Control.Model
 
         }
 
-        public static EffectConfig Load(String trigger, String type, Color argb, double delay, double duration)
+        public Color getColor()
+        {
+            return Color.FromArgb(Int32.Parse(mAlpha), ColorTranslator.FromHtml(mHexRgb));
+        }
+
+        public static EffectConfig Create(string trigger, string type, string hexRgb, string alpha, double delay, double duration)
         {
             EffectConfig cfg = new EffectConfig();
             cfg.mTrigger = trigger;
             cfg.mType = type;
-            cfg.mColor = argb;
+            cfg.mHexRgb = hexRgb;
+            cfg.mAlpha = alpha;
             cfg.mDelay = delay;
             cfg.mDuration = duration;
             return cfg;

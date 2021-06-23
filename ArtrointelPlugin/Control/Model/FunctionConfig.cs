@@ -11,20 +11,20 @@ namespace ArtrointelPlugin.Control.Model
         public enum ETrigger { OnKeyPressed, OnKeyReleased };
         public enum EType { Text, Keycode, OpenWebpage, OpenFile, ExecuteCommand, PlaySound };
 
-        public String mTrigger;
-        public String mType;
+        public string mTrigger;
+        public string mType;
         
         public double mDelay;
         public double mInterval;
         public double mDuration;
-        public String mMetadata;
+        public string mMetadata;
 
         private FunctionConfig()
         {
 
         }
 
-        public static FunctionConfig Load(String trigger, String type, double delay, double interval, double duration, string metadata)
+        public static FunctionConfig Load(string trigger, string type, double delay, double interval, double duration, string metadata)
         {
             FunctionConfig cfg = new FunctionConfig();
             cfg.mTrigger = trigger;

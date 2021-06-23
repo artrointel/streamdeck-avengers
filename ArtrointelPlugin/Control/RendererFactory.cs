@@ -15,14 +15,14 @@ namespace ArtrointelPlugin.Control.Model
             // creates a renderer
             if(cfg.mType.Equals(EffectConfig.EType.Flash.ToString()))
             {
-                renderer = new FlashRenderer(cfg.mColor, cfg.mDuration);
+                renderer = new FlashRenderer(cfg.getColor(), cfg.mDuration);
             } else if (cfg.mType.Equals(EffectConfig.EType.CircleSpread.ToString()))
             {
-                renderer = new CircleSpreadRenderer(cfg.mColor, cfg.mDuration);
+                renderer = new CircleSpreadRenderer(cfg.getColor(), cfg.mDuration);
             } else if (cfg.mType.Equals(EffectConfig.EType.Pie.ToString()))
             {
                 // TODO Add more cfg data
-                renderer = new PieRenderer(cfg.mColor, cfg.mDuration);
+                renderer = new PieRenderer(cfg.getColor(), cfg.mDuration);
             } else if (cfg.mType.Equals(EffectConfig.EType.ImageBlending.ToString()))
             {
                 // TODO

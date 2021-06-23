@@ -5,13 +5,14 @@
 function onImageUpdated(e) {    
     var inputUri = decodeURIComponent(e.value.replace(/^C:\\fakepath\\/, ''));
     const iFileName = inputUri.split('/').pop();
-    
-    var label = document.getElementById('iSelectedImageFileName');
+
+    var label = document.getElementById('iBaseImageFile');
     label.value = iFileName.length > 28
         ? iFileName.substr(0, 10)
         + '...'
         + iFileName.substr(iFileName.length - 10, iFileName.length)
         : iFileName;
+
     var payload = buildImageUpdatePayload(inputUri);
     sendPayloadToPlugin(payload);
 }
