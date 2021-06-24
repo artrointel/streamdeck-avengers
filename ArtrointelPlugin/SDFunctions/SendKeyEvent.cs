@@ -58,18 +58,18 @@ namespace ArtrointelPlugin.SDFunctions
                 }
             }
 
-            int delay = (int)(delayInSecond * 1000);
+            int delms = (int)(delayInSecond * 1000);
             double ims = (int)(intervalInSecond * 1000);
-            int dms = (int)(durationInSecond * 1000);
-            if (delay == 0)
+            int durms = (int)(durationInSecond * 1000);
+            if (delms == 0)
             {
-                sendKeyEvent(ims, dms, metadata);
+                sendKeyEvent(ims, durms, metadata);
                 return;
             }
 
-            mDelayedTask = new DelayedTask(delay, () =>
+            mDelayedTask = new DelayedTask(delms, () =>
             {
-                sendKeyEvent(ims, dms, metadata);
+                sendKeyEvent(ims, durms, metadata);
             });
         }
 

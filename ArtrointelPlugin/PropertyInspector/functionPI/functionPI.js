@@ -1,5 +1,8 @@
 ﻿/// body on loaded with settings data ///
 function onLoad() {
+	if (cfg == null || cfg.length == 0) {
+		return;
+	}
 	// refer to FunctionConfigs.cs
 	for (var idx = 1; idx <= cfg.length; idx++) {
 		onAddNewFunction();
@@ -49,8 +52,8 @@ function onAddNewFunction() {
 				<option value="PlaySound">Play sound file</option>
 			</select>
 
-			<div class="sdpi-item-value" style="text-align:center;">
-				<input id="iFunctionDelay${idx}" type="text" placeholder="second" value="0.0" style="width:60px; height: 20px;"/>
+			<div class="sdpi-item-value avg-container-center">
+				<input class="sdpi-item-text avg-input-text" id="iFunctionDelay${idx}" type="text" placeholder="second" value="0.0" hidden/>
 			</div>
 		</div>`;
 
@@ -62,6 +65,9 @@ function onAddNewFunction() {
 
 function onFunctionChanged(idx) {
 	// remove prev option UI
+	document.getElementById(`iFunctionDelay${idx}`).hidden = true;
+	document.getElementById(`iFunctionDelay${idx}`).value = 0;
+
 	var prevOptions = document.getElementById('dOptions' + idx);
 	var prevOptionsHr = document.getElementById('dOptionsHr' + idx);
 	
@@ -72,31 +78,37 @@ function onFunctionChanged(idx) {
 
 	var type = getSelectValue('sFunctionType', idx);
 	if (type != null) {
-		// create option UI
-		var openOptionDiv = null;
+		// Creates option UI
+		var optionDiv = null;
+		var optionHr = document.createElement('hr');
+		optionHr.id = `dOptionsHr${idx}`;
 		if (type == 'OpenFile') {
-			openOptionDiv = createOpenFileOptionsDiv(idx);
+			optionDiv = createOpenFileOptionsDiv(idx);
 		}
 		else if (type == 'OpenWebpage') {
-			openOptionDiv = createOpenWebpageOptionsDiv(idx);
+			optionDiv = createOpenWebpageOptionsDiv(idx);
 		}
 		else if (type == 'ExecuteCommand') {
-			openOptionDiv = createExecuteCommandOptionsDiv(idx);
+			optionDiv = createExecuteCommandOptionsDiv(idx);
 		}
 		else if (type == 'Keycode') {
-			openOptionDiv = createKeyCombinationOptionsDiv(idx);
+			optionDiv = createKeyCombinationOptionsDiv(idx);
+			document.getElementById(`iFunctionDelay${idx}`).hidden = false;
 		}
 		else if (type == 'Text') {
-			openOptionDiv = createTextOptionsDiv(idx);
+			optionDiv = createTextOptionsDiv(idx);
+			document.getElementById(`iFunctionDelay${idx}`).hidden = false;
 		}
 		else if (type == 'PlaySound') {
-			openOptionDiv = createPlaySoundOptionsDiv(idx);
+			// TODO optionDiv = createPlaySoundOptionsDiv(idx);
+			// document.getElementById(`iFunctionDelay${idx}`).hidden = false;
 		}
 
 		// attach the option UI
-		if (openOptionDiv != null) {
+		if (optionDiv != null) {
 			var container = document.getElementById('dFunctionContainer' + idx);
-			container.parentNode.insertBefore(openOptionDiv, container.nextSibling);
+			container.parentNode.insertBefore(optionDiv, container.nextSibling);
+			optionDiv.parentNode.insertBefore(optionHr, optionDiv.nextSibling);
         }
     }
 }
@@ -104,36 +116,52 @@ function onFunctionChanged(idx) {
 /// detail options ///
 
 function createOpenFileOptionsDiv(idx) {
-	var openOptionDiv = document.createElement('div');
-	openOptionDiv.innerHTML =
-		`<div class="sdpi-item" id="dOptions${idx}">
-			<label style="width:100px; text-align:center;">Path to Open</label>
-			<input class="sdpi-item-value" id="iFunctionMetadata${idx}" type="text"
-				placeholder="type directory or file path to open. ex) C:\\test.exe"/>
-		 </div><hr id="dOptionsHr${idx}">`;
-	return openOptionDiv;
+	var optionDiv = createSdpiDiv('dOptions', idx, 'avg-container-center');
+	var groupDiv = createSdpiGroupDiv('optionGroup', idx, 'sdpi-item-value');
+	optionDiv.appendChild(groupDiv);
+
+	var descDiv = createSdpiChildDiv(groupDiv, 'desc', idx, 'avg-center');
+	descDiv.innerHTML = `Put path of a file or a folder to open`;
+
+	var pathDiv = createSdpiChildDiv(groupDiv, 'path', idx, 'avg-container-center');
+	pathDiv.innerHTML =
+		`<input class="sdpi-item-value avg-input-text" id="iFunctionMetadata${idx}" type="text"
+			placeholder="ex) C:\myProgram.exe or C:\MyDownloadFolder"/>`;
+
+	return optionDiv;
 }
 
 function createOpenWebpageOptionsDiv(idx) {
-	var openOptionDiv = document.createElement('div');
-	openOptionDiv.innerHTML =
-		`<div class="sdpi-item" id="dOptions${idx}">
-			<label style="width:100px; text-align:center;">Path to Open</label>
-			<input class="sdpi-item-value" id="iFunctionMetadata${idx}" type="text"
-				placeholder="type address of webpage ex) google.com"/>
-		 </div><hr id="dOptionsHr${idx}">`;
-	return openOptionDiv;
+	var optionDiv = createSdpiDiv('dOptions', idx, 'avg-container-center');
+	var groupDiv = createSdpiGroupDiv('optionGroup', idx, 'sdpi-item-value');
+	optionDiv.appendChild(groupDiv);
+
+	var descDiv = createSdpiChildDiv(groupDiv, 'desc', idx, 'avg-center');
+	descDiv.innerHTML = `Put address of a webpage to open`;
+
+	var addrDiv = createSdpiChildDiv(groupDiv, 'addr', idx, 'avg-container-center');
+	addrDiv.innerHTML =
+		`<input class="sdpi-item-value avg-input-text" id="iFunctionMetadata${idx}" type="text"
+			placeholder="ex) google.com"/>`;
+
+	return optionDiv;
 }
 
 function createExecuteCommandOptionsDiv(idx) {
-	var openOptionDiv = document.createElement('div');
-	openOptionDiv.innerHTML =
-		`<div class="sdpi-item" id="dOptions${idx}">
-			<label style="width:100px; text-align:center;">Path to Open</label>
-			<input class="sdpi-item-value" id="iFunctionMetadata${idx}" type="text"
-				placeholder="runs bash command in background."/>
-		 </div><hr id="dOptionsHr${idx}">`;
-	return openOptionDiv;
+	var optionDiv = createSdpiDiv('dOptions', idx, 'avg-container-center');
+	var groupDiv = createSdpiGroupDiv('optionGroup', idx, 'sdpi-item-value');
+	optionDiv.appendChild(groupDiv);
+
+	var descDiv = createSdpiChildDiv(groupDiv, 'desc', idx, 'avg-center');
+	descDiv.innerHTML = `Put command to be executed`;
+
+	var cmdDiv = createSdpiChildDiv(groupDiv, 'cmd', idx, 'avg-container-center');
+	cmdDiv.innerHTML =
+		`<input class="sdpi-item-value avg-input-text" id="iFunctionMetadata${idx}" type="text"
+			placeholder="ex) shutdown -s -t 3600 "/>`;
+
+	// TODO add check button whether in background or not
+	return optionDiv;
 }
 
 class KeyRecorder {
@@ -183,39 +211,51 @@ class KeyRecorder {
 var keyRecorder;
 
 function createKeyCombinationOptionsDiv(idx) {
-	var openOptionDiv = document.createElement('div');
 	keyRecorder = new KeyRecorder;
-	openOptionDiv.innerHTML =
-		`<div class="sdpi-item" id="dOptions${idx}">
-			<label id="iFunctionMetadata${idx}" style="width:150px; text-align:center;">Type Any key : </label>
-			<input id="iKeyRecorder${idx}" type="text"
-				placeholder="type key"
-				onkeydown="keyRecorder.onKeyDown(${idx})" 
-				onkeyup="keyRecorder.onKeyUp(${idx})"
-				style="width:50px"/>
-		 </div><hr id="dOptionsHr${idx}">`;
+	
+	var openOptionDiv = createSdpiDiv('dOptions', idx, 'avg-container-center');
+	var groupDiv = createSdpiGroupDiv('optionGroup', idx, 'sdpi-item-value');
+	openOptionDiv.appendChild(groupDiv);
+
+	var descDiv = createSdpiChildDiv(groupDiv, 'desc', idx, 'avg-center');
+	descDiv.innerHTML = `Edit delay/duration/interval if you want to run this function recursively.`;
+
+	var keycodeDiv = createSdpiChildDiv(groupDiv, 'keycode', idx, 'avg-container-center');
+	keycodeDiv.innerHTML =
+		`<input class="sdpi-item-value avg-input-text" id="iKeyRecorder${idx}" type="text"
+			placeholder="Record key here"
+			onkeydown="keyRecorder.onKeyDown(${idx})" 
+			onkeyup="keyRecorder.onKeyUp(${idx})"/>
+		<label class="sdpi-item-value avg-label" id="iFunctionMetadata${idx}">(Type Any key)</label>`;
+	
+	var loopDiv = createSdpiChildDiv(groupDiv, 'loop', idx, 'avg-container-center');
+	loopDiv.innerHTML =
+		`<label class="sdpi-item-value avg-label">Duration</label>
+		<input class="sdpi-item-value avg-input-text" id="iFunctionDuration${idx}" type="text" placeholder="second" value="0.0"/>
+		<label class="sdpi-item-value avg-label">Interval</label>
+		<input class="sdpi-item-value avg-input-text" id="iFunctionInterval${idx}" type="text" placeholder="second" value="0.0"/>`;
 	return openOptionDiv;
 }
 
 function createTextOptionsDiv(idx) {
-	var openOptionDiv = document.createElement('div');
-	openOptionDiv.innerHTML =
-		`<div class="sdpi-item" id="dOptions${idx}">
-			<label style="width:100px; text-align:center;">Text</label>
-			<input class="sdpi-item-value" id="iFunctionMetadata${idx}" type="text"
-				placeholder="write text here."/>
-		 </div><hr id="dOptionsHr${idx}">`;
-	return openOptionDiv;
-}
+	var openOptionDiv = createSdpiDiv('dOptions', idx, 'avg-container-center');
+	var groupDiv = createSdpiGroupDiv('optionGroup', idx, 'sdpi-item-value');
+	openOptionDiv.appendChild(groupDiv);
 
-function createPlaySoundOptionsDiv(idx) {
-	var openOptionDiv = document.createElement('div');
-	openOptionDiv.innerHTML =
-		`<div class="sdpi-item" id="dOptions${idx}">
-			<label style="width:100px; text-align:center;">Text</label>
-			<input class="sdpi-item-value" id="iFunctionMetadata${idx}" type="text"
-				placeholder="sound file path."/>
-		 </div><hr id="dOptionsHr${idx}">`;
+	var descDiv = createSdpiChildDiv(groupDiv, 'desc', idx, 'avg-center');
+	descDiv.innerHTML = `Write text and Edit delay/duration/interval if you want to run this function recursively.`;
+
+	var textDiv = createSdpiChildDiv(groupDiv, 'textString', idx, 'avg-container-center');
+	textDiv.innerHTML =
+		`<input class="sdpi-item-value avg-input-text" id="iFunctionMetadata${idx}" type="text"
+			placeholder="write any text here."/>`;
+
+	var loopDiv = createSdpiChildDiv(groupDiv, 'loop', idx, 'avg-container-center');
+	loopDiv.innerHTML =
+		`<label class="sdpi-item-value avg-label">Duration</label>
+		<input class="sdpi-item-value avg-input-text" id="iFunctionDuration${idx}" type="text" placeholder="second" value="0.0"/>
+		<label class="sdpi-item-value avg-label">Interval</label>
+		<input class="sdpi-item-value avg-input-text" id="iFunctionInterval${idx}" type="text" placeholder="second" value="0.0"/>`;
 	return openOptionDiv;
 }
 

@@ -1,6 +1,4 @@
-﻿// payload helper
-
-function getSelectValue(elemId, idx) {
+﻿function getSelectValue(elemId, idx) {
     var selection = document.getElementById(elemId + idx);
     return selection.options[selection.selectedIndex].value;
 }

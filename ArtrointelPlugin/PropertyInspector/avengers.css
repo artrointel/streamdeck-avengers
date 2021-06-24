@@ -1,16 +1,25 @@
-.avg-label {
-  text-align: center;
-  flex: 1;
-  font-weight: 600;
-  -webkit-user-select: none;
-}
-
 .avg-input-text {
-    width: 40px;
+    text-align: center;
     vertical-align: central;
+    height: 20px;
 }
 
-.avg-input-label {
+.avg-label {
+    text-align: center;
     width: 40px;
-    vertical-align: central;
+    align-items: center;
+    display: flex;
+}
+
+.avg-center {
+    text-align: center;
+    vertical-align: middle;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.avg-container-center {
+    display: flex;
+    justify-content: center;
 }
