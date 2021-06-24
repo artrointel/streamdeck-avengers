@@ -10,42 +10,30 @@ namespace ArtrointelPlugin.Utils
     // https://stackoverflow.com/questions/20482338/simulate-keyboard-input-in-c-sharp
     public class Keyboard
     {
-        public void Send(VirtualKeyShort key)
-        {
-            INPUT[] Inputs = new INPUT[1];
-            INPUT Input = new INPUT();
-            Input.type = 1; // 1 = Keyboard Input
-            Input.U.ki.wVk = key;
-            Input.U.ki.dwFlags = KEYEVENTF.UNICODE;
-            Inputs[0] = Input;
-            SendInput(1, Inputs, INPUT.Size);
-        }
-
-        public void Send(short ascii)
-        {
-            INPUT[] Inputs = new INPUT[1];
-            INPUT Input = new INPUT();
-            Input.type = 1; // 1 = Keyboard Input
-            Input.U.ki.wVk = (VirtualKeyShort) ascii;
-            Input.U.ki.dwFlags = KEYEVENTF.UNICODE;
-            Inputs[0] = Input;
-            SendInput(1, Inputs, INPUT.Size);
-        }
-
+        /// <summary>
+        /// Send a key combination event press down and press up
+        /// </summary>
+        /// <param name="ascii">ascii keycodes</param>
         public void Send(short[] ascii)
         {
-            INPUT[] Inputs = new INPUT[ascii.Length];
-            for(int i = 0; i < ascii.Length; i++)
+            SendKeycodes(ascii, KEYEVENTF.UNICODE); // down
+            SendKeycodes(ascii, KEYEVENTF.UNICODE | KEYEVENTF.KEYUP); // up
+        }
+
+        private static uint SendKeycodes(short[] ascii, KEYEVENTF dwFlags)
+        {
+            INPUT[] inputs = new INPUT[ascii.Length];
+            for (int i = 0; i < ascii.Length; i++)
             {
                 INPUT input = new INPUT();
                 input.type = 1; // 1 = Keyboard Input
-                input.U.ki.wVk = (VirtualKeyShort) ascii[i];
-                input.U.ki.dwFlags = KEYEVENTF.UNICODE;
-                Inputs[i] = input;
+                input.U.ki.wVk = (VirtualKeyShort)ascii[i];
+                input.U.ki.dwFlags = dwFlags;
+                inputs[i] = input;
             }
-            
-            SendInput((uint)ascii.Length, Inputs, INPUT.Size);
+            return SendInput((uint)ascii.Length, inputs, INPUT.Size);
         }
+
         /// <summary>
         /// Declaration of external SendInput method
         /// </summary>

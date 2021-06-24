@@ -1,43 +1,22 @@
-﻿function onBtnCancelClicked() {
-    if (confirm('This action will abort changes if you edited something in this page.')) {
-        window.close();
-    }
-}
+﻿/// body on loaded with settings data ///
+function onLoad() {
+	// refer to EffectConfigs.cs
+	for (var i = 1; i <= cfg.length; i++) {
+		onAddNewEffect();
+		var effectConfig = cfg[i - 1];
+		setSelectValue('sEffectTrigger', i, effectConfig['mTrigger']);
+		setSelectValue('sEffectType', i, effectConfig['mType']);
 
-function onBtnApplyClicked() {
-	// process saving all changes
-	var payload = buildEffectPayload();
-	if (payload == null) {
-		alert("Invalid data exists. cannot apply the effect.");
-	} else {
-		window.opener.sendPayloadToPlugin(payload);
-		window.close();
-    }
-}
-
-function buildEffectPayload() {
-	var payload = {};
-	var count = document.getElementsByName('effectItem').length;
-	
-	if (count > 0) {
-		payload['payload_updateEffects'] = count;
-		for (var i = 1; i <= count; i++) {
-			payload['sEffectTrigger' + i] = getSelectValue('sEffectTrigger', i);
-			payload['sEffectType' + i] = getSelectValue('sEffectType', i);
-			// TODO
-			payload['iEffectRGB' + i] = getValue('iEffectRGB', i);
-			payload['iEffectAlpha' + i] = getValue('iEffectAlpha', i);
-			payload['iEffectDelay' + i] = getValue('iEffectDelay', i);
-			payload['iEffectDuration' + i] = getValue('iEffectDuration', i);
-        }
-		return payload;
-	} else {
-		return null;
+		setValue('iEffectRGB', i, effectConfig['mHexRgb']);
+		setValue('iEffectAlpha', i, effectConfig['mAlpha']);
+		setValue('iEffectDelay', i, effectConfig['mDelay']);
+		setValue('iEffectDuration', i, effectConfig['mDuration']);
     }
 }
 
 var idx = 1;
-function onAddNewEvent() {
+
+function onAddNewEffect() {
 	var newEffectItem = document.createElement('div');
 	newEffectItem.innerHTML =
 		`<div class="sdpi-item" id="dEvent${idx}" name="effectItem">
@@ -65,6 +44,50 @@ function onAddNewEvent() {
 
 	var effectList = document.getElementById('dvEffectList');
 	effectList.appendChild(newEffectItem.firstChild);
-		
+
 	idx++;
+}
+
+/// detail options ///
+
+// todo
+
+/// on apply and cancel button clicked ///
+
+function onBtnCancelClicked() {
+	if (confirm('This action will abort changes if you edited something in this page.')) {
+		window.close();
+	}
+}
+
+function onBtnApplyClicked() {
+	// process saving all changes
+	var payload = buildEffectPayload();
+	if (payload == null) {
+		alert("Invalid data exists. cannot apply the effect.");
+	} else {
+		window.opener.sendPayloadToPlugin(payload);
+		window.close();
+	}
+}
+
+function buildEffectPayload() {
+	var payload = {};
+	var count = document.getElementsByName('effectItem').length;
+
+	if (count > 0) {
+		payload['payload_updateEffects'] = count;
+		for (var i = 1; i <= count; i++) {
+			payload['sEffectTrigger' + i] = getSelectValue('sEffectTrigger', i);
+			payload['sEffectType' + i] = getSelectValue('sEffectType', i);
+			
+			payload['iEffectRGB' + i] = getValue('iEffectRGB', i);
+			payload['iEffectAlpha' + i] = getValue('iEffectAlpha', i);
+			payload['iEffectDelay' + i] = getValue('iEffectDelay', i);
+			payload['iEffectDuration' + i] = getValue('iEffectDuration', i);
+		}
+		return payload;
+	} else {
+		return null;
+	}
 }

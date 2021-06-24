@@ -1,39 +1,63 @@
-﻿function onBtnCancelClicked() {
-    if (confirm('This action will abort changes if you edited something in this page.')) {
-        window.close();
-    }
-}
+﻿/// body on loaded with settings data ///
+function onLoad() {
+	// refer to FunctionConfigs.cs
+	for (var idx = 1; idx <= cfg.length; idx++) {
+		onAddNewFunction();
+		var functionConfig = cfg[idx - 1];
+		setSelectValue('sFunctionTrigger', idx, functionConfig['mTrigger']);
+		setSelectValue('sFunctionType', idx, functionConfig['mType']);
+		setValue('iFunctionDelay', idx, functionConfig['mDelay']);
 
-function onBtnApplyClicked() {
-	// process saving all changes
-	var payload = buildFunctionPayload();
-	if (payload == null) {
-		alert("Invalid data exists. cannot apply the effect.");
-	} else {
-		window.opener.sendPayloadToPlugin(payload);
-		window.close();
-    }
-}
+		onFunctionChanged(idx);
+		setValue('iFunctionMetadata', idx, functionConfig['mMetadata']);
 
-function buildFunctionPayload() {
-	var payload = {};
-	var count = document.getElementsByName('functionItem').length;
-	
-	if (count > 0) {
-		payload['payload_updateFunctions'] = count;
-		for (var i = 1; i <= count; i++) {
-			payload['sFunctionTrigger' + i] = getSelectValue('sFunctionTrigger', i);
-			payload['sFunctionType' + i] = getSelectValue('sFunctionType', i);
-
-			payload['iFunctionInterval' + i] = getValue('iFunctionInterval', i);
-			payload['iFunctionDelay' + i] = getValue('iFunctionDelay', i);
-			payload['iFunctionDuration' + i] = getValue('iFunctionDuration', i);
-			payload['iFunctionMetadata' + i] = getValue('iFunctionMetadata', i);
+		// detail options
+		switch (functionConfig['mType']) {
+			case 'Keycode':
+				var keyCombination = "";
+				var keycodes = functionConfig['mMetadata'].split(' '); // metada contains keycodes with spaces. 
+				for (var ki = 0; ki < keycodes.length; ki++) { // last index will be empty.
+					keyCombination += gKeyboardMap[Number(keycodes[ki])] + '+';
+				}
+				if (keyCombination.length > 0) {
+					keyCombination = keyCombination.slice(0, -1); // removes last char '+'
+                }
+				
+				document.getElementById('iFunctionMetadata' + idx).innerHTML = keyCombination;
+				break;
         }
-		return payload;
-	} else {
-		return null;
-    }
+	}
+}
+
+var idx = 1;
+
+function onAddNewFunction() {
+	var newFunctionItem = document.createElement('div');
+	newFunctionItem.innerHTML =
+		`<div class="sdpi-item" id="dFunctionContainer${idx}" name="functionItem">
+			<select class="sdpi-item-value" id="sFunctionTrigger${idx}" style="width:50px">
+				<option>Select</option>
+				<option value="OnKeyPressed">OnKeyPressed</option>
+			</select>
+			<select class="sdpi-item-value" id="sFunctionType${idx}" onchange="onFunctionChanged(${idx})" style="width:50px">
+				<option>Select</option>
+				<option value="OpenFile">Open file/folder</option>
+				<option value="OpenWebpage">Open Webpage</option>
+				<option value="ExecuteCommand">Execute Command</option>
+				<option value="Keycode">Key Combination</option>
+				<option value="Text">Type Text</option>
+				<option value="PlaySound">Play sound file</option>
+			</select>
+
+			<div class="sdpi-item-value" style="text-align:center;">
+				<input id="iFunctionDelay${idx}" type="text" placeholder="second" value="0.0" style="width:60px; height: 20px;"/>
+			</div>
+		</div>`;
+
+	var effectList = document.getElementById('dvFunctionList');
+	effectList.appendChild(newFunctionItem.firstChild);
+
+	idx++;
 }
 
 function onFunctionChanged(idx) {
@@ -76,6 +100,8 @@ function onFunctionChanged(idx) {
         }
     }
 }
+
+/// detail options ///
 
 function createOpenFileOptionsDiv(idx) {
 	var openOptionDiv = document.createElement('div');
@@ -145,9 +171,13 @@ class KeyRecorder {
 		for (const keycode in this.map) {
 			if (this.map[keycode] == true) {
 				this.recordedKeycodeASC += keycode + " ";
-				this.recordedKeycode += keyboardMap[keycode] + " ";
+				this.recordedKeycode += gKeyboardMap[keycode] + "+";
 			}
 		}
+		if (this.recordedKeycodeASC.length > 0) {
+			this.recordedKeycodeASC = this.recordedKeycodeASC.slice(0, -1); // removes last empty space
+			this.recordedKeycode = this.recordedKeycode.slice(0, -1); // removes last char '+'
+        }
     }
 }
 var keyRecorder;
@@ -189,33 +219,42 @@ function createPlaySoundOptionsDiv(idx) {
 	return openOptionDiv;
 }
 
-var idx = 1;
+/// on apply and cancel button clicked ///
 
-function onAddNewEvent() {
-	var newFunctionItem = document.createElement('div');
-	newFunctionItem.innerHTML =
-		`<div class="sdpi-item" id="dFunctionContainer${idx}" name="functionItem">
-			<select class="sdpi-item-value" id="sFunctionTrigger${idx}" style="width:50px">
-				<option>Select</option>
-				<option value="OnKeyPressed">OnKeyPressed</option>
-			</select>
-			<select class="sdpi-item-value" id="sFunctionType${idx}" onchange="onFunctionChanged(${idx})" style="width:50px">
-				<option>Select</option>
-				<option value="OpenFile">Open file/folder</option>
-				<option value="OpenWebpage">Open Webpage</option>
-				<option value="ExecuteCommand">Execute Command</option>
-				<option value="Keycode">Key Combination</option>
-				<option value="Text">Type Text</option>
-				<option value="PlaySound">Play sound file</option>
-			</select>
+function onBtnCancelClicked() {
+	if (confirm('This action will abort changes if you edited something in this page.')) {
+		window.close();
+	}
+}
 
-			<div class="sdpi-item-value" style="text-align:center;">
-				<input id="iFunctionDelay${idx}" type="text" placeholder="second" value="0.0" style="width:60px; height: 20px;"/>
-			</div>
-		</div>`;
+function onBtnApplyClicked() {
+	// process saving all changes
+	var payload = buildFunctionPayload();
+	if (payload == null) {
+		alert("Invalid data exists. cannot apply the effect.");
+	} else {
+		window.opener.sendPayloadToPlugin(payload);
+		window.close();
+	}
+}
 
-	var effectList = document.getElementById('dvFunctionList');
-	effectList.appendChild(newFunctionItem.firstChild);
-		
-	idx++;
+function buildFunctionPayload() {
+	var payload = {};
+	var count = document.getElementsByName('functionItem').length;
+
+	if (count > 0) {
+		payload['payload_updateFunctions'] = count;
+		for (var i = 1; i <= count; i++) {
+			payload['sFunctionTrigger' + i] = getSelectValue('sFunctionTrigger', i);
+			payload['sFunctionType' + i] = getSelectValue('sFunctionType', i);
+
+			payload['iFunctionInterval' + i] = getValue('iFunctionInterval', i);
+			payload['iFunctionDelay' + i] = getValue('iFunctionDelay', i);
+			payload['iFunctionDuration' + i] = getValue('iFunctionDuration', i);
+			payload['iFunctionMetadata' + i] = getValue('iFunctionMetadata', i);
+		}
+		return payload;
+	} else {
+		return null;
+	}
 }

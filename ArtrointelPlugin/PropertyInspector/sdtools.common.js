@@ -7,6 +7,9 @@ var websocket = null,
     runningApps = [],
     isQT = navigator.appVersion.includes('QtWebEngine');
 
+// AvengersKeySettings
+var avgSettings;
+
 function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, inActionInfo) {
     uuid = inUUID;
     registerEventName = inRegisterEvent;
@@ -23,8 +26,6 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
     // Allow others to get notified that the websocket is created
     var event = new Event('websocketCreate');
     document.dispatchEvent(event);
-
-    loadConfiguration(actionInfo.payload.settings);
 }
 
 function websocketOnOpen() {
@@ -43,93 +44,18 @@ function websocketOnMessage(evt) {
     var jsonObj = JSON.parse(evt.data);
 
     if (jsonObj.event === 'sendToPropertyInspector') {
-        var payload = jsonObj.payload;
-        loadConfiguration(payload);
+        var settings = jsonObj.payload;
+        avgSettings = new AvengersKeySettings;
+        avgSettings.loadSettings(settings);
     }
     else if (jsonObj.event === 'didReceiveSettings') {
-        var payload = jsonObj.payload;
-        loadConfiguration(payload.settings);
+        var settings = jsonObj.payload.settings;
+        avgSettings = new AvengersKeySettings;
+        avgSettings.loadSettings(settings);
     }
     else {
         console.log("Unhandled websocketOnMessage: " + jsonObj.event);
     }
-}
-
-function loadConfiguration(payload) {
-    console.log('loadConfiguration');
-    console.log(payload);
-    for (var key in payload) {
-        try {
-            var elem = document.getElementById(key);
-            if (elem.classList.contains("sdCheckbox")) { // Checkbox
-                elem.checked = payload[key];
-            }
-            else if (elem.classList.contains("sdFile")) { // File
-                var elemFile = document.getElementById(elem.id + "Filename");
-                elemFile.innerText = payload[key];
-                if (!elemFile.innerText) {
-                    elemFile.innerText = "No file...";
-                }
-            }
-            else if (elem.classList.contains("sdList")) { // Dynamic dropdown
-                var textProperty = elem.getAttribute("sdListTextProperty");
-                var valueProperty = elem.getAttribute("sdListValueProperty");
-                var valueField = elem.getAttribute("sdValueField");
-
-                var items = payload[key];
-                elem.options.length = 0;
-
-                for (var idx = 0; idx < items.length; idx++) {
-                    var opt = document.createElement('option');
-                    opt.value = items[idx][valueProperty];
-                    opt.text = items[idx][textProperty];
-                    elem.appendChild(opt);
-                }
-                elem.value = payload[valueField];
-            }
-            else { // Normal value
-                elem.value = payload[key];
-            }
-            console.log("Load: " + key + "=" + payload[key]);
-        }
-        catch (err) {
-            console.log("loadConfiguration failed for key: " + key + " - " + err);
-        }
-    }
-}
-
-// unsed function
-function setSettings() {
-    var payload = {};
-    var elements = document.getElementsByClassName("sdProperty");
-
-    Array.prototype.forEach.call(elements, function (elem) {
-        var key = elem.id;
-        if (elem.classList.contains("sdCheckbox")) { // Checkbox
-            payload[key] = elem.checked;
-        }
-        else if (elem.classList.contains("sdFile")) { // File
-            var elemFile = document.getElementById(elem.id + "Filename");
-            payload[key] = elem.value;
-            if (!elem.value) {
-                // Fetch innerText if file is empty (happens when we lose and regain focus to this key)
-                payload[key] = elemFile.innerText;
-            }
-            else {
-                // Set value on initial file selection
-                elemFile.innerText = elem.value;
-            }
-        }
-        else if (elem.classList.contains("sdList")) { // Dynamic dropdown
-            var valueField = elem.getAttribute("sdValueField");
-            payload[valueField] = elem.value;
-        }
-        else { // Normal value
-            payload[key] = elem.value;
-        }
-        console.log("Save: " + key + "<=" + payload[key]);
-    });
-    setSettingsToPlugin(payload);
 }
 
 function setSettingsToPlugin(payload) {
@@ -173,24 +99,6 @@ function sendValueToPlugin(value, param) {
     }
 }
 
-function openWebsite() {
-    if (websocket && (websocket.readyState === 1)) {
-        const json = {
-            'event': 'openUrl',
-            'payload': {
-                'url': 'https://BarRaider.github.io'
-            }
-        };
-        websocket.send(JSON.stringify(json));
-    }
-}
-
-if (!isQT) {
-    document.addEventListener('DOMContentLoaded', function () {
-        initPropertyInspector();
-    });
-}
-
 window.addEventListener('beforeunload', function (e) {
     e.preventDefault();
 
@@ -199,11 +107,6 @@ window.addEventListener('beforeunload', function (e) {
 
     // Don't set a returnValue to the event, otherwise Chromium with throw an error.
 });
-
-function initPropertyInspector() {
-    // Place to add functions
-}
-
 
 function addDynamicStyles(clrs) {
     const node = document.getElementById('#sdpi-dynamic-styles') || document.createElement('style');

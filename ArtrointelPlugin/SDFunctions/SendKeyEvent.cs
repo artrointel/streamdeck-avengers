@@ -23,7 +23,7 @@ namespace ArtrointelPlugin.SDFunctions
                 mSendKeyAction = (ascNumbers) =>
                 {
                     string[] ascs = ascNumbers.Split(' ');
-                    short[] ascii = new short[ascs.Length - 1]; // empty string on last index of ascNumbers
+                    short[] ascii = new short[ascs.Length];
 
                     for (int i = 0; i < ascii.Length; i++)
                     {
@@ -37,7 +37,7 @@ namespace ArtrointelPlugin.SDFunctions
             {
                 mSendKeyAction = (text) =>
                 {
-                    SendKeys.SendWait("(" + text + ")");
+                    SendKeys.SendWait("(" + text + ")"); // send text directly
                 };
             }
         }

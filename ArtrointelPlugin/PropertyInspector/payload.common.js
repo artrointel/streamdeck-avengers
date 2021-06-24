@@ -2,17 +2,23 @@
 
 function getSelectValue(elemId, idx) {
     var selection = document.getElementById(elemId + idx);
-    if (selection == null) {
-        alert('dbg wrong selection:' + elemId + idx);
-        return null;
-    }
     return selection.options[selection.selectedIndex].value;
 }
 
+function setSelectValue(elemId, idx, value) {
+    var selection = document.getElementById(elemId + idx);
+    selection.value = value;
+}
+
 function getValue(elemId, idx, fallbackValue = 0.0) {
-    var dataContainer = document.getElementById(elemId + idx);
-    if (dataContainer == null) {
+    var valueContainer = document.getElementById(elemId + idx);
+    if (valueContainer == null) {
         return fallbackValue;
     }
-    return dataContainer.value;
+    return valueContainer.value;
+}
+
+function setValue(elemId, idx, value) {
+    var valueContainer = document.getElementById(elemId + idx);
+    valueContainer.value = value;
 }

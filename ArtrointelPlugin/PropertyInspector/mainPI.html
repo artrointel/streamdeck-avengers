@@ -7,24 +7,27 @@
     <meta name=apple-mobile-web-app-status-bar-style content=black>
     <title>Plugin Settings</title>
     <link rel="stylesheet" href="sdpi.css">
+    <script src="settings.js"></script>
     <script src="sdtools.common.js"></script>
     <script src="mainPI.js"></script>
 </head>
 <body>
     <div class="sdpi-wrapper">
+
         <div class="sdpi-item" id="dvImageSelection">
             <div class="sdpi-item-label">Base Image </div>
             <input id="inputFile" type="file" style="display:none;" onchange="onImageUpdated(this)" accept=".jpg, .png, .jpeg, .gif, .bmp, .json" />
             <button class="sdpi-item-value" id="btnSelect" onclick="onSelectImage()">Select</button>
-            <input class="sdpi-item-value" id="iBaseImageFile" placeholder="select image file" disabled/>
         </div>
+
         <div class="sdpi-item" id="dvFunctionSelection">
             <div class="sdpi-item-label">Functions </div>
-            <button class="sdpi-item-value" id="btnFunctionEdit" onclick="onBtnFunctionEditClicked()">Edit</button>
+            <button class="sdpi-item-value" id="btnFunctionEdit" onclick="onBtnFunctionEditClicked()" disabled>Edit</button>
         </div>
+
         <div class="sdpi-item" id="dvEffectSelection">
             <div class="sdpi-item-label">UI Effects </div>
-            <button class="sdpi-item-value" id="btnEffectEdit" onclick="onBtnEffectEditClicked()">Edit</button>
+            <button class="sdpi-item-value" id="btnEffectEdit" onclick="onBtnEffectEditClicked()" disabled>Edit</button>
         </div>
     </div>
 </body>

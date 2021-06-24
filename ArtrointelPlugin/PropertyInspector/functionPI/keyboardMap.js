@@ -1,4 +1,4 @@
-﻿var keyboardMap = [
+﻿const gKeyboardMap = [
     "", // [0]
     "", // [1]
     "", // [2]

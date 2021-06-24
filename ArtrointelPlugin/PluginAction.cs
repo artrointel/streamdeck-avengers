@@ -45,8 +45,6 @@ namespace ArtrointelPlugin
 
         private void Connection_OnSendToPlugin(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.SendToPlugin> e)
         {
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Plugin Connection_OnSendToPlugin");
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "received payload : " + e.Event.Payload.ToString());
             if(mController.handlePayload(e.Event.Payload))
             {
                 SaveSettings();
@@ -62,6 +60,7 @@ namespace ArtrointelPlugin
         {
             Logger.Instance.LogMessage(TracingLevel.DEBUG, "Plugin Connection_OnPropertyInspectorDidAppear");
             // todo send settings to PI
+            Connection.SendToPropertyInspectorAsync(JObject.FromObject(mController.getSettings()));
         }
 
         private void Connection_OnDeviceDidDisconnect(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.DeviceDidDisconnect> e)

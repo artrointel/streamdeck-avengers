@@ -11,7 +11,10 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>bin\Debug\com.test.sdtools.sdPlugin\</OutputPath>
-  </PropertyGroup> 
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="PropertyInspector\settings.js" />
+  </ItemGroup> 
   <ItemGroup>
     <None Include="App.config" />
     <None Include="manifest.json">
@@ -39,6 +42,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PropertyInspector\sdpi.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PropertyInspector\settings.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PropertyInspector\sdtools.common.js">
