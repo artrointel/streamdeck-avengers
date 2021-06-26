@@ -55,6 +55,10 @@ namespace SDGraphics
 
         public bool animateRendererAt(int index, double delayInSecond, bool restart = true)
         {
+            if(mRenderers == null || mRenderers[index] == null)
+            {
+                return false;
+            }
             if (mRenderers[index] is IAnimatableRenderer)
             {
                 ((IAnimatableRenderer)mRenderers[index]).animate(delayInSecond, restart);

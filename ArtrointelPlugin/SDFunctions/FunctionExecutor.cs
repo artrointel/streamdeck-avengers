@@ -21,9 +21,14 @@ namespace ArtrointelPlugin.SDFunctions
             mExecutables.Add(executable);
         }
 
-        public void executeFunctionAt(int index, double delayInSecond, double interval, double duration, String metadata)
+        public bool executeFunctionAt(int index, double delayInSecond, double interval, double duration, String metadata)
         {
+            if(mExecutables == null || mExecutables[index] == null)
+            {
+                return false;
+            }
             ((IExecutable)mExecutables[index]).execute(delayInSecond, interval, duration, true, metadata);
+            return true;
         }
         
         public void destroyAll()

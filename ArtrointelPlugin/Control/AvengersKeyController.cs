@@ -42,7 +42,31 @@ namespace ArtrointelPlugin.Control
             mRenderEngine.run();            
         }
 
-        #region Internal Creators
+        #region Internal
+        private void refineEffectConfigurations()
+        {
+            var effectCfgs = mSettings.EffectConfigurations;
+            for (int i = effectCfgs.Count - 1; i != 0; i--)
+            {
+                if (!RendererFactory.IsSupported((EffectConfig)effectCfgs[i]))
+                {
+                    effectCfgs.RemoveAt(i);
+                }
+            }
+        }
+
+        private void refineFunctionConfigurations()
+        {
+            var functionCfgs = mSettings.FunctionConfigurations;
+            for (int i = functionCfgs.Count - 1; i != 0; i--)
+            {
+                if (!FunctionFactory.IsSupported((FunctionConfig)functionCfgs[i]))
+                {
+                    functionCfgs.RemoveAt(i);
+                }
+            }
+        }
+
         private void initializeFunctionExecutor()
         {
             if (mFunctionExecutor != null)
@@ -97,6 +121,7 @@ namespace ArtrointelPlugin.Control
             {
                 mSettings.EffectConfigurations = PayloadReader.LoadEffectDataFromPayload(payload, effectCount);
                 Logger.Instance.LogMessage(TracingLevel.DEBUG, "detected effect payload.");
+                refineEffectConfigurations();
                 initializeRenderEngine();
                 return true;
             }
@@ -107,6 +132,7 @@ namespace ArtrointelPlugin.Control
             {
                 mSettings.FunctionConfigurations = PayloadReader.LoadFunctionDataFromPayload(payload, functionCount);
                 Logger.Instance.LogMessage(TracingLevel.DEBUG, "detected function payload.");
+                refineFunctionConfigurations();
                 initializeFunctionExecutor();
                 return true;
             }

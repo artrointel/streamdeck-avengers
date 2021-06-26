@@ -9,10 +9,19 @@ namespace ArtrointelPlugin.Control.Model
 {
     public class RendererFactory
     {
+        public static bool IsSupported(EffectConfig cfg)
+        {
+            foreach (EffectConfig.EType t in Enum.GetValues(typeof(EffectConfig.EType)))
+            {
+                if (cfg.mType.Equals(t.ToString())) return true;
+            }
+            return false;
+        }
+
         public static CanvasRendererBase CreateRenderer(EffectConfig cfg)
         {
             CanvasRendererBase renderer = null;
-            // creates a renderer
+            // Creates a renderer
             if(cfg.mType.Equals(EffectConfig.EType.Flash.ToString()))
             {
                 renderer = new FlashRenderer(cfg.getColor(), cfg.mDuration);

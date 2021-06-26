@@ -10,6 +10,15 @@ namespace ArtrointelPlugin.Control
 {
     class FunctionFactory
     {
+        public static bool IsSupported(FunctionConfig cfg)
+        {
+            foreach (FunctionConfig.EType t in Enum.GetValues(typeof(FunctionConfig.EType)))
+            {
+                if (cfg.mType.Equals(t.ToString())) return true;
+            }
+            return false;
+        }
+
         internal static IExecutable CreateExecutable(FunctionConfig cfg)
         {
             IExecutable e = null;
