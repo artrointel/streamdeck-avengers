@@ -5,16 +5,18 @@ function onLoad() {
 	}
 	// refer to FunctionConfigs.cs
 	for (var idx = 1; idx <= cfg.length; idx++) {
-		onAddNewFunction();
+        onAddNewFunction();
 		var functionConfig = cfg[idx - 1];
 		setSelectValue('sFunctionTrigger', idx, functionConfig['mTrigger']);
-		setSelectValue('sFunctionType', idx, functionConfig['mType']);
-		setValue('iFunctionDelay', idx, functionConfig['mDelay']);
+        setSelectValue('sFunctionType', idx, functionConfig['mType']);
+        onFunctionChanged(idx);
 
-		onFunctionChanged(idx);
+        setValue('iFunctionDelay', idx, functionConfig['mDelay']);
+        setValue('iFunctionDuration', idx, functionConfig['mDuration']);
+        setValue('iFunctionInterval', idx, functionConfig['mInterval']);
 		setValue('iFunctionMetadata', idx, functionConfig['mMetadata']);
 
-		// detail options
+		// for each options
 		switch (functionConfig['mType']) {
 			case 'Keycode':
 				var keyCombination = "";
@@ -43,7 +45,7 @@ function onAddNewFunction() {
 				<option value="OnKeyPressed">OnKeyPressed</option>
 			</select>
 			<select class="sdpi-item-value" id="sFunctionType${idx}" onchange="onFunctionChanged(${idx})" style="width:50px">
-				<option>Select</option>
+				<option value="Select">Select</option>
 				<option value="OpenFile">Open file/folder</option>
 				<option value="OpenWebpage">Open Webpage</option>
 				<option value="ExecuteCommand">Execute Command</option>
@@ -53,7 +55,7 @@ function onAddNewFunction() {
 			</select>
 
 			<div class="sdpi-item-value avg-container-center">
-				<input class="sdpi-item-text avg-input-text" id="iFunctionDelay${idx}" type="text" placeholder="second" value="0.0" hidden/>
+				<button class="sdpi-item-value" id="iDelete${idx}" onclick="onBtnDelete(${idx})">Delete</button>
 			</div>
 		</div>`;
 
@@ -65,9 +67,6 @@ function onAddNewFunction() {
 
 function onFunctionChanged(idx) {
 	// remove prev option UI
-	document.getElementById(`iFunctionDelay${idx}`).hidden = true;
-	document.getElementById(`iFunctionDelay${idx}`).value = 0;
-
 	var prevOptions = document.getElementById('dOptions' + idx);
 	var prevOptionsHr = document.getElementById('dOptionsHr' + idx);
 	
@@ -93,11 +92,9 @@ function onFunctionChanged(idx) {
 		}
 		else if (type == 'Keycode') {
 			optionDiv = createKeyCombinationOptionsDiv(idx);
-			document.getElementById(`iFunctionDelay${idx}`).hidden = false;
 		}
 		else if (type == 'Text') {
 			optionDiv = createTextOptionsDiv(idx);
-			document.getElementById(`iFunctionDelay${idx}`).hidden = false;
 		}
 		else if (type == 'PlaySound') {
 			// TODO optionDiv = createPlaySoundOptionsDiv(idx);
@@ -111,6 +108,12 @@ function onFunctionChanged(idx) {
 			optionDiv.parentNode.insertBefore(optionHr, optionDiv.nextSibling);
         }
     }
+}
+
+function onBtnDelete(idx) {
+    setSelectValue('sFunctionType', idx, 'Select');
+    onFunctionChanged(idx);
+    document.getElementById(`dFunctionContainer${idx}`).style.display = "none";
 }
 
 /// detail options ///
@@ -230,7 +233,9 @@ function createKeyCombinationOptionsDiv(idx) {
 	
 	var loopDiv = createSdpiChildDiv(groupDiv, 'loop', idx, 'avg-container-center');
 	loopDiv.innerHTML =
-		`<label class="sdpi-item-value avg-label">Duration</label>
+        `<label class="sdpi-item-value avg-label">Delay</label>
+		<input class="sdpi-item-value avg-input-text" id="iFunctionDelay${idx}" type="text" placeholder="second" value="0.0"/>
+		<label class="sdpi-item-value avg-label">Duration</label>
 		<input class="sdpi-item-value avg-input-text" id="iFunctionDuration${idx}" type="text" placeholder="second" value="0.0"/>
 		<label class="sdpi-item-value avg-label">Interval</label>
 		<input class="sdpi-item-value avg-input-text" id="iFunctionInterval${idx}" type="text" placeholder="second" value="0.0"/>`;
@@ -252,7 +257,9 @@ function createTextOptionsDiv(idx) {
 
 	var loopDiv = createSdpiChildDiv(groupDiv, 'loop', idx, 'avg-container-center');
 	loopDiv.innerHTML =
-		`<label class="sdpi-item-value avg-label">Duration</label>
+        `<label class="sdpi-item-value avg-label">Delay</label>
+		<input class="sdpi-item-value avg-input-text" id="iFunctionDelay${idx}" type="text" placeholder="second" value="0.0"/>
+		<label class="sdpi-item-value avg-label">Duration</label>
 		<input class="sdpi-item-value avg-input-text" id="iFunctionDuration${idx}" type="text" placeholder="second" value="0.0"/>
 		<label class="sdpi-item-value avg-label">Interval</label>
 		<input class="sdpi-item-value avg-input-text" id="iFunctionInterval${idx}" type="text" placeholder="second" value="0.0"/>`;
