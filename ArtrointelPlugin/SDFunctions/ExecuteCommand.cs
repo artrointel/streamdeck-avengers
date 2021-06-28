@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace ArtrointelPlugin.SDFunctions
 {
     /// <summary>
-    /// Execute command as background task
+    /// Executes a command
     /// </summary>
     class ExecuteCommand : IExecutable
     {
@@ -14,16 +14,17 @@ namespace ArtrointelPlugin.SDFunctions
             executeCommand(metadata, true);
         }
 
-        public void executeCommand(String command, bool hide = false)
+        public void executeCommand(string command, bool hide = false)
         {
-            var p = new Process();
+            var p = new Process(); 
+            var procStartInfo = new ProcessStartInfo("cmd", "/c " + command);
+
             if (hide)
             {
-                p.StartInfo.CreateNoWindow = true;
-                p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                procStartInfo.CreateNoWindow = true;
+                procStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             }
-            p.StartInfo.FileName = "CMD.exe";
-            p.StartInfo.Arguments = command;
+            p.StartInfo = procStartInfo;
             p.Start();
         }
     }

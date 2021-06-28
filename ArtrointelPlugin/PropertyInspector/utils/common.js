@@ -18,5 +18,7 @@ function getValue(elemId, idx, fallbackValue = 0.0) {
 
 function setValue(elemId, idx, value) {
     var valueContainer = document.getElementById(elemId + idx);
-    valueContainer.value = value;
+    if (valueContainer != null) {
+        valueContainer.value = value;
+    }
 }

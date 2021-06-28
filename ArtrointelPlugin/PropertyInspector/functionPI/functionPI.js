@@ -41,7 +41,6 @@ function onAddNewFunction() {
 	newFunctionItem.innerHTML =
 		`<div class="sdpi-item" id="dFunctionContainer${idx}" name="functionItem">
 			<select class="sdpi-item-value" id="sFunctionTrigger${idx}" style="width:50px">
-				<option>Select</option>
 				<option value="OnKeyPressed">OnKeyPressed</option>
 			</select>
 			<select class="sdpi-item-value" id="sFunctionType${idx}" onchange="onFunctionChanged(${idx})" style="width:50px">
@@ -51,7 +50,6 @@ function onAddNewFunction() {
 				<option value="ExecuteCommand">Execute Command</option>
 				<option value="Keycode">Key Combination</option>
 				<option value="Text">Type Text</option>
-				<option value="PlaySound">Play sound file</option>
 			</select>
 
 			<div class="sdpi-item-value avg-container-center">
@@ -95,10 +93,6 @@ function onFunctionChanged(idx) {
 		}
 		else if (type == 'Text') {
 			optionDiv = createTextOptionsDiv(idx);
-		}
-		else if (type == 'PlaySound') {
-			// TODO optionDiv = createPlaySoundOptionsDiv(idx);
-			// document.getElementById(`iFunctionDelay${idx}`).hidden = false;
 		}
 
 		// attach the option UI
@@ -160,8 +154,8 @@ function createExecuteCommandOptionsDiv(idx) {
 
 	var cmdDiv = createSdpiChildDiv(groupDiv, 'cmd', idx, 'avg-container-center');
 	cmdDiv.innerHTML =
-		`<input class="sdpi-item-value avg-input-text" id="iFunctionMetadata${idx}" type="text"
-			placeholder="ex) shutdown -s -t 3600 "/>`;
+		`<textarea class="sdpi-item-value" id="iFunctionMetadata${idx}"
+			placeholder="ex) shutdown -s -t 3600 or shutdown -a"></textarea>`;
 
 	// TODO add check button whether in background or not
 	return optionDiv;
@@ -221,7 +215,7 @@ function createKeyCombinationOptionsDiv(idx) {
 	openOptionDiv.appendChild(groupDiv);
 
 	var descDiv = createSdpiChildDiv(groupDiv, 'desc', idx, 'avg-center');
-	descDiv.innerHTML = `Edit delay/duration/interval if you want to run this function recursively.`;
+	descDiv.innerHTML = `Record key combination and edit detail options.`;
 
 	var keycodeDiv = createSdpiChildDiv(groupDiv, 'keycode', idx, 'avg-container-center');
 	keycodeDiv.innerHTML =
@@ -248,7 +242,7 @@ function createTextOptionsDiv(idx) {
 	openOptionDiv.appendChild(groupDiv);
 
 	var descDiv = createSdpiChildDiv(groupDiv, 'desc', idx, 'avg-center');
-	descDiv.innerHTML = `Write text and Edit delay/duration/interval if you want to run this function recursively.`;
+	descDiv.innerHTML = `Write text and edit detail options.`;
 
 	var textDiv = createSdpiChildDiv(groupDiv, 'textString', idx, 'avg-container-center');
 	textDiv.innerHTML =
@@ -269,9 +263,7 @@ function createTextOptionsDiv(idx) {
 /// on apply and cancel button clicked ///
 
 function onBtnCancelClicked() {
-	if (confirm('This action will abort changes if you edited something in this page.')) {
-		window.close();
-	}
+	window.close();
 }
 
 function onBtnApplyClicked() {
