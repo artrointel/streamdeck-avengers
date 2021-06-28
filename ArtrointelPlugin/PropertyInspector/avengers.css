@@ -1,15 +1,38 @@
 .avg-input-text {
+    margin: 0px !important;
+    padding: 0px !important;
     text-align: center;
     vertical-align: central;
-    height: 20px;
+    height: 40px;
     width: 40px;
+}
+.avg-input-color {
+    margin: 0px !important;
+    flex: auto !important;
+    width: 0px !important;
+    height: auto !important;
+}
+
+.avg-input-range-alpha {
+    margin-top: 0px !important;
+    height: auto !important;
+    width: 0px !important;
+    transform: scaleX(-1) !important;
 }
 
 .avg-label {
+    margin: 0px !important;
+    padding: 1px !important;
     text-align: center;
-    width: 40px;
+    min-width: 40px;
     align-items: center;
     display: flex;
+}
+
+.avg-checkbox {
+    display: flex !important;
+    margin: auto !important;
+    -webkit-appearance: checkbox !important;
 }
 
 .avg-center {
@@ -21,6 +44,7 @@
 }
 
 .avg-container-center {
+    min-height:40px;
     display: flex;
     justify-content: center;
 }

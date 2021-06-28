@@ -30,8 +30,16 @@ namespace ArtrointelPlugin.Control.Model
                 renderer = new CircleSpreadRenderer(cfg.getColor(), cfg.mDuration);
             } else if (cfg.mType.Equals(EffectConfig.EType.Pie.ToString()))
             {
-                // TODO Add more cfg data
-                renderer = new PieRenderer(cfg.getColor(), cfg.mDuration);
+                bool grow = false;
+                bool clockwise = false;
+                try
+                {
+                    string[] meta = cfg.mMetadata.Split(' '); // grow and clockwise options
+                    grow = bool.Parse(meta[0]);
+                    clockwise = bool.Parse(meta[1]);
+                } catch { }
+                
+                renderer = new PieRenderer(cfg.getColor(), cfg.mDuration, grow, clockwise);
             } else if (cfg.mType.Equals(EffectConfig.EType.ImageBlending.ToString()))
             {
                 // TODO

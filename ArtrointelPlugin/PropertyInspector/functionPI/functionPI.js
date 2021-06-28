@@ -20,7 +20,7 @@ function onLoad() {
 		switch (functionConfig['mType']) {
 			case 'Keycode':
 				var keyCombination = "";
-				var keycodes = functionConfig['mMetadata'].split(' '); // metada contains keycodes with spaces. 
+				var keycodes = functionConfig['mMetadata'].split(' '); // metadata contains keycodes with spaces. 
 				for (var ki = 0; ki < keycodes.length; ki++) { // last index will be empty.
 					keyCombination += gKeyboardMap[Number(keycodes[ki])] + '+';
 				}

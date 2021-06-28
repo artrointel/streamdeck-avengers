@@ -641,26 +641,9 @@ textarea {
   margin-bottom: 2px;
 }
 
-textarea + label {
-  display: flex;
-  justify-content: flex-end
-}
 input[type="radio"],
 input[type="checkbox"] {
   display: none;
-}
-input[type="radio"] + label,
-input[type="checkbox"] + label {
-  font-size: 9pt;
-  color: var(--sdpi-color);
-  font-weight: normal;
-  margin-right: 8px;
-  -webkit-user-select: none;
-}
-
-input[type="radio"] + label:after, 
-input[type="checkbox"] + label:after {
-  content: " " !important;
 }
 
 .sdpi-item[type="radio"] > .sdpi-item-value,

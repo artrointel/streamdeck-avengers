@@ -20,6 +20,7 @@ namespace ArtrointelPlugin.Control.Payload
         public const string KEY_EFFECT_ALPHA = "iEffectAlpha";
         public const string KEY_EFFECT_DELAY = "iEffectDelay";
         public const string KEY_EFFECT_DURATION = "iEffectDuration";
+        public const string KEY_EFFECT_METADATA = "iEffectMetadata";
 
         public const string KEY_FUNCTION_TRIGGER = "sFunctionTrigger";
         public const string KEY_FUNCTION_TYPE = "sFunctionType";
@@ -58,14 +59,15 @@ namespace ArtrointelPlugin.Control.Payload
                 ArrayList newEffectList = new ArrayList();
                 for (int i = 1; i <= count; i++)
                 {
-                    String trigger = payload.Value<String>(KEY_EFFECT_TRIGGER + i);
-                    String type = payload.Value<String>(KEY_EFFECT_TYPE + i);
-                    String hexrgb = payload.Value<String>(KEY_EFFECT_RGB + i);
-                    String alpha = payload.Value<String>(KEY_EFFECT_ALPHA + i);
+                    string trigger = payload.Value<string>(KEY_EFFECT_TRIGGER + i);
+                    string type = payload.Value<string>(KEY_EFFECT_TYPE + i);
+                    string hexrgb = payload.Value<string>(KEY_EFFECT_RGB + i);
+                    string alpha = payload.Value<string>(KEY_EFFECT_ALPHA + i);
                     double delay = payload.Value<double>(KEY_EFFECT_DELAY + i);
                     double duration = payload.Value<double>(KEY_EFFECT_DURATION + i);
+                    string metadata = payload.Value<string>(KEY_EFFECT_METADATA + i);
                     newEffectList.Add(EffectConfig.Create(
-                        trigger, type, hexrgb, alpha, delay, duration));
+                        trigger, type, hexrgb, alpha, delay, duration, metadata));
                 }
                 return newEffectList;
             } catch(Exception e)

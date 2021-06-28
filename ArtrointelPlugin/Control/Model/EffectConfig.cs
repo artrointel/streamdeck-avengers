@@ -19,6 +19,7 @@ namespace ArtrointelPlugin.Control.Model
         public string mAlpha;
         public double mDelay;
         public double mDuration;
+        public string mMetadata;
 
         private EffectConfig()
         {
@@ -30,7 +31,7 @@ namespace ArtrointelPlugin.Control.Model
             return Color.FromArgb(Int32.Parse(mAlpha), ColorTranslator.FromHtml(mHexRgb));
         }
 
-        public static EffectConfig Create(string trigger, string type, string hexRgb, string alpha, double delay, double duration)
+        public static EffectConfig Create(string trigger, string type, string hexRgb, string alpha, double delay, double duration, string metadata)
         {
             EffectConfig cfg = new EffectConfig();
             cfg.mTrigger = trigger;
@@ -39,6 +40,7 @@ namespace ArtrointelPlugin.Control.Model
             cfg.mAlpha = alpha;
             cfg.mDelay = delay;
             cfg.mDuration = duration;
+            cfg.mMetadata = metadata;
             return cfg;
         }
 
