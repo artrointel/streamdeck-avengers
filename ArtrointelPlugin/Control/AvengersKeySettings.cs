@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ArtrointelPlugin.Control.Model;
 using System.Collections;
+using ArtrointelPlugin.Utils;
 
 namespace ArtrointelPlugin.Control
 {

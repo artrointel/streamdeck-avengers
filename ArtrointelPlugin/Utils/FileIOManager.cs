@@ -8,8 +8,7 @@ using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using BarRaider.SdTools;
 
-
-namespace ArtrointelPlugin.Control
+namespace ArtrointelPlugin.Utils
 {
     internal class FileIOManager
     {
@@ -24,15 +23,21 @@ namespace ArtrointelPlugin.Control
             return RES_DIR + Sep + IMAGE_DIR + Sep + BASE_IMAGE_NAME;
         }
 
+        public static string getResourceImagePath(string image)
+        {
+            var Sep = System.IO.Path.DirectorySeparatorChar;
+            return RES_DIR + Sep + IMAGE_DIR + Sep + image;
+        }
+
         /// <summary>
         /// Returns new image to fit the stream deck icon, 144x144
         /// </summary>
         /// <param name="imgToResize"></param>
         /// <returns></returns>
         // https://www.c-sharpcorner.com/UploadFile/ishbandhu2009/resize-an-image-in-C-Sharp/
-        public static Image ResizeImage(Image imgToResize)
+        public static Image ResizeImage(Image imgToResize, int newWidth = 144, int newHeight = 144)
         {
-            Size size = new Size(144, 144);
+            Size size = new Size(newWidth, newHeight);
 
             // Get the image current width  
             int sourceWidth = imgToResize.Width;
@@ -97,6 +102,11 @@ namespace ArtrointelPlugin.Control
         public static string LoadFallbackBase64Image()
         {
             return Tools.ImageToBase64(LoadFallbackImage(), false);
+        }
+
+        public static Image LoadSpinner()
+        {
+            return Image.FromFile(getResourceImagePath("spinner.png"));
         }
     }
 }

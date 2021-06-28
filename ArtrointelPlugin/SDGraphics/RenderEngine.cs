@@ -161,7 +161,8 @@ namespace SDGraphics
                 mCompositedCanvas.mGraphics.Clear(Color.Black);
                 foreach (CanvasRendererBase renderer in mRenderers)
                 {
-                    mCompositedCanvas.mGraphics.DrawImage(renderer.mOffscreenCanvas.mImage, new Point(0, 0));
+                    if(renderer.isVisible())
+                        mCompositedCanvas.mGraphics.DrawImage(renderer.mOffscreenCanvas.mImage, new Point(0, 0));
                 }
                 return true;
             }

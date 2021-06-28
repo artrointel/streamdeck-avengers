@@ -25,10 +25,12 @@ namespace ArtrointelPlugin.Control.Model
             if(cfg.mType.Equals(EffectConfig.EType.Flash.ToString()))
             {
                 renderer = new FlashRenderer(cfg.getColor(), cfg.mDuration);
-            } else if (cfg.mType.Equals(EffectConfig.EType.CircleSpread.ToString()))
+            } 
+            else if (cfg.mType.Equals(EffectConfig.EType.CircleSpread.ToString()))
             {
                 renderer = new CircleSpreadRenderer(cfg.getColor(), cfg.mDuration);
-            } else if (cfg.mType.Equals(EffectConfig.EType.Pie.ToString()))
+            } 
+            else if (cfg.mType.Equals(EffectConfig.EType.Pie.ToString()))
             {
                 bool grow = false;
                 bool clockwise = false;
@@ -40,7 +42,12 @@ namespace ArtrointelPlugin.Control.Model
                 } catch { }
                 
                 renderer = new PieRenderer(cfg.getColor(), cfg.mDuration, grow, clockwise);
-            } else if (cfg.mType.Equals(EffectConfig.EType.ImageBlending.ToString()))
+            }
+            else if (cfg.mType.Equals(EffectConfig.EType.BorderWave.ToString()))
+            {
+                renderer = new BorderWaveRenderer(cfg.getColor(), cfg.mDuration);
+            }
+            else if (cfg.mType.Equals(EffectConfig.EType.ImageBlending.ToString()))
             {
                 // TODO
             }

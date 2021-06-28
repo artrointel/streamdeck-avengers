@@ -158,6 +158,11 @@ function onChangePieMetadata(idx) {
 	var clockwise = document.getElementById(`iClockwise${idx}`);
 	metadata.value = grow.checked + ' ' + clockwise.checked;
 }
+
+function createBorderWaveOptionsDiv(idx) {
+	return _createBasicOptionsDiv(idx);
+}
+
 /// on apply and cancel button clicked ///
 
 function onBtnCancelClicked() {
