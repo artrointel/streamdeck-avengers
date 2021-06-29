@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
-using System.Timers;
+﻿using System.Drawing;
 
-namespace SDGraphics
+namespace ArtrointelPlugin.SDGraphics.Renderer
 {
     /// <summary>
     /// Base class of the renderer. Override <see cref="onRender(Graphics)"/>

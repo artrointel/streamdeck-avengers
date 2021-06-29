@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ArtrointelPlugin.Control.Model
+﻿namespace ArtrointelPlugin.Control.Model
 {
     public class FunctionConfig
     {
@@ -19,10 +13,7 @@ namespace ArtrointelPlugin.Control.Model
         public double mDuration;
         public string mMetadata;
 
-        private FunctionConfig()
-        {
-
-        }
+        private FunctionConfig() {}
 
         public static FunctionConfig Load(string trigger, string type, double delay, double interval, double duration, string metadata)
         {

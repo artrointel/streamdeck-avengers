@@ -1,30 +1,30 @@
 {
   "Actions": [
     {
-      "Icon": "Images/testIcon",
-      "Name": "Graphic Sample Test Plugin",
+      "Icon": "Images/avengersIcon",
+      "Name": "Avengers Key",
       "States": [
         {
-          "Image": "Images/testIcon",
-          "TitleAlignment": "middle",
+          "Image": "Images/avengersIcon",
+          "TitleAlignment": "bottom",
           "FontSize": "12"
         }
       ],
       "SupportedInMultiActions": false,
-      "Tooltip": "Graphic Sample Plugin to test SDGraphic RenderEngine",
-      "UUID": "com.artrointel.graphicsampleplugin",
+      "Tooltip": "Avengers Key tooltip",
+      "UUID": "com.artrointel.avengerskey",
       "PropertyInspectorPath": "PropertyInspector/mainPI.html"
     }
   ],
   "Author": "Artrointel",
-  "Description": "Provides Animated Graphic Action Key with custom control.",
-  "Name": "Graphic Master Key",
-  "Icon": "Images/logo",
+  "Description": "Provides Animated graphic effects and Functions",
+  "Name": "Avengers Key",
+  "Icon": "Images/avengersIcon",
   "URL": "https://github.com/artrointel/",
-  "Version": "0.1",
-  "CodePath": "com.artrointel.graphicsampleplugin",
+  "Version": "1.0b",
+  "CodePath": "com.artrointel.avengerskey",
   "Category": "Avengers Key",
-  "CategoryIcon": "Images/avengersIcon",
+  "CategoryIcon": "Images/logo",
   "OS": [
     {
       "Platform": "windows",
@@ -34,12 +34,5 @@
   "SDKVersion": 2,
   "Software": {
     "MinimumVersion": "4.4.1"
-  },
-  "ApplicationsToMonitor": {
-    "windows": [
-      "notepad.exe",
-      "calc.exe"
-    ]
   }
-
 }

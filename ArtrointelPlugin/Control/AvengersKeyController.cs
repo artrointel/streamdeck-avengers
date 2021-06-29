@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Collections;
 using System.Drawing;
 using Newtonsoft.Json.Linq;
 using BarRaider.SdTools;
-using SDGraphics;
+using ArtrointelPlugin.SDGraphics;
+using ArtrointelPlugin.SDGraphics.Renderer;
 using ArtrointelPlugin.Control.Model;
 using ArtrointelPlugin.Control.Payload;
 using ArtrointelPlugin.Utils;

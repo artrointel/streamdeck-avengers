@@ -8,10 +8,10 @@ window.addEventListener('onSettingsUpdated', function (e) {
     var eCount = avgSettings.mEffectConfigurations.length;
     
     if (fCount > 0) {
-        document.getElementById('btnFunctionEdit').innerHTML = 'Edit [' + fCount + ']';
+        document.getElementById('btnFunctionEdit').innerHTML = 'Edit  (' + fCount + ')';
     }
     if (eCount > 0) {
-        document.getElementById('btnEffectEdit').innerHTML = 'Edit [' + eCount + ']';
+        document.getElementById('btnEffectEdit').innerHTML = 'Edit  (' + eCount + ')';
     }
 });
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-
 namespace ArtrointelPlugin.Utils
 {
     // TODO: System Timer in C#, System.Timer or System.Threading.Timer,

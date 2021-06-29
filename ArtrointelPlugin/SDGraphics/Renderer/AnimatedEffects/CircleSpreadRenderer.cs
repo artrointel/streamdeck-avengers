@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SDGraphics;
-using System.Drawing;
+﻿using System.Drawing;
 using ArtrointelPlugin.Utils;
 
-namespace SDGraphics
+namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
 {
     /// <summary>
     /// Animates a circle spreading from center of the canvas.

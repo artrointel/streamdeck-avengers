@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Drawing;
 using Newtonsoft.Json.Linq;
 using BarRaider.SdTools;
 using ArtrointelPlugin.Control.Model;

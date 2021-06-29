@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Drawing;
 using ArtrointelPlugin.Utils;
 
-namespace SDGraphics
+namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
 {
     public class PieRenderer : CanvasRendererBase, IAnimatableRenderer
     {

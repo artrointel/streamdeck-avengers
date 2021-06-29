@@ -15,7 +15,7 @@ namespace ArtrointelPlugin.Utils
         // For resource directories
         public const String RES_DIR = "Res";
         public const String IMAGE_DIR = "Images";
-        public const String BASE_IMAGE_NAME = "avengersIcon.png";
+        public const String BASE_IMAGE_NAME = "baseImage.png";
 
         public static String getFallbackImagePath()
         {

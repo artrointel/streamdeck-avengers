@@ -1,12 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Collections;
 using System.Drawing.Imaging;
 using ArtrointelPlugin.Utils;
 
 
-namespace SDGraphics
+namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
 {
     public class BorderWaveRenderer : CanvasRendererBase, IAnimatableRenderer
     {

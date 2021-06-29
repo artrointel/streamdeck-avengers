@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections;
 using BarRaider.SdTools;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ArtrointelPlugin.Control.Model;
-using System.Collections;
 using ArtrointelPlugin.Utils;
 
 namespace ArtrointelPlugin.Control

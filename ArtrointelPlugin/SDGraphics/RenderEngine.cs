@@ -3,8 +3,9 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Collections;
 using System.Timers;
+using ArtrointelPlugin.SDGraphics.Renderer;
 
-namespace SDGraphics
+namespace ArtrointelPlugin.SDGraphics
 {
     /// <summary>
     /// RenderEngine is a simple graphic module to make dynamically-animated rendered action icon for the stream deck.

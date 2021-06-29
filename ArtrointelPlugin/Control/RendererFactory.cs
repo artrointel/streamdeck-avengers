@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SDGraphics;
+using ArtrointelPlugin.SDGraphics.Renderer;
+using ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects;
 
 namespace ArtrointelPlugin.Control.Model
 {

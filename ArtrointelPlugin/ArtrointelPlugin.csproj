@@ -3,7 +3,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net472</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <AssemblyName>com.artrointel.graphicsampleplugin</AssemblyName>
+    <AssemblyName>com.artrointel.avengerskey</AssemblyName>
     <RootNamespace>ArtrointelPlugin</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -30,7 +30,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="!!README!!.txt" />
     <Content Include="PropertyInspector\caret.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
