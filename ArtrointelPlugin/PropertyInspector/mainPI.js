@@ -9,9 +9,13 @@ window.addEventListener('onSettingsUpdated', function (e) {
     
     if (fCount > 0) {
         document.getElementById('btnFunctionEdit').innerHTML = 'Edit  (' + fCount + ')';
+    } else {
+        document.getElementById('btnFunctionEdit').innerHTML = 'Edit';
     }
     if (eCount > 0) {
         document.getElementById('btnEffectEdit').innerHTML = 'Edit  (' + eCount + ')';
+    } else {
+        document.getElementById('btnEffectEdit').innerHTML = 'Edit';
     }
 });
 

@@ -26,6 +26,10 @@
             cfg.mMetadata = metadata;
             return cfg;
         }
-
+        public override string ToString()
+        {
+            string ret = $"Trigger:{mTrigger}, Type:{mType}, Delay:{mDelay}, Alpha:{mInterval}, Duration:{mDuration}, Meta:{mMetadata}";
+            return ret;
+        }
     }
 }

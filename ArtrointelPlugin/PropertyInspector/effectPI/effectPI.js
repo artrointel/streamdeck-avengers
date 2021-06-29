@@ -180,20 +180,16 @@ function onBtnCancelClicked() {
 function onBtnApplyClicked() {
 	// process saving all changes
 	var payload = buildEffectPayload();
-	if (payload == null) {
-		alert("Invalid data exists. cannot apply the effect.");
-	} else {
-		window.opener.sendPayloadToPlugin(payload);
-		window.close();
-	}
+	window.opener.sendPayloadToPlugin(payload);
+	window.close();
 }
 
 function buildEffectPayload() {
 	var payload = {};
 	var count = document.getElementsByName('effectItem').length;
-
+	payload['payload_updateEffects'] = 'true';
+	payload['payload_arrayCount'] = count;
 	if (count > 0) {
-		payload['payload_updateEffects'] = count;
 		for (var i = 1; i <= count; i++) {
 			payload['sEffectTrigger' + i] = getSelectValue('sEffectTrigger', i);
 			payload['sEffectType' + i] = getSelectValue('sEffectType', i);
@@ -204,8 +200,6 @@ function buildEffectPayload() {
 			payload['iEffectDuration' + i] = getValue('iEffectDuration', i);
 			payload['iEffectMetadata' + i] = getValue('iEffectMetadata', i);
 		}
-		return payload;
-	} else {
-		return null;
 	}
+	return payload;
 }

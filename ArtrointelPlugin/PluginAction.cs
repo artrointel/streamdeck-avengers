@@ -13,6 +13,7 @@ using ArtrointelPlugin.Control;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using ArtrointelPlugin.Utils;
 
 namespace ArtrointelPlugin
 {
@@ -107,7 +108,7 @@ namespace ArtrointelPlugin
 
         public override void ReceivedSettings(ReceivedSettingsPayload payload)
         {
-
+            DLogger.LogMessage(TracingLevel.DEBUG, "ReceivedSettings: " + payload.ToString());
         }
 
         public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload) { }

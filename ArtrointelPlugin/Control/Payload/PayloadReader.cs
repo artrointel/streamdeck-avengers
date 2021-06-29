@@ -11,7 +11,9 @@ namespace ArtrointelPlugin.Control.Payload
         // constants from property inspector written in javascript.
         public const string PAYLOAD_IMAGE_UPDATE_KEY = "payload_updateImage";
         public const string PAYLOAD_EFFECT_KEY = "payload_updateEffects";
-        public const string PAYLOAD_FUNCTIONS_KEY = "payload_updateFunctions";
+        public const string PAYLOAD_FUNCTION_KEY = "payload_updateFunctions";
+
+        public const string PAYLOAD_COUNT = "payload_arrayCount";
 
         public const string KEY_EFFECT_TRIGGER = "sEffectTrigger";
         public const string KEY_EFFECT_TYPE = "sEffectType";
@@ -33,21 +35,36 @@ namespace ArtrointelPlugin.Control.Payload
 
         }
 
-        public static int isEffectPayload(JObject payload)
+        public static bool isEffectPayload(JObject payload)
         {
-            int effectCount = payload.Value<int>(PAYLOAD_EFFECT_KEY);
-            return effectCount;
+            bool ret = false;
+            try
+            {
+                ret = bool.Parse(payload.Value<string>(PAYLOAD_EFFECT_KEY));
+            }
+            catch { }
+            return ret;
         }
 
-        public static int isFunctionPayload(JObject payload)
+        public static bool isFunctionPayload(JObject payload)
         {
-            int functionCount = payload.Value<int>(PAYLOAD_FUNCTIONS_KEY);
-            return functionCount;
+            bool ret = false;
+            try
+            {
+                ret = bool.Parse(payload.Value<string>(PAYLOAD_FUNCTION_KEY));
+            }
+            catch { }
+            return ret;
         }
 
-        public static String isImageUpdatePayload(JObject payload)
+        public static int getArrayCount(JObject payload)
         {
-            String imagePath = payload.Value<String>(PAYLOAD_IMAGE_UPDATE_KEY);
+            return payload.Value<int>(PAYLOAD_COUNT);
+        }
+
+        public static string isImageUpdatePayload(JObject payload)
+        {
+            string imagePath = payload.Value<string>(PAYLOAD_IMAGE_UPDATE_KEY);
             return imagePath;
         }
 

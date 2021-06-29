@@ -269,20 +269,16 @@ function onBtnCancelClicked() {
 function onBtnApplyClicked() {
 	// process saving all changes
 	var payload = buildFunctionPayload();
-	if (payload == null) {
-		alert("Invalid data exists. cannot apply the effect.");
-	} else {
-		window.opener.sendPayloadToPlugin(payload);
-		window.close();
-	}
+	window.opener.sendPayloadToPlugin(payload);
+	window.close();
 }
 
 function buildFunctionPayload() {
 	var payload = {};
 	var count = document.getElementsByName('functionItem').length;
-
+	payload['payload_updateFunctions'] = 'true';
+	payload['payload_arrayCount'] = count;
 	if (count > 0) {
-		payload['payload_updateFunctions'] = count;
 		for (var i = 1; i <= count; i++) {
 			payload['sFunctionTrigger' + i] = getSelectValue('sFunctionTrigger', i);
 			payload['sFunctionType' + i] = getSelectValue('sFunctionType', i);
@@ -292,8 +288,6 @@ function buildFunctionPayload() {
 			payload['iFunctionDuration' + i] = getValue('iFunctionDuration', i);
 			payload['iFunctionMetadata' + i] = getValue('iFunctionMetadata', i);
 		}
-		return payload;
-	} else {
-		return null;
 	}
+	return payload;
 }

@@ -46,7 +46,7 @@ namespace ArtrointelPlugin.Control
         private void refineEffectConfigurations()
         {
             var effectCfgs = mSettings.EffectConfigurations;
-            for (int i = effectCfgs.Count - 1; i != 0; i--)
+            for (int i = effectCfgs.Count - 1; i != -1; i--)
             {
                 if (!RendererFactory.IsSupported((EffectConfig)effectCfgs[i]))
                 {
@@ -58,7 +58,7 @@ namespace ArtrointelPlugin.Control
         private void refineFunctionConfigurations()
         {
             var functionCfgs = mSettings.FunctionConfigurations;
-            for (int i = functionCfgs.Count - 1; i != 0; i--)
+            for (int i = functionCfgs.Count - 1; i != -1; i--)
             {
                 if (!FunctionFactory.IsSupported((FunctionConfig)functionCfgs[i]))
                 {
@@ -115,9 +115,9 @@ namespace ArtrointelPlugin.Control
         public bool handlePayload(JObject payload)
         {
             // Handles Effect payload
-            int effectCount = PayloadReader.isEffectPayload(payload);
-            if(effectCount > 0)
+            if(PayloadReader.isEffectPayload(payload))
             {
+                int effectCount = PayloadReader.getArrayCount(payload);
                 mSettings.EffectConfigurations = PayloadReader.LoadEffectDataFromPayload(payload, effectCount);
                 refineEffectConfigurations();
                 initializeRenderEngine();
@@ -125,15 +125,15 @@ namespace ArtrointelPlugin.Control
             }
 
             // Handles Function payload
-            int functionCount = PayloadReader.isFunctionPayload(payload);
-            if (functionCount > 0)
+            if(PayloadReader.isFunctionPayload(payload))
             {
+                int functionCount = PayloadReader.getArrayCount(payload);
                 mSettings.FunctionConfigurations = PayloadReader.LoadFunctionDataFromPayload(payload, functionCount);
                 refineFunctionConfigurations();
                 initializeFunctionExecutor();
                 return true;
             }
-
+            
             // Handles Image update payload
             String imgPath = PayloadReader.isImageUpdatePayload(payload);
             if (imgPath != null && File.Exists(imgPath))

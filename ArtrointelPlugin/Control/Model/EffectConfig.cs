@@ -39,5 +39,9 @@ namespace ArtrointelPlugin.Control.Model
             return cfg;
         }
 
+        public override string ToString() {
+            string ret = $"Trigger:{mTrigger}, Type:{mType}, HexRgb:{mHexRgb}, Alpha:{mAlpha}, Delay:{mDelay}, Duration:{mDuration}, Meta:{mMetadata}";
+            return ret;
+        }
     }
 }
