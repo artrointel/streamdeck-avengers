@@ -47,6 +47,10 @@ namespace ArtrointelPlugin.Control.Model
             {
                 renderer = new BorderWaveRenderer(cfg.getColor(), cfg.mDuration);
             }
+            else if (cfg.mType.Equals(EffectConfig.EType.ColorOverlay.ToString()))
+            {
+                renderer = new ColorOverlayRenderer(cfg.getColor(), cfg.mDuration);
+            }
             else if (cfg.mType.Equals(EffectConfig.EType.ImageBlending.ToString()))
             {
                 // TODO

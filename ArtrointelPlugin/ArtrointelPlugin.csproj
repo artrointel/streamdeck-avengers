@@ -13,8 +13,11 @@
     <OutputPath>bin\Debug\com.test.sdtools.sdPlugin\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Properties\**" />
     <Compile Remove="SDGraphics\Animator\**" />
+    <EmbeddedResource Remove="Properties\**" />
     <EmbeddedResource Remove="SDGraphics\Animator\**" />
+    <None Remove="Properties\**" />
     <None Remove="SDGraphics\Animator\**" />
   </ItemGroup>
   <ItemGroup>
@@ -58,9 +61,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\barraider-sdtools\barraider-sdtools.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="OpenTK" Version="3.2.0" />

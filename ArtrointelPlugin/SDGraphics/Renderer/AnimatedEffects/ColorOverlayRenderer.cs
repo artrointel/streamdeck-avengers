@@ -12,23 +12,25 @@ namespace SDGraphics
     /// <summary>
     /// Flashes with input color with animated alpha value.
     /// </summary>
-    class FlashRenderer : CanvasRendererBase, IAnimatableRenderer
+    class ColorOverlayRenderer : CanvasRendererBase, IAnimatableRenderer
     {
         // input data
         private Color mInputColor;
         private int mInputDurationInMillisecond;
 
         // for internal logic
-        private ValueAnimator mFlashStartAnimator;
-        private ValueAnimator mFlashEndAnimator;
+        private const int ALPHA_DURATION = 100;
+        private ValueAnimator mAlphaBlendStartAnimator;
+        private ValueAnimator mAlphaBlendEndAnimator;
         private Color mAnimFlashColor;
+        private DelayedTask mOverlayTask;
         private DelayedTask mDelayedTask;
 
         /// <summary>
         /// Flash with the color. alpha value will be used for brightest moment.
         /// </summary>
         /// <param name="color"></param>
-        public FlashRenderer(Color color, double durationInSecond)
+        public ColorOverlayRenderer(Color color, double durationInSecond)
         {
             mInputColor = color;
             mInputDurationInMillisecond = (int)(durationInSecond * 1000);
@@ -37,24 +39,32 @@ namespace SDGraphics
 
         private void initialize()
         {
-            int flashStartDuration = (int)(mInputDurationInMillisecond * 0.25);
-            int flashEndDuration = (int)(mInputDurationInMillisecond * 0.75);
-            mFlashStartAnimator = new ValueAnimator(0, 1, flashStartDuration, ValueAnimator.INTERVAL_60_PER_SEC);
-            mFlashEndAnimator = new ValueAnimator(1, 0, flashEndDuration, ValueAnimator.INTERVAL_60_PER_SEC);
+            
+            mAlphaBlendStartAnimator = new ValueAnimator(0, 1, ALPHA_DURATION, ValueAnimator.INTERVAL_60_PER_SEC);
+            mAlphaBlendEndAnimator = new ValueAnimator(1, 0, ALPHA_DURATION, ValueAnimator.INTERVAL_60_PER_SEC);
 
-            mFlashStartAnimator.setAnimationListeners((value, duration) => {
+            mAlphaBlendStartAnimator.setAnimationListeners((value, duration) => {
                 mAnimFlashColor = Color.FromArgb((int)(mInputColor.A * value), mInputColor);
                 invalidate();
-            },
-            () =>
-            {
-                mFlashEndAnimator.start();
             });
 
-            mFlashEndAnimator.setAnimationListeners((value, duration) =>
+            mAlphaBlendEndAnimator.setAnimationListeners((value, duration) =>
             {
                 mAnimFlashColor = Color.FromArgb((int)(mInputColor.A * value), mInputColor);
                 invalidate();
+            });
+        }
+
+        private void startAnimations(bool restart)
+        {
+            mAlphaBlendEndAnimator.stop();
+            mAlphaBlendStartAnimator.start(restart);
+            if(mOverlayTask != null)
+            {
+                mOverlayTask.cancel();
+            }
+            mOverlayTask = new DelayedTask(mInputDurationInMillisecond, () => {
+                mAlphaBlendEndAnimator.start();
             });
         }
 
@@ -74,20 +84,20 @@ namespace SDGraphics
                 }
                 mDelayedTask = new DelayedTask((int)(delayInSecond * 1000), () =>
                 {
-                    mFlashEndAnimator.stop();
-                    mFlashStartAnimator.start(restart);
+                    startAnimations(restart);
                 });
             }
             else
             {
-                mFlashEndAnimator.stop();
-                mFlashStartAnimator.start(restart);
+                startAnimations(restart);
             }
         }
 
         public void pause()
         {
-            // do nothing. it is more natural that not pausing the flash animation.
+            mAlphaBlendStartAnimator.pause();
+            mAlphaBlendEndAnimator.pause();
+            mOverlayTask.cancel();
         }
 
         public override void onDestroy()
@@ -96,8 +106,12 @@ namespace SDGraphics
             {
                 mDelayedTask.cancel();
             }
-            mFlashEndAnimator.destroy();
-            mFlashStartAnimator.destroy();
+            if(mOverlayTask != null)
+            {
+                mOverlayTask.cancel();
+            }
+            mAlphaBlendEndAnimator.destroy();
+            mAlphaBlendStartAnimator.destroy();
             base.onDestroy();
         }
     }

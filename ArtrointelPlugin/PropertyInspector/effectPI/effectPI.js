@@ -37,6 +37,7 @@ function onAddNewEffect() {
 			<select class="sdpi-item-value" id="sEffectType${idx}" onchange="onEffectChanged(${idx})" style="width:50px">
 				<option value="Select">Select</option>
 				<option value="Flash">Flash</option>
+				<option value="ColorOverlay">Color overlay</option>
 				<option value="CircleSpread">Circle Spread</option>
 				<option value="Pie">Pie</option>
 				<option value="BorderWave">Border Wave</option>
@@ -71,6 +72,9 @@ function onEffectChanged(idx) {
 		optionHr.id = `dOptionsHr${idx}`;
 		if (type == 'Flash') {
 			optionDiv = createFlashOptionsDiv(idx);
+		}
+		else if (type == 'ColorOverlay') {
+			optionDiv = createColorOverlayOptionsDiv(idx);
 		}
 		else if (type == 'CircleSpread') {
 			optionDiv = createCircleSpreadOptionsDiv(idx);
@@ -128,6 +132,10 @@ function _createBasicOptionsDiv(idx) {
 }
 
 function createFlashOptionsDiv(idx) {
+	return _createBasicOptionsDiv(idx);
+}
+
+function createColorOverlayOptionsDiv(idx) {
 	return _createBasicOptionsDiv(idx);
 }
 

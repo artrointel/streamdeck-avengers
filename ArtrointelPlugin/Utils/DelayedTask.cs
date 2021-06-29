@@ -24,8 +24,15 @@ namespace ArtrointelPlugin.Utils
             });
         }
 
+        /// <summary>
+        /// the delayed task will be canceled and also be disposed
+        /// </summary>
         public async void cancel()
         {
+            if(mCts.IsCancellationRequested)
+            {
+                return;
+            }
             mCts.Cancel();
 
             try
