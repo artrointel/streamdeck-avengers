@@ -152,7 +152,7 @@ function createPieOptionsDiv(idx) {
 
 	var pieOptions = createSdpiChildDiv(groupDiv, 'pieOptions', idx, 'avg-container-center');
 	pieOptions.innerHTML =
-		`<div id="iEffectMetadata${idx}" value="false false" style="display:none"></div>
+		`<input id="iEffectMetadata${idx}" type="text" value="false false" style="display:none"></div>
 		<label class="sdpi-item-value avg-label">GrowPie</label>
 		<input class="sdpi-item-value avg-checkbox" id="iGrow${idx}" type="checkbox" onchange="onChangePieMetadata(${idx})"/>
 		<label class="sdpi-item-value avg-label">Clockwise</label>
