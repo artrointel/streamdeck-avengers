@@ -17,11 +17,11 @@
     }
   ],
   "Author": "Artrointel",
-  "Description": "Provides Animated graphic effects and Functions",
+  "Description": "Make your own button for your Stream Deck ! It provides animated graphic effects for your icon, and also provides many functions to control your PC.",
   "Name": "Avengers Key",
   "Icon": "Images/avengersIcon",
   "URL": "https://github.com/artrointel/",
-  "Version": "1.0b",
+  "Version": "1.0.0",
   "CodePath": "com.artrointel.avengerskey",
   "Category": "Avengers Key",
   "CategoryIcon": "Images/logo",

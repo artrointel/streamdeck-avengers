@@ -71,7 +71,7 @@ namespace ArtrointelPlugin.Control.Payload
                 return newEffectList;
             } catch(Exception e)
             {
-                Logger.Instance.LogMessage(TracingLevel.ERROR, "input effect data is wrong: " + e.ToString());
+                Logger.Instance.LogMessage(TracingLevel.ERROR, "Input effect data is wrong: " + e.ToString());
             }
             return null;
         }
@@ -92,12 +92,11 @@ namespace ArtrointelPlugin.Control.Payload
                     newFunctionList.Add(FunctionConfig.Load(
                         trigger, type, delay, interval, duration, metadata));
                 }
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "Loaded Payload, count is " + newFunctionList.Count);
                 return newFunctionList;
             }
             catch (Exception e)
             {
-                Logger.Instance.LogMessage(TracingLevel.ERROR, "input effect data is wrong: " + e.ToString());
+                Logger.Instance.LogMessage(TracingLevel.ERROR, "Input effect data is wrong: " + e.ToString());
             }
             return null;
         }

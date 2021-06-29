@@ -83,7 +83,6 @@ namespace ArtrointelPlugin
 
         public override void Dispose()
         {
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Plugin Dispose");
             Connection.OnApplicationDidLaunch -= Connection_OnApplicationDidLaunch;
             Connection.OnApplicationDidTerminate -= Connection_OnApplicationDidTerminate;
             Connection.OnDeviceDidConnect -= Connection_OnDeviceDidConnect;
@@ -108,7 +107,7 @@ namespace ArtrointelPlugin
 
         public override void ReceivedSettings(ReceivedSettingsPayload payload)
         {
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "ReceivedSettings," + payload.Settings);
+
         }
 
         public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload) { }

@@ -7,57 +7,11 @@
     <RootNamespace>ArtrointelPlugin</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>bin\Release\com.test.sdtools.sdPlugin\</OutputPath>
+    <OutputPath>bin\Release\com.artrointel.avengerskey.sdPlugin\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>bin\Debug\com.test.sdtools.sdPlugin\</OutputPath>
+    <OutputPath>bin\Debug\com.artrointel.avengerskey.sdPlugin\</OutputPath>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Properties\**" />
-    <Compile Remove="SDGraphics\Animator\**" />
-    <EmbeddedResource Remove="Properties\**" />
-    <EmbeddedResource Remove="SDGraphics\Animator\**" />
-    <None Remove="Properties\**" />
-    <None Remove="SDGraphics\Animator\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="PropertyInspector\settings.js" />
-  </ItemGroup> 
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="manifest.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="PropertyInspector\caret.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PropertyInspector\check.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PropertyInspector\check.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PropertyInspector\elg_calendar.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PropertyInspector\elg_calendar_inv.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PropertyInspector\rcheck.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PropertyInspector\sdpi.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PropertyInspector\settings.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PropertyInspector\sdtools.common.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\barraider-sdtools\barraider-sdtools.csproj" />
   </ItemGroup>

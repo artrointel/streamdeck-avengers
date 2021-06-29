@@ -38,10 +38,12 @@ Draws Moving waves on the border of the base image.
 ## Effect Combination Examples
 Each effect will be drawn **ordered by layer** in the effect property inspector.  
 
-### Effect Combination
+### Example. Effect Combination
+Example of an avengers key icon with effect combination.  
 ![Sample-Combination](./Images/example_combination.gif)  
+Configure every effects on your needs.
 
-### Skill icon like in game
+### Example. Skill Icon like in game
 Example of a Skill icon in game.  
 ![Sample-Skill](./Images/example_skill.gif)  
 Cooltime as pie, Duration as border wave and color overlay, touch feedback as circle spread, Cooltime-end feedback as flash.  
@@ -90,7 +92,7 @@ Use "Base Image : Update" button in the property inspector instead.
 - Initial release for the Avengers Key.
 
 # Platform
-- Windows
+- Windows 10
 
 # Future items
 - Image: animated gif support as base image (in ver1.x)

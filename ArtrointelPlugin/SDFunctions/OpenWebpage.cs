@@ -25,7 +25,7 @@ namespace ArtrointelPlugin.SDFunctions
             }
             catch
             {
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "Couldn't open page : " + metadata);
+                Logger.Instance.LogMessage(TracingLevel.ERROR, "Couldn't open page : " + metadata);
             }
             
         }

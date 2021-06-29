@@ -104,7 +104,6 @@ namespace ArtrointelPlugin.Control
                 mRenderEngine.addRenderer(renderer);
             }
             mRenderEngine.run();
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "updated render engine.");
         }
         #endregion
 
@@ -120,7 +119,6 @@ namespace ArtrointelPlugin.Control
             if(effectCount > 0)
             {
                 mSettings.EffectConfigurations = PayloadReader.LoadEffectDataFromPayload(payload, effectCount);
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "detected effect payload.");
                 refineEffectConfigurations();
                 initializeRenderEngine();
                 return true;
@@ -131,7 +129,6 @@ namespace ArtrointelPlugin.Control
             if (functionCount > 0)
             {
                 mSettings.FunctionConfigurations = PayloadReader.LoadFunctionDataFromPayload(payload, functionCount);
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "detected function payload.");
                 refineFunctionConfigurations();
                 initializeFunctionExecutor();
                 return true;
@@ -141,7 +138,6 @@ namespace ArtrointelPlugin.Control
             String imgPath = PayloadReader.isImageUpdatePayload(payload);
             if (imgPath != null && File.Exists(imgPath))
             {
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "detected update image payload, " + imgPath);
                 mSettings.Base64ImageString = FileIOManager.ProcessImageToBase64(imgPath);
                 initializeRenderEngine();
                 return true;

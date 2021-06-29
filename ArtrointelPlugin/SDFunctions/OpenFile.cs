@@ -16,12 +16,12 @@ namespace ArtrointelPlugin.SDFunctions
                 }
                 else
                 {
-                    Logger.Instance.LogMessage(TracingLevel.WARN, metadata + " does not exists.");
+                    Logger.Instance.LogMessage(TracingLevel.WARN, "OpenFile: " + metadata + " does not exists.");
                 }
             } 
             catch
             {
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "Couldn't open :" + metadata);
+                Logger.Instance.LogMessage(TracingLevel.ERROR, "Couldn't open :" + metadata);
             }
         }
     }
