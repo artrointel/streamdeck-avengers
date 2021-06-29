@@ -228,11 +228,11 @@ function createKeyCombinationOptionsDiv(idx) {
 	var loopDiv = createSdpiChildDiv(groupDiv, 'loop', idx, 'avg-container-center');
 	loopDiv.innerHTML =
         `<label class="sdpi-item-value avg-label">Delay</label>
-		<input class="sdpi-item-value avg-input-text" id="iFunctionDelay${idx}" type="text" placeholder="second" value="0.0"/>
+		<input class="sdpi-item-value avg-input-text" id="iFunctionDelay${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>
 		<label class="sdpi-item-value avg-label">Duration</label>
-		<input class="sdpi-item-value avg-input-text" id="iFunctionDuration${idx}" type="text" placeholder="second" value="0.0"/>
+		<input class="sdpi-item-value avg-input-text" id="iFunctionDuration${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>
 		<label class="sdpi-item-value avg-label">Interval</label>
-		<input class="sdpi-item-value avg-input-text" id="iFunctionInterval${idx}" type="text" placeholder="second" value="0.0"/>`;
+		<input class="sdpi-item-value avg-input-text" id="iFunctionInterval${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>`;
 	return openOptionDiv;
 }
 
@@ -252,11 +252,11 @@ function createTextOptionsDiv(idx) {
 	var loopDiv = createSdpiChildDiv(groupDiv, 'loop', idx, 'avg-container-center');
 	loopDiv.innerHTML =
         `<label class="sdpi-item-value avg-label">Delay</label>
-		<input class="sdpi-item-value avg-input-text" id="iFunctionDelay${idx}" type="text" placeholder="second" value="0.0"/>
+		<input class="sdpi-item-value avg-input-text" id="iFunctionDelay${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>
 		<label class="sdpi-item-value avg-label">Duration</label>
-		<input class="sdpi-item-value avg-input-text" id="iFunctionDuration${idx}" type="text" placeholder="second" value="0.0"/>
+		<input class="sdpi-item-value avg-input-text" id="iFunctionDuration${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>
 		<label class="sdpi-item-value avg-label">Interval</label>
-		<input class="sdpi-item-value avg-input-text" id="iFunctionInterval${idx}" type="text" placeholder="second" value="0.0"/>`;
+		<input class="sdpi-item-value avg-input-text" id="iFunctionInterval${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>`;
 	return openOptionDiv;
 }
 

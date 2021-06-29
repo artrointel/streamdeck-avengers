@@ -106,7 +106,7 @@ function _createRGBAPaletteDiv(groupDiv, idx) {
 	var argbDiv = createSdpiChildDiv(groupDiv, 'rgba', idx, 'avg-container-center');
 	argbDiv.innerHTML =
 		`<label class="sdpi-item-value avg-label">Color</label>
-		<input class="sdpi-item-value avg-input-color" id="iEffectRGB${idx}" type="color" />
+		<input class="sdpi-item-value avg-input-color" id="iEffectRGB${idx}" type="color" value="#ffffff"/>
 		<label class="sdpi-item-value avg-label">Transparency</label>
 		<input class="sdpi-item-value avg-input-range-alpha" id="iEffectAlpha${idx}" type="range" min="0" max="255" value="200" />`;
 	return argbDiv;
@@ -116,9 +116,9 @@ function _createAnimationPaletteDiv(groupDiv, idx) {
 	var animDiv = createSdpiChildDiv(groupDiv, 'anim', idx, 'avg-container-center');
 	animDiv.innerHTML =
 		`<label class="sdpi-item-value avg-label">Delay</label>
-		<input class="sdpi-item-value avg-input-text" id="iEffectDelay${idx}" type="text" placeholder="second" value="0.0"/>
+		<input class="sdpi-item-value avg-input-text" id="iEffectDelay${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>
 		<label class="sdpi-item-value avg-label">Duration</label>
-		<input class="sdpi-item-value avg-input-text" id="iEffectDuration${idx}" type="text" placeholder="second" value="0.0"/>`;
+		<input class="sdpi-item-value avg-input-text" id="iEffectDuration${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="1.0"/>`;
 	return animDiv;
 }
 
