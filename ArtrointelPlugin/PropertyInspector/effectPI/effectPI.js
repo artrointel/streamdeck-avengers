@@ -188,7 +188,7 @@ function buildEffectPayload() {
 	var payload = {};
 	var count = document.getElementsByName('effectItem').length;
 	payload['payload_updateEffects'] = 'true';
-	payload['payload_arrayCount'] = count;
+	payload['meta_arrayCount'] = count;
 	if (count > 0) {
 		for (var i = 1; i <= count; i++) {
 			payload['sEffectTrigger' + i] = getSelectValue('sEffectTrigger', i);

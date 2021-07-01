@@ -118,13 +118,16 @@ function createOpenFileOptionsDiv(idx) {
 	optionDiv.appendChild(groupDiv);
 
 	var descDiv = createSdpiChildDiv(groupDiv, 'desc', idx, 'avg-center');
-	descDiv.innerHTML = `Put path of a file or a folder to open`;
+	descDiv.innerHTML = `Put path of a file or a folder to open. click the button if you want to use file's icon in the stream deck.`;
 
 	var pathDiv = createSdpiChildDiv(groupDiv, 'path', idx, 'avg-container-center');
 	pathDiv.innerHTML =
 		`<input class="sdpi-item-value avg-input-text" id="iFunctionMetadata${idx}" type="text"
 			placeholder="ex) C:\myProgram.exe or C:\MyDownloadFolder"/>`;
 
+	var iconDiv = createSdpiChildDiv(groupDiv, 'icon', idx, 'avg-container-center');
+	iconDiv.innerHTML =
+		`<button type="button" value="Confirm" onclick="onUploadIconFromFile(${idx})">Upload this file's icon as base image</button>`;
 	return optionDiv;
 }
 
@@ -273,11 +276,19 @@ function onBtnApplyClicked() {
 	window.close();
 }
 
+function onUploadIconFromFile(idx) {
+	var metadata = document.getElementById('iFunctionMetadata' + idx);
+	var payload = {};
+	payload['payload_commands'] = 'true';
+	payload['meta_filePath'] = metadata.value;
+	window.opener.sendPayloadToPlugin(payload);
+}
+
 function buildFunctionPayload() {
 	var payload = {};
 	var count = document.getElementsByName('functionItem').length;
 	payload['payload_updateFunctions'] = 'true';
-	payload['payload_arrayCount'] = count;
+	payload['meta_arrayCount'] = count;
 	if (count > 0) {
 		for (var i = 1; i <= count; i++) {
 			payload['sFunctionTrigger' + i] = getSelectValue('sFunctionTrigger', i);

@@ -21,7 +21,7 @@ namespace ArtrointelPlugin.Control
         {
             AvengersKeySettings instance = new AvengersKeySettings
             {
-                Base64ImageString = FileIOManager.LoadFallbackBase64Image(),
+                Base64ImageString = FileIOManager.GetFallbackBase64Image(),
                 FunctionConfigurations = new ArrayList(),
                 EffectConfigurations = new ArrayList()
             };

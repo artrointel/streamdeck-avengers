@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using BarRaider.SdTools;
 
@@ -13,13 +9,15 @@ namespace ArtrointelPlugin.Utils
     internal class FileIOManager
     {
         // For resource directories
-        public const String RES_DIR = "Res";
-        public const String IMAGE_DIR = "Images";
-        public const String BASE_IMAGE_NAME = "baseImage.png";
+        public const string RES_DIR = "Res";
+        public const string IMAGE_DIR = "Images";
+        public const string BASE_IMAGE_NAME = "baseImage.png";
 
-        public static String getFallbackImagePath()
+        private static Image mFallbackImage;
+
+        public static string GetFallbackImagePath()
         {
-            var Sep = System.IO.Path.DirectorySeparatorChar;
+            var Sep = Path.DirectorySeparatorChar;
             return RES_DIR + Sep + IMAGE_DIR + Sep + BASE_IMAGE_NAME;
         }
 
@@ -73,7 +71,7 @@ namespace ArtrointelPlugin.Utils
         /// </summary>
         /// <param name="path"></param>
         /// <returns>base64image</returns>
-        public static string ProcessImageToBase64(String path)
+        public static string ProcessImageFileToSDBase64(String path)
         {
             string base64 = null;
             try
@@ -94,19 +92,48 @@ namespace ArtrointelPlugin.Utils
             return Tools.Base64StringToImage(base64ImageString);
         }
 
-        public static Image LoadFallbackImage()
+        public static string ImageToBase64(Image image)
         {
-            return Image.FromFile(getFallbackImagePath());
+            return Tools.ImageToBase64(image, false);
         }
 
-        public static string LoadFallbackBase64Image()
+        public static Image GetFallbackImage()
         {
-            return Tools.ImageToBase64(LoadFallbackImage(), false);
+            if(mFallbackImage == null)
+            {
+                mFallbackImage = Image.FromFile(GetFallbackImagePath());
+            }
+            return mFallbackImage;
+        }
+
+        public static string GetFallbackBase64Image()
+        {
+            return Tools.ImageToBase64(GetFallbackImage(), false);
         }
 
         public static Image LoadSpinner()
         {
             return Image.FromFile(getResourceImagePath("spinner.png"));
+        }
+
+        public static Image IconFromFile(string exePath)
+        {
+            FileInfo fileInfo = new FileInfo(exePath);
+            
+            Icon icon = null;
+            try
+            {
+                //icon = Icon.ExtractAssociatedIcon(exePath);
+                icon = new Icon(exePath, 256, 256);
+            } catch(Exception e)
+            {
+                DLogger.LogMessage(TracingLevel.ERROR, "Cannot create image : " + e.Message);
+            }
+            if(icon == null)
+            {
+                return null;
+            }
+            return icon.ToBitmap();
         }
     }
 }

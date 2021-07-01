@@ -12,8 +12,10 @@ namespace ArtrointelPlugin.Control.Payload
         public const string PAYLOAD_IMAGE_UPDATE_KEY = "payload_updateImage";
         public const string PAYLOAD_EFFECT_KEY = "payload_updateEffects";
         public const string PAYLOAD_FUNCTION_KEY = "payload_updateFunctions";
+        public const string PAYLOAD_COMMAND_KEY = "payload_commands";
 
-        public const string PAYLOAD_COUNT = "payload_arrayCount";
+        public const string META_DATA_COUNT = "meta_arrayCount";
+        public const string META_FILE_PATH = "meta_filePath";
 
         public const string KEY_EFFECT_TRIGGER = "sEffectTrigger";
         public const string KEY_EFFECT_TYPE = "sEffectType";
@@ -37,21 +39,25 @@ namespace ArtrointelPlugin.Control.Payload
 
         public static bool isEffectPayload(JObject payload)
         {
-            bool ret = false;
-            try
-            {
-                ret = bool.Parse(payload.Value<string>(PAYLOAD_EFFECT_KEY));
-            }
-            catch { }
-            return ret;
+            return identifyPayload(payload, PAYLOAD_EFFECT_KEY);
         }
 
         public static bool isFunctionPayload(JObject payload)
         {
+            return identifyPayload(payload, PAYLOAD_FUNCTION_KEY);
+        }
+
+        public static bool isCommandPayload(JObject payload)
+        {
+            return identifyPayload(payload, PAYLOAD_COMMAND_KEY);
+        }
+
+        private static bool identifyPayload(JObject payload, string key)
+        {
             bool ret = false;
             try
             {
-                ret = bool.Parse(payload.Value<string>(PAYLOAD_FUNCTION_KEY));
+                ret = bool.Parse(payload.Value<string>(key));
             }
             catch { }
             return ret;
@@ -59,13 +65,24 @@ namespace ArtrointelPlugin.Control.Payload
 
         public static int getArrayCount(JObject payload)
         {
-            return payload.Value<int>(PAYLOAD_COUNT);
+            return payload.Value<int>(META_DATA_COUNT);
         }
 
-        public static string isImageUpdatePayload(JObject payload)
+        public static bool isImageUpdatePayload(JObject payload)
         {
-            string imagePath = payload.Value<string>(PAYLOAD_IMAGE_UPDATE_KEY);
-            return imagePath;
+            return identifyPayload(payload, PAYLOAD_IMAGE_UPDATE_KEY);
+        }
+
+        public static string getFilePath(JObject payload)
+        {
+            string ret = null;
+            try
+            {
+                ret = payload.Value<string>(META_FILE_PATH);
+            }
+            catch { }
+            
+            return ret;
         }
 
         public static ArrayList LoadEffectDataFromPayload(JObject payload, int count)
@@ -86,7 +103,8 @@ namespace ArtrointelPlugin.Control.Payload
                         trigger, type, hexrgb, alpha, delay, duration, metadata));
                 }
                 return newEffectList;
-            } catch(Exception e)
+            } 
+            catch(Exception e)
             {
                 Logger.Instance.LogMessage(TracingLevel.ERROR, "Input effect data is wrong: " + e.ToString());
             }

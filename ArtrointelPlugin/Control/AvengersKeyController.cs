@@ -92,7 +92,7 @@ namespace ArtrointelPlugin.Control
             Image baseImage = FileIOManager.LoadBase64(mSettings.Base64ImageString);
             if (baseImage == null)
             {
-                baseImage = FileIOManager.LoadFallbackImage();
+                baseImage = FileIOManager.GetFallbackImage();
             }
             var imageRenderer = new ImageRenderer(baseImage);
             imageRenderer.invalidate();
@@ -135,14 +135,46 @@ namespace ArtrointelPlugin.Control
             }
             
             // Handles Image update payload
-            String imgPath = PayloadReader.isImageUpdatePayload(payload);
-            if (imgPath != null && File.Exists(imgPath))
+            if (PayloadReader.isImageUpdatePayload(payload))
             {
-                mSettings.Base64ImageString = FileIOManager.ProcessImageToBase64(imgPath);
-                initializeRenderEngine();
+                string imgPath = PayloadReader.getFilePath(payload);
+                if(imgPath != null && File.Exists(imgPath))
+                {
+                    mSettings.Base64ImageString = FileIOManager.ProcessImageFileToSDBase64(imgPath);
+                    initializeRenderEngine();
+                }
                 return true;
             }
 
+            // Handles Additional special commands for the Avengers Key.
+            if(PayloadReader.isCommandPayload(payload))
+            {
+                return handleCommands(payload);
+            }
+
+            return false;
+        }
+
+        private bool handleCommands(JObject payload)
+        {
+            // Command to use file icon as a base image
+            string data = PayloadReader.getFilePath(payload);
+            if (data != null && File.Exists(data)) {
+                try
+                {
+                    LoadIconHelper icon = new LoadIconHelper(data);
+                    Image resizedIcon = FileIOManager.ResizeImage(icon.getJumboIcon());
+                    string base64Image = FileIOManager.ImageToBase64(resizedIcon);
+                    resizedIcon.Dispose();
+                    mSettings.Base64ImageString = base64Image;
+                    initializeRenderEngine();
+                }
+                catch (Exception e)
+                {
+                    DLogger.LogMessage(TracingLevel.DEBUG, "Could not load icon from " + data + ": " + e.Message);
+                }
+                return true;
+            }
             return false;
         }
         
@@ -172,7 +204,7 @@ namespace ArtrointelPlugin.Control
 
         public void actionOnKeyReleased()
         {
-
+            // TODO not used at least now. for long-pressed event
         }
 
         public AvengersKeySettings getSettings()

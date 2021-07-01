@@ -32,7 +32,8 @@ function onImageUpdated(e) {
 
 function buildImageUpdatePayload(path) {
     var payload = {};
-    payload['payload_updateImage'] = path;
+    payload['payload_updateImage'] = 'true';
+    payload['meta_filePath'] = path;
     return payload;
 }
 
