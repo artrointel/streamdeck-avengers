@@ -45,7 +45,7 @@ function onAddNewFunction() {
 			</select>
 			<select class="sdpi-item-value" id="sFunctionType${idx}" onchange="onFunctionChanged(${idx})" style="width:50px">
 				<option value="Select">Select</option>
-				<option value="OpenFile">Open file/folder</option>
+				<option value="OpenFile">Open File/Folder</option>
 				<option value="OpenWebpage">Open Webpage</option>
 				<option value="ExecuteCommand">Execute Command</option>
 				<option value="Keycode">Key Combination</option>

@@ -111,6 +111,7 @@ namespace ArtrointelPlugin.Utils
             return Tools.ImageToBase64(GetFallbackImage(), false);
         }
 
+        // TODO not used yet
         public static Image LoadSpinner()
         {
             return Image.FromFile(getResourceImagePath("spinner.png"));

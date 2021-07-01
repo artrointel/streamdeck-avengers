@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Drawing;
+using System.Drawing.Imaging;
 using Newtonsoft.Json.Linq;
 using BarRaider.SdTools;
 using ArtrointelPlugin.SDGraphics;
@@ -89,8 +90,11 @@ namespace ArtrointelPlugin.Control
             }
             mRenderEngine = new RenderEngine();
             mRenderEngine.setRenderingUpdatedListener(mRendererUpdatedListener);
-            Image baseImage = FileIOManager.LoadBase64(mSettings.Base64ImageString);
-            if (baseImage == null)
+            Image baseImage = null;
+            try
+            {
+                baseImage = FileIOManager.LoadBase64(mSettings.Base64ImageString);
+            } catch
             {
                 baseImage = FileIOManager.GetFallbackImage();
             }
@@ -140,7 +144,29 @@ namespace ArtrointelPlugin.Control
                 string imgPath = PayloadReader.getFilePath(payload);
                 if(imgPath != null && File.Exists(imgPath))
                 {
-                    mSettings.Base64ImageString = FileIOManager.ProcessImageFileToSDBase64(imgPath);
+                    FileStream stream = new FileStream(imgPath, FileMode.Open);
+
+                    // TODO test
+                    Image image = Image.FromStream(stream);
+                    if (ImageAnimator.CanAnimate(image))
+                    {
+                        DLogger.LogMessage(TracingLevel.DEBUG, "animatable image loaded:" + imgPath);
+                        using (MemoryStream m = new MemoryStream())
+                        {
+                            image.Save(m, ImageFormat.Gif);
+                            byte[] imageBytes = m.ToArray();
+
+                            // Convert byte[] to Base64 String
+                            string base64String = Convert.ToBase64String(imageBytes);
+                            mSettings.Base64ImageString = base64String;
+                        }
+                    } else
+                    {
+                        mSettings.Base64ImageString = FileIOManager.ProcessImageFileToSDBase64(imgPath);
+                    }
+                    
+                    stream.Close();
+
                     initializeRenderEngine();
                 }
                 return true;
