@@ -7,7 +7,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
     public class PieRenderer : CanvasRendererBase, IAnimatableRenderer
     {
         // constants
-        private const int PIE_RADIUS = (int)((SDCanvas.DEFAULT_IMAGE_SIZE / 2) * 1.42); // pie tightly covers the canvas
+        private const int PIE_RADIUS = (int)((BufferedCanvas.DEFAULT_IMAGE_SIZE / 2) * 1.42); // pie tightly covers the canvas
 
         // input data
         private double mInputDurationInSecond; // animation in second
@@ -25,6 +25,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
         private DelayedTask mDelayedTask;
 
         public PieRenderer(Color color, double durationInSecond, bool grow = false, bool clockwise = false)
+            : base(BufferedCanvas.DefaultCreateInfo)
         {
             mInputDurationInSecond = durationInSecond;
             mInputColor = color;
@@ -42,7 +43,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
                 mAnimatorInterval < loosenAnimationInterval ? 
                 loosenAnimationInterval : mAnimatorInterval;
 
-            int center = SDCanvas.DEFAULT_IMAGE_SIZE / 2;
+            int center = BufferedCanvas.DEFAULT_IMAGE_SIZE / 2;
             mPieBrush = new SolidBrush(mInputColor);
             mRectPieGeometry = new Rectangle(center - PIE_RADIUS, center - PIE_RADIUS, PIE_RADIUS * 2, PIE_RADIUS * 2);
 
@@ -91,10 +92,9 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             }
         }
 
-        public override void onRender(Graphics graphics)
+        protected override void onRender(Graphics graphics)
         {
             mRenderPieMethod(graphics);
-            base.onRender(graphics);
         }
 
         public void animate(double delayInSecond, bool restart)

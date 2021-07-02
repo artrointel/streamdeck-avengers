@@ -1,37 +1,65 @@
 ﻿using System.Drawing;
+using System;
+using System.Threading.Tasks;
 
 namespace ArtrointelPlugin.SDGraphics.Renderer
 {
     /// <summary>
     /// Base class of the renderer. Override <see cref="onRender(Graphics)"/>
     /// </summary>
-    public abstract class CanvasRendererBase : ICanvasRenderer
+    public abstract class CanvasRendererBase
     {
-        public SDCanvas mOffscreenCanvas { get; }
+        protected BufferedCanvas mOffscreenCanvas { get; }
         private bool mNeedToRender = false;
         private bool mVisible = true;
 
+        private object o = new object();
+
         public CanvasRendererBase(
-            int canvasWidth = SDCanvas.DEFAULT_IMAGE_SIZE,
-            int canvasHeight = SDCanvas.DEFAULT_IMAGE_SIZE)
+            BufferedCanvas.CreateInfo info,
+            int canvasWidth = BufferedCanvas.DEFAULT_IMAGE_SIZE,
+            int canvasHeight = BufferedCanvas.DEFAULT_IMAGE_SIZE)
         {
-            mOffscreenCanvas = SDCanvas.CreateCanvas(canvasWidth, canvasHeight);
+            mOffscreenCanvas = new BufferedCanvas(info, canvasWidth, canvasHeight);
         }
 
         public void invalidate()
         {
-            mNeedToRender = true;
+            lock (o)
+            {
+                mNeedToRender = true;
+            }
         }
 
         public bool needToUpdate()
         {
-            return mNeedToRender;
+            lock (o)
+            {
+                return mNeedToRender;
+            }
         }
 
-        public virtual void onRender(Graphics graphics)
+        internal async void renderAsync(Action asyncCallback)
         {
-            mNeedToRender = false;
+            await Task.Run(() => {
+                BufferedCanvas.Canvas c = mOffscreenCanvas.acquire();
+                if(c != null)
+                {
+                    var gfx = c.lockCanvas();
+                    onRender(gfx);
+                    c.unlockCanvas();
+                    lock(o)
+                    {
+                        mNeedToRender = false;
+                    }
+
+                    if (asyncCallback != null)
+                        asyncCallback();
+                }
+            });
         }
+
+        protected abstract void onRender(Graphics graphics);
 
         public bool isVisible()
         {
@@ -43,9 +71,14 @@ namespace ArtrointelPlugin.SDGraphics.Renderer
             mVisible = visible;
         }
 
+        internal BufferedCanvas getBufferedCanvas()
+        {
+            return mOffscreenCanvas;
+        }
+
         public virtual void onDestroy()
         {
-            mOffscreenCanvas.mImage.Dispose();
+            mOffscreenCanvas.dispose();
         }
     }
 }
