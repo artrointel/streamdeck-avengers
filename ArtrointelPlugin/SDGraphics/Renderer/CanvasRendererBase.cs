@@ -1,13 +1,14 @@
 ﻿using System.Drawing;
+using System.Threading.Tasks;
 
 namespace ArtrointelPlugin.SDGraphics.Renderer
 {
     /// <summary>
     /// Base class of the renderer. Override <see cref="onRender(Graphics)"/>
     /// </summary>
-    public abstract class CanvasRendererBase : ICanvasRenderer
+    public abstract class CanvasRendererBase
     {
-        public SDCanvas mOffscreenCanvas { get; }
+        protected SDCanvas mOffscreenCanvas;
         private bool mNeedToRender = false;
         private bool mVisible = true;
 
@@ -18,6 +19,9 @@ namespace ArtrointelPlugin.SDGraphics.Renderer
             mOffscreenCanvas = SDCanvas.CreateCanvas(canvasWidth, canvasHeight);
         }
 
+        /// <summary>
+        /// Set this renderer need to be rendered. <see cref="renderAsync()"/>
+        /// </summary>
         public void invalidate()
         {
             mNeedToRender = true;
@@ -28,9 +32,32 @@ namespace ArtrointelPlugin.SDGraphics.Renderer
             return mNeedToRender;
         }
 
-        public virtual void onRender(Graphics graphics)
+        /// <summary>
+        /// Renders on internal offscreen canvas. <see cref="mNeedToRender"/> flag is set false after this rendering call.
+        /// </summary>
+        public async void renderAsync()
         {
+            await Task.Run(() =>
+            {
+                onRender(mOffscreenCanvas.getGraphics());
+                // TODO lock and called on updated callback?
+            });
             mNeedToRender = false;
+        }
+
+        /// <summary>
+        /// Override this method for graphic rendering.
+        /// </summary>
+        /// <param name="graphics"></param>
+        protected abstract void onRender(Graphics graphics);
+
+        /// <summary>
+        /// Gets the rendering result as Image from offscreen canvas. <see cref="SDCanvas.getImage()"/>
+        /// </summary>
+        /// <returns></returns>
+        public Image getImage()
+        {
+            return mOffscreenCanvas.getImage();
         }
 
         public bool isVisible()
@@ -45,7 +72,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer
 
         public virtual void onDestroy()
         {
-            mOffscreenCanvas.mImage.Dispose();
+            mOffscreenCanvas.Dispose();
         }
     }
 }

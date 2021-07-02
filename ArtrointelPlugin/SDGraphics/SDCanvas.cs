@@ -7,40 +7,66 @@ namespace ArtrointelPlugin.SDGraphics
     {
         public const int DEFAULT_IMAGE_SIZE = 144;
 
-        public Graphics mGraphics;
-        public Image mImage;
-        public SDCanvas(Graphics graphics, Image image)
+        private Image mImage;
+        private Graphics mGraphicsForImage;
+        private BufferedGraphicsContext mCtx;
+        private BufferedGraphics mBufferedGfx; // TODO on swapbuffer async callback??
+        
+        private SDCanvas(BufferedGraphicsContext bCtx, BufferedGraphics bGfx, Image image, Graphics graphicsForImage)
         {
-            mGraphics = graphics;
+            mGraphicsForImage = graphicsForImage;
+            mCtx = bCtx;
+            mBufferedGfx = bGfx;
             mImage = image;
+        }
+
+        ~SDCanvas()
+        {
+            Dispose();
+        }
+        
+        public void Dispose()
+        {
+            mBufferedGfx.Dispose();
+            mGraphicsForImage.Dispose();
+            mImage.Dispose();
+            mCtx.Dispose();
+        }
+
+        /// <summary>
+        /// Returns the image that rendered by it's graphic buffer.
+        /// </summary>
+        /// <returns>Result of the rendering</returns>
+        public Image getImage()
+        {
+            mBufferedGfx.Render(mGraphicsForImage);
+            return mImage;
+        }
+
+        public Graphics getGraphics()
+        {
+            return mBufferedGfx.Graphics;
         }
 
         public static SDCanvas CreateCanvas(int width = DEFAULT_IMAGE_SIZE, int height = DEFAULT_IMAGE_SIZE)
         {
+            Rectangle geometry = new Rectangle(0, 0, width, height);
             Bitmap bitmap = new Bitmap(width, height);
-            var brush = new SolidBrush(Color.Empty);
             Graphics graphics = Graphics.FromImage(bitmap);
+            graphics.CompositingMode = CompositingMode.SourceOver; //TODO remove unused
             graphics.SmoothingMode = SmoothingMode.AntiAlias;
             graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
             graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            graphics.Clear(Color.Empty);
+            BufferedGraphicsContext bCtx = new BufferedGraphicsContext();
+            BufferedGraphics bgfx = bCtx.Allocate(graphics, geometry);
+            bgfx.Graphics.CompositingMode = CompositingMode.SourceOver;
+            bgfx.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            bgfx.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            bgfx.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            bgfx.Graphics.Clear(Color.Empty);
 
-            graphics.FillRectangle(brush, 0, 0, width, height);
-
-            return new SDCanvas(graphics, bitmap);
-        }
-
-        public static SDCanvas CopyCanvas(SDCanvas target)
-        {
-            int width = target.mImage.Width;
-            int height = target.mImage.Height;
-            Bitmap bitmap = new Bitmap(width, height);
-            var brush = new SolidBrush(Color.Empty);
-            Graphics graphics = Graphics.FromImage(bitmap);
-            graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            graphics.DrawImage(target.mImage, Point.Empty);
-            return new SDCanvas(graphics, bitmap);
+            return new SDCanvas(bCtx, bgfx, bitmap, graphics);
         }
     }
 }

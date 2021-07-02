@@ -8,8 +8,6 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
 {
     public class BorderWaveRenderer : CanvasRendererBase, IAnimatableRenderer
     {
-        // constants
-        
         // input data
         private double mInputDurationInSecond; // animation in second
         private Color mInputColor; // color of wave
@@ -156,7 +154,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             // mSpinnerImage = FileIOManager.ResizeImage(FileIOManager.LoadSpinner(), thickness, thickness);
             // mSpinnerCanvas = SDCanvas.CreateCanvas();
 
-            mOffscreenCanvas.mGraphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+            mOffscreenCanvas.getGraphics().CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
             mAlphaScaler = new ImageAttributes();
             var cm = new ColorMatrix();
             cm.Matrix33 = (float)(1 - trailReducer); // reduce trails by alpha
@@ -189,17 +187,17 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             });
         }
 
-        public override void onRender(Graphics graphics)
+        protected override void onRender(Graphics graphics)
         {
             if(mVanishing)
             {
-                graphics.DrawImage(mOffscreenCanvas.mImage,
+                graphics.DrawImage(mOffscreenCanvas.getImage(),
                        new Rectangle(0, 0, SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE),
                        0, 0, SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE,
                        GraphicsUnit.Pixel, mVanishingScaler);
             } else
             {
-                graphics.DrawImage(mOffscreenCanvas.mImage,
+                graphics.DrawImage(mOffscreenCanvas.getImage(),
                        new Rectangle(0, 0, SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE),
                        0, 0, SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE,
                        GraphicsUnit.Pixel, mAlphaScaler); 
@@ -210,7 +208,6 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
 
                 graphics.FillRectangles(mWaveBrush, geometries);
             }
-            base.onRender(graphics);
         }
 
         public void animate(double delayInSecond, bool restart)

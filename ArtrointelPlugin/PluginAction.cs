@@ -24,9 +24,9 @@ namespace ArtrointelPlugin
         
         public PluginAction(ISDConnection connection, InitialPayload payload) : base(connection, payload)
         {
-            mController = new AvengersKeyController(payload.Settings, async (canvas) =>
+            mController = new AvengersKeyController(payload.Settings, async (image) =>
             {
-                await Connection.SetImageAsync(canvas.mImage);
+                await Connection.SetImageAsync(image);
             });
 
             Connection.OnApplicationDidLaunch += Connection_OnApplicationDidLaunch;
@@ -96,7 +96,10 @@ namespace ArtrointelPlugin
 
         public async override void KeyPressed(KeyPayload payload)
         {
-            mController.actionOnKeyPressed();
+            await Task.Run(() =>
+            {
+                mController.actionOnKeyPressed();
+            });
         }
 
         public async override void KeyReleased(KeyPayload payload) 

@@ -29,7 +29,7 @@ namespace ArtrointelPlugin.SDGraphics
         SDCanvas mCompositedCanvas;
         bool mNeedComposition;
 
-        Action<SDCanvas> mOnUpdatedCanvas;
+        Action<Image> mOnUpdatedCanvas;
 
         /// <summary>
         /// It renders and composites per input frameRate.
@@ -39,7 +39,6 @@ namespace ArtrointelPlugin.SDGraphics
         {
             mFrameDuration = 1000.0 / frameRate;
             mCompositedCanvas = SDCanvas.CreateCanvas();
-            mCompositedCanvas.mGraphics.CompositingMode = CompositingMode.SourceOver;
 
             mRenderTimer = new Timer(mFrameDuration);
             mRenderTimer.Elapsed += onTimedEvent;
@@ -89,14 +88,14 @@ namespace ArtrointelPlugin.SDGraphics
                 renderer.onDestroy();
             }
             mRenderers.Clear();
-            mCompositedCanvas.mImage.Dispose();
+            mCompositedCanvas.Dispose();
         }
 
         /// <summary>
         /// listener is called whenever the rendering result is updated.
         /// </summary>
         /// <param name="listener"></param>
-        public void setRenderingUpdatedListener(Action<SDCanvas> listener)
+        public void setRenderingUpdatedListener(Action<Image> listener)
         {
             mOnUpdatedCanvas = listener;
         }
@@ -138,7 +137,7 @@ namespace ArtrointelPlugin.SDGraphics
             doRender();
             if (doComposite() && (mOnUpdatedCanvas != null))
             {
-                mOnUpdatedCanvas(mCompositedCanvas);
+                mOnUpdatedCanvas(mCompositedCanvas.getImage());
             }
         }
 
@@ -149,7 +148,7 @@ namespace ArtrointelPlugin.SDGraphics
             {
                 if(renderer.needToUpdate())
                 {
-                    renderer.onRender(renderer.mOffscreenCanvas.mGraphics);
+                    renderer.renderAsync();
                     mNeedComposition = true;
                 }
             }
@@ -159,11 +158,11 @@ namespace ArtrointelPlugin.SDGraphics
         {
             if(mNeedComposition)
             {
-                mCompositedCanvas.mGraphics.Clear(Color.Black);
+                mCompositedCanvas.getGraphics().Clear(Color.Empty);
                 foreach (CanvasRendererBase renderer in mRenderers)
                 {
                     if(renderer.isVisible())
-                        mCompositedCanvas.mGraphics.DrawImage(renderer.mOffscreenCanvas.mImage, new Point(0, 0));
+                        mCompositedCanvas.getGraphics().DrawImage(renderer.getImage(), new Point(0, 0));
                 }
                 return true;
             }

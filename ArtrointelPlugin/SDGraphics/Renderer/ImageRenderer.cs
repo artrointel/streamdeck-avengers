@@ -4,22 +4,29 @@ namespace ArtrointelPlugin.SDGraphics.Renderer
 {
     public class ImageRenderer : CanvasRendererBase
     {
+        public Rectangle DEFAULT_IMAGE_CANVAS = new Rectangle(0, 0, 
+            SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE);
         private Image mImage;
+        private Rectangle mGeometry;
 
         public ImageRenderer(Image image)
         {
             mImage = image;
+            mGeometry = DEFAULT_IMAGE_CANVAS;
         }
 
-        public override void onRender(Graphics graphics)
+        public ImageRenderer(Image image, Rectangle geometry)
         {
-            // TODO any exception? ->  fallback image
+            mGeometry = geometry;
+        }
+
+        protected override void onRender(Graphics graphics)
+        {
             if(mImage != null)
             {
-                graphics.DrawImage(mImage, 0, 0, SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE);
+                graphics.Clear(Color.Empty);
+                graphics.DrawImage(mImage, mGeometry);
             }
-
-            base.onRender(graphics);
         }
 
         public override void onDestroy()

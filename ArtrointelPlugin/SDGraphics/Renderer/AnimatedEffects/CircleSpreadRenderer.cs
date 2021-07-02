@@ -50,11 +50,10 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             });
         }
 
-        public override void onRender(Graphics graphics)
+        protected override void onRender(Graphics graphics)
         {
             graphics.Clear(Color.Empty);
             graphics.FillEllipse(new SolidBrush(mAnimCircleColor), mRectCircleGeometry);
-            base.onRender(graphics);
         }
 
         public void animate(double delayInSecond, bool restart)
