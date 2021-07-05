@@ -19,7 +19,7 @@ namespace ArtrointelPlugin.Control
     public class AvengersKeyController
     {
         #region Internal Members
-        private Action<BufferedCanvas> mRendererUpdatedListener;
+        private Action<SDCanvas> mRendererUpdatedListener;
 
         // Render engine to render user-customized effects
         private RenderEngine mRenderEngine;
@@ -31,7 +31,7 @@ namespace ArtrointelPlugin.Control
         AvengersKeySettings mSettings;
         #endregion
 
-        public AvengersKeyController(JObject settings, Action<BufferedCanvas> rendererUpdatedListener)
+        public AvengersKeyController(JObject settings, Action<SDCanvas> rendererUpdatedListener)
         {
             mSettings = AvengersKeySettings.LoadFrom(settings);
             mRendererUpdatedListener = rendererUpdatedListener;

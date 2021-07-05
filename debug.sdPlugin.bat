@@ -36,4 +36,4 @@ Rem disable your anti-virus system if it cannot release the your.streamDeckPlugi
 DistributionTool.exe -b -i %TARGET_DIR% -o %RELEASE_DIR%
 
 Rem remove belows for debugging
-Rem rmdir /s /q %TARGET_DIR%
+rmdir /s /q %TARGET_DIR%

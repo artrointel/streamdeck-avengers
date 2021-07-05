@@ -1,9 +1,18 @@
 ﻿using BarRaider.SdTools;
 using BarRaider.SdTools.Wrappers;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using ArtrointelPlugin.Control;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using ArtrointelPlugin.Utils;
 
 namespace ArtrointelPlugin
@@ -17,14 +26,7 @@ namespace ArtrointelPlugin
         {
             mController = new AvengersKeyController(payload.Settings, async (canvas) =>
             {
-                Image img = canvas.consume();
-                if(img != null)
-                {
-                    DLogger.LogMessage("setImageAsync!");
-                    Task task = Connection.SetImageAsync(img);
-                    await task.ContinueWith((t) => { img.Dispose(); });
-                }
-                // TODO dispose img
+                await Connection.SetImageAsync(canvas.mImage);
             });
 
             Connection.OnApplicationDidLaunch += Connection_OnApplicationDidLaunch;
@@ -94,9 +96,7 @@ namespace ArtrointelPlugin
 
         public async override void KeyPressed(KeyPayload payload)
         {
-            await Task.Run(() => {
-                mController.actionOnKeyPressed();
-            });
+            mController.actionOnKeyPressed();
         }
 
         public async override void KeyReleased(KeyPayload payload) 

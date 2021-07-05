@@ -25,7 +25,6 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
         /// </summary>
         /// <param name="color"></param>
         public ColorOverlayRenderer(Color color, double durationInSecond)
-            : base(BufferedCanvas.DefaultCreateInfo)
         {
             mInputColor = color;
             mInputDurationInMillisecond = (int)(durationInSecond * 1000);
@@ -63,9 +62,10 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             });
         }
 
-        protected override void onRender(Graphics graphics)
+        public override void onRender(Graphics graphics)
         {
             graphics.Clear(mAnimFlashColor);
+            base.onRender(graphics);
         }
 
         public void animate(double delayInSecond, bool restart)

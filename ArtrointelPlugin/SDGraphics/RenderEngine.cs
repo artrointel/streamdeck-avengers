@@ -26,11 +26,10 @@ namespace ArtrointelPlugin.SDGraphics
         private Timer mRenderTimer;
 
         ArrayList mRenderers = new ArrayList();
-        BufferedCanvas mCompositedCanvas;
+        SDCanvas mCompositedCanvas;
         bool mNeedComposition;
-        object synCompObj = new object();
 
-        Action<BufferedCanvas> mOnUpdatedCanvas;
+        Action<SDCanvas> mOnUpdatedCanvas;
 
         /// <summary>
         /// It renders and composites per input frameRate.
@@ -39,7 +38,8 @@ namespace ArtrointelPlugin.SDGraphics
         public RenderEngine(int frameRate = FRAME_RATE_HINT)
         {
             mFrameDuration = 1000.0 / frameRate;
-            mCompositedCanvas = new BufferedCanvas(BufferedCanvas.DefaultCreateInfo);
+            mCompositedCanvas = SDCanvas.CreateCanvas();
+            mCompositedCanvas.mGraphics.CompositingMode = CompositingMode.SourceOver;
 
             mRenderTimer = new Timer(mFrameDuration);
             mRenderTimer.Elapsed += onTimedEvent;
@@ -89,14 +89,14 @@ namespace ArtrointelPlugin.SDGraphics
                 renderer.onDestroy();
             }
             mRenderers.Clear();
-            mCompositedCanvas.dispose();
+            mCompositedCanvas.mImage.Dispose();
         }
 
         /// <summary>
         /// listener is called whenever the rendering result is updated.
         /// </summary>
         /// <param name="listener"></param>
-        public void setRenderingUpdatedListener(Action<BufferedCanvas> listener)
+        public void setRenderingUpdatedListener(Action<SDCanvas> listener)
         {
             mOnUpdatedCanvas = listener;
         }
@@ -136,14 +136,6 @@ namespace ArtrointelPlugin.SDGraphics
         private void onTimedEvent(object sender, ElapsedEventArgs e)
         {
             doRender();
-            lock (synCompObj)
-            {
-                if (mNeedComposition)
-                {
-                    mNeedComposition = false;
-                }
-                else return;
-            }
             if (doComposite() && (mOnUpdatedCanvas != null))
             {
                 mOnUpdatedCanvas(mCompositedCanvas);
@@ -152,40 +144,27 @@ namespace ArtrointelPlugin.SDGraphics
 
         private void doRender()
         {
+            mNeedComposition = false;
             foreach(CanvasRendererBase renderer in mRenderers)
             {
                 if(renderer.needToUpdate())
                 {
-                    renderer.renderAsync(() => {
-                        lock (synCompObj)
-                        {
-                            mNeedComposition = true;
-                        }
-                    });
+                    renderer.onRender(renderer.mOffscreenCanvas.mGraphics);
+                    mNeedComposition = true;
                 }
             }
         }
 
         private bool doComposite()
         {
-            BufferedCanvas.Canvas c = mCompositedCanvas.acquire();
-            if (c != null)
+            if(mNeedComposition)
             {
-                Graphics gfx = c.lockCanvas();
-                gfx.Clear(Color.Empty);
+                mCompositedCanvas.mGraphics.Clear(Color.Black);
                 foreach (CanvasRendererBase renderer in mRenderers)
                 {
-                    if (renderer.isVisible())
-                    {
-                        Image img = renderer.getBufferedCanvas().consume();
-                        if (img != null)
-                        {
-                            gfx.DrawImage(img, new Point(0, 0));
-                            img.Dispose();
-                        }
-                    }
+                    if(renderer.isVisible())
+                        mCompositedCanvas.mGraphics.DrawImage(renderer.mOffscreenCanvas.mImage, new Point(0, 0));
                 }
-                c.unlockCanvas();
                 return true;
             }
             return false;

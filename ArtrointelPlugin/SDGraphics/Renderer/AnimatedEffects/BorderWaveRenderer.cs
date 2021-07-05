@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 using System.Collections;
 using System.Drawing.Imaging;
-using System.Drawing.Drawing2D;
 using ArtrointelPlugin.Utils;
 
 
@@ -9,7 +8,8 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
 {
     public class BorderWaveRenderer : CanvasRendererBase, IAnimatableRenderer
     {
-        #region member vars
+        // constants
+        
         // input data
         private double mInputDurationInSecond; // animation in second
         private Color mInputColor; // color of wave
@@ -28,7 +28,6 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
         private bool mVanishing;
 
         private DelayedTask mDelayedTask;
-        #endregion
 
         public class BorderSpinner // border spinner
         {
@@ -50,7 +49,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             {
                 mState = state;
                 mSpinnerSize = spinnerSize;
-                mEndPoint = BufferedCanvas.DEFAULT_IMAGE_SIZE - mSpinnerSize;
+                mEndPoint = SDCanvas.DEFAULT_IMAGE_SIZE - mSpinnerSize;
                 switch (state)
                 {
                     case State.TOP:
@@ -133,11 +132,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             }
         }
 
-        public BorderWaveRenderer(
-            Color color, double durationInSecond, 
-            int thickness = 14, double trailReducer = 0.02, 
-            int speed = 3, bool wave4 = true)
-            : base(new BufferedCanvas.CreateInfo() { CompositingMode = CompositingMode.SourceCopy} )
+        public BorderWaveRenderer(Color color, double durationInSecond, int thickness = 14, double trailReducer = 0.02, int speed = 3, bool wave4 = true)
         {
             mInputColor = color;
             mInputDurationInSecond = durationInSecond;
@@ -161,6 +156,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             // mSpinnerImage = FileIOManager.ResizeImage(FileIOManager.LoadSpinner(), thickness, thickness);
             // mSpinnerCanvas = SDCanvas.CreateCanvas();
 
+            mOffscreenCanvas.mGraphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
             mAlphaScaler = new ImageAttributes();
             var cm = new ColorMatrix();
             cm.Matrix33 = (float)(1 - trailReducer); // reduce trails by alpha
@@ -193,28 +189,19 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             });
         }
 
-        protected override void onRender(Graphics graphics)
+        public override void onRender(Graphics graphics)
         {
             if(mVanishing)
             {
-                Image img = mOffscreenCanvas.peekImage();
-                if(img == null)
-                    return;
-
-                graphics.DrawImage(img,
-                       new Rectangle(0, 0, BufferedCanvas.DEFAULT_IMAGE_SIZE, BufferedCanvas.DEFAULT_IMAGE_SIZE),
-                       0, 0, BufferedCanvas.DEFAULT_IMAGE_SIZE, BufferedCanvas.DEFAULT_IMAGE_SIZE,
+                graphics.DrawImage(mOffscreenCanvas.mImage,
+                       new Rectangle(0, 0, SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE),
+                       0, 0, SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE,
                        GraphicsUnit.Pixel, mVanishingScaler);
-                img.Dispose();
             } else
             {
-                Image img = mOffscreenCanvas.peekImage();
-                if (img == null)
-                    return;
-
-                graphics.DrawImage(img,
-                       new Rectangle(0, 0, BufferedCanvas.DEFAULT_IMAGE_SIZE, BufferedCanvas.DEFAULT_IMAGE_SIZE),
-                       0, 0, BufferedCanvas.DEFAULT_IMAGE_SIZE, BufferedCanvas.DEFAULT_IMAGE_SIZE,
+                graphics.DrawImage(mOffscreenCanvas.mImage,
+                       new Rectangle(0, 0, SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE),
+                       0, 0, SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE,
                        GraphicsUnit.Pixel, mAlphaScaler); 
                 
                 RectangleF[] geometries = new RectangleF[mSpinners.Count];
@@ -222,8 +209,8 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
                     geometries[i] = ((BorderSpinner)mSpinners[i]).mRectangle;
 
                 graphics.FillRectangles(mWaveBrush, geometries);
-                img.Dispose();
             }
+            base.onRender(graphics);
         }
 
         public void animate(double delayInSecond, bool restart)

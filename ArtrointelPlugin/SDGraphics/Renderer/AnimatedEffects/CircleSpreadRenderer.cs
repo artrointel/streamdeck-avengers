@@ -9,7 +9,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
     public class CircleSpreadRenderer : CanvasRendererBase, IAnimatableRenderer
     {
         // constants
-        private const int CIRCLE_START_RADIUS = BufferedCanvas.DEFAULT_IMAGE_SIZE / 10;
+        private const int CIRCLE_START_RADIUS = SDCanvas.DEFAULT_IMAGE_SIZE / 10;
         
         // input data
         private Color mInputColor;
@@ -22,7 +22,6 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
         private DelayedTask mDelayedTask;
 
         public CircleSpreadRenderer(Color color, double durationInSecond)
-            : base(BufferedCanvas.DefaultCreateInfo)
         {           
             mInputColor = color;
             mInputDurationInMillisecond = (int)(durationInSecond * 1000);
@@ -31,11 +30,11 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
 
         private void initialize()
         {
-            int center = BufferedCanvas.DEFAULT_IMAGE_SIZE / 2;
+            int center = SDCanvas.DEFAULT_IMAGE_SIZE / 2;
             mRectCircleGeometry = new Rectangle(center, center, 0, 0);
 
             mCircleAnimator = new ValueAnimator(
-                CIRCLE_START_RADIUS, BufferedCanvas.DEFAULT_IMAGE_SIZE * 1.42f, // maximum circle radius should be (IMAGE_SIZE * sqrt(2)) to fit the rect.
+                CIRCLE_START_RADIUS, SDCanvas.DEFAULT_IMAGE_SIZE * 1.42f, // maximum circle radius should be (IMAGE_SIZE * sqrt(2)) to fit the rect.
                 mInputDurationInMillisecond, ValueAnimator.INTERVAL_60_PER_SEC);
 
             mCircleAnimator.setAnimationListeners((value, duration) => {
@@ -51,10 +50,11 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             });
         }
 
-        protected override void onRender(Graphics graphics)
+        public override void onRender(Graphics graphics)
         {
             graphics.Clear(Color.Empty);
             graphics.FillEllipse(new SolidBrush(mAnimCircleColor), mRectCircleGeometry);
+            base.onRender(graphics);
         }
 
         public void animate(double delayInSecond, bool restart)

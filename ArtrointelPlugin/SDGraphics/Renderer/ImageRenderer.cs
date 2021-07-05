@@ -6,17 +6,20 @@ namespace ArtrointelPlugin.SDGraphics.Renderer
     {
         private Image mImage;
 
-        public ImageRenderer(Image image) : base(BufferedCanvas.DefaultCreateInfo)
+        public ImageRenderer(Image image)
         {
             mImage = image;
         }
 
-        protected override void onRender(Graphics graphics)
+        public override void onRender(Graphics graphics)
         {
+            // TODO any exception? ->  fallback image
             if(mImage != null)
             {
-                graphics.DrawImage(mImage, 0, 0, BufferedCanvas.DEFAULT_IMAGE_SIZE, BufferedCanvas.DEFAULT_IMAGE_SIZE);
+                graphics.DrawImage(mImage, 0, 0, SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE);
             }
+
+            base.onRender(graphics);
         }
 
         public override void onDestroy()
