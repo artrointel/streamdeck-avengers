@@ -14,8 +14,14 @@ namespace ArtrointelPlugin.SDGraphics.Renderer
         public CanvasRendererBase(
             int canvasWidth = SDCanvas.DEFAULT_IMAGE_SIZE,
             int canvasHeight = SDCanvas.DEFAULT_IMAGE_SIZE)
+            : this(SDCanvas.CreateInfo.DEFAULT, canvasWidth, canvasHeight)
+        {}
+
+        public CanvasRendererBase(SDCanvas.CreateInfo info,
+            int canvasWidth = SDCanvas.DEFAULT_IMAGE_SIZE,
+            int canvasHeight = SDCanvas.DEFAULT_IMAGE_SIZE)
         {
-            mOffscreenCanvas = SDCanvas.CreateCanvas(canvasWidth, canvasHeight);
+            mOffscreenCanvas = SDCanvas.CreateCanvas(info, canvasWidth, canvasHeight);
         }
 
         public void invalidate()
@@ -45,7 +51,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer
 
         public virtual void onDestroy()
         {
-            mOffscreenCanvas.mImage.Dispose();
+            mOffscreenCanvas.Dispose();
         }
     }
 }

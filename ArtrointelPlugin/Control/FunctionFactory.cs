@@ -8,6 +8,9 @@ namespace ArtrointelPlugin.Control
     {
         public static bool IsSupported(FunctionConfig cfg)
         {
+            if(cfg.mType == null)
+                return false;
+
             foreach (FunctionConfig.EType t in Enum.GetValues(typeof(FunctionConfig.EType)))
             {
                 if (cfg.mType.Equals(t.ToString())) return true;
@@ -17,7 +20,11 @@ namespace ArtrointelPlugin.Control
 
         internal static IExecutable CreateExecutable(FunctionConfig cfg)
         {
+            if (cfg.mType == null)
+                return null;
+
             IExecutable e = null;
+
             if (cfg.mType.Equals(FunctionConfig.EType.ExecuteCommand.ToString()))
             {
                 e = new ExecuteCommand();

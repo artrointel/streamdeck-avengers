@@ -16,10 +16,7 @@ namespace ArtrointelPlugin.Control.Model
         public double mDuration;
         public string mMetadata;
 
-        private EffectConfig()
-        {
-
-        }
+        private EffectConfig() {}
 
         public Color getColor()
         {
@@ -40,8 +37,7 @@ namespace ArtrointelPlugin.Control.Model
         }
 
         public override string ToString() {
-            string ret = $"Trigger:{mTrigger}, Type:{mType}, HexRgb:{mHexRgb}, Alpha:{mAlpha}, Delay:{mDelay}, Duration:{mDuration}, Meta:{mMetadata}";
-            return ret;
+            return $"Trigger:{mTrigger}, Type:{mType}, HexRgb:{mHexRgb}, Alpha:{mAlpha}, Delay:{mDelay}, Duration:{mDuration}, Meta:{mMetadata}";
         }
     }
 }

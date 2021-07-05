@@ -26,11 +26,14 @@ namespace ArtrointelPlugin.Utils
         /// </summary>
         public async void cancel()
         {
-            if(mCts.IsCancellationRequested)
+            lock(mCts)
             {
-                return;
+                if (mCts.IsCancellationRequested)
+                {
+                    return;
+                }
+                mCts.Cancel();
             }
-            mCts.Cancel();
 
             try
             {

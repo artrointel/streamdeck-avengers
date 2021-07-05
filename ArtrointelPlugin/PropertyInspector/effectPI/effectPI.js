@@ -1,5 +1,8 @@
 ﻿/// body on loaded with settings data ///
 function onLoad() {
+	if (cfg == null || cfg.length == 0) {
+		return;
+	}
 	// refer to EffectConfigs.cs
 	for (var idx = 1; idx <= cfg.length; idx++) {
 		onAddNewEffect();
@@ -178,7 +181,6 @@ function onBtnCancelClicked() {
 }
 
 function onBtnApplyClicked() {
-	// process saving all changes
 	var payload = buildEffectPayload();
 	window.opener.sendPayloadToPlugin(payload);
 	window.close();

@@ -8,6 +8,9 @@ namespace ArtrointelPlugin.Control.Model
     {
         public static bool IsSupported(EffectConfig cfg)
         {
+            if(cfg.mType == null)
+                return false;
+
             foreach (EffectConfig.EType t in Enum.GetValues(typeof(EffectConfig.EType)))
             {
                 if (cfg.mType.Equals(t.ToString())) return true;
@@ -17,7 +20,11 @@ namespace ArtrointelPlugin.Control.Model
 
         public static CanvasRendererBase CreateRenderer(EffectConfig cfg)
         {
+            if (cfg.mType == null)
+                return null;
+
             CanvasRendererBase renderer = null;
+
             // Creates a renderer
             if(cfg.mType.Equals(EffectConfig.EType.Flash.ToString()))
             {

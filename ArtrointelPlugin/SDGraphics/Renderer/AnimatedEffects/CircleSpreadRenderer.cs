@@ -19,6 +19,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
         private ValueAnimator mCircleAnimator;
         private Color mAnimCircleColor;
         private Rectangle mRectCircleGeometry;
+
         private DelayedTask mDelayedTask;
 
         public CircleSpreadRenderer(Color color, double durationInSecond)
@@ -75,7 +76,6 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
                 mCircleAnimator.start(restart);
             }
         }
-
 
         public void pause()
         {

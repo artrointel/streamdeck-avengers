@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
 namespace ArtrointelPlugin.Utils
@@ -14,7 +10,7 @@ namespace ArtrointelPlugin.Utils
         /// Send a key combination event press down and press up
         /// </summary>
         /// <param name="ascii">ascii keycodes</param>
-        public void Send(short[] ascii)
+        public static void Send(short[] ascii)
         {
             SendKeycodes(ascii, KEYEVENTF.UNICODE); // down
             SendKeycodes(ascii, KEYEVENTF.UNICODE | KEYEVENTF.KEYUP); // up

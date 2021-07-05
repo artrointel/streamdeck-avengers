@@ -1,18 +1,8 @@
 ﻿using BarRaider.SdTools;
 using BarRaider.SdTools.Wrappers;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using ArtrointelPlugin.Control;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using ArtrointelPlugin.Utils;
 
 namespace ArtrointelPlugin
@@ -20,13 +10,13 @@ namespace ArtrointelPlugin
     [PluginActionId("com.artrointel.avengerskey")]
     public class PluginAction : PluginBase
     {
-        AvengersKeyController mController;
+        private AvengersKeyController mController;
         
         public PluginAction(ISDConnection connection, InitialPayload payload) : base(connection, payload)
         {
-            mController = new AvengersKeyController(payload.Settings, async (canvas) =>
+            mController = new AvengersKeyController(payload.Settings, async (image) =>
             {
-                await Connection.SetImageAsync(canvas.mImage);
+                await Connection.SetImageAsync(image);
             });
 
             Connection.OnApplicationDidLaunch += Connection_OnApplicationDidLaunch;
@@ -96,12 +86,15 @@ namespace ArtrointelPlugin
 
         public async override void KeyPressed(KeyPayload payload)
         {
-            mController.actionOnKeyPressed();
+            await Task.Run(() =>
+            {
+                mController.actionOnKeyPressed();
+            });
         }
 
         public async override void KeyReleased(KeyPayload payload) 
         {
-            // mController.actionOnKeyReleased();
+            // TODO mController.actionOnKeyReleased();
         }
 
         public override void OnTick() { }

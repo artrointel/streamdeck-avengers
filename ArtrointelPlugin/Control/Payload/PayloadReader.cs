@@ -37,22 +37,22 @@ namespace ArtrointelPlugin.Control.Payload
 
         }
 
-        public static bool isEffectPayload(JObject payload)
+        public static bool IsEffectPayload(JObject payload)
         {
-            return identifyPayload(payload, PAYLOAD_EFFECT_KEY);
+            return IdentifyPayload(payload, PAYLOAD_EFFECT_KEY);
         }
 
-        public static bool isFunctionPayload(JObject payload)
+        public static bool IsFunctionPayload(JObject payload)
         {
-            return identifyPayload(payload, PAYLOAD_FUNCTION_KEY);
+            return IdentifyPayload(payload, PAYLOAD_FUNCTION_KEY);
         }
 
-        public static bool isCommandPayload(JObject payload)
+        public static bool IsCommandPayload(JObject payload)
         {
-            return identifyPayload(payload, PAYLOAD_COMMAND_KEY);
+            return IdentifyPayload(payload, PAYLOAD_COMMAND_KEY);
         }
 
-        private static bool identifyPayload(JObject payload, string key)
+        private static bool IdentifyPayload(JObject payload, string key)
         {
             bool ret = false;
             try
@@ -63,17 +63,17 @@ namespace ArtrointelPlugin.Control.Payload
             return ret;
         }
 
-        public static int getArrayCount(JObject payload)
+        public static int GetArrayCount(JObject payload)
         {
             return payload.Value<int>(META_DATA_COUNT);
         }
 
-        public static bool isImageUpdatePayload(JObject payload)
+        public static bool IsImageUpdatePayload(JObject payload)
         {
-            return identifyPayload(payload, PAYLOAD_IMAGE_UPDATE_KEY);
+            return IdentifyPayload(payload, PAYLOAD_IMAGE_UPDATE_KEY);
         }
 
-        public static string getFilePath(JObject payload)
+        public static string GetFilePath(JObject payload)
         {
             string ret = null;
             try

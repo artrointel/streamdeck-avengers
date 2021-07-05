@@ -10,6 +10,7 @@ namespace ArtrointelPlugin.SDFunctions
 {
     public class PlaySound : DelayedExecutable, IExecutable
     {
+        SoundPlayer mPlayer;
         public void execute(double delayInSecond, double intervalInSecond, double durationInSecond, 
             bool restart = true, string metadata = null)
         {
@@ -37,8 +38,20 @@ namespace ArtrointelPlugin.SDFunctions
 
         private void playSound(string mediaFilePath) 
         {
-            SoundPlayer player = new SoundPlayer(mediaFilePath);
-            player.Play();
+            try
+            {
+                if(mPlayer != null)
+                {
+                    mPlayer.Stop();
+                    mPlayer.Dispose();
+                }
+                mPlayer = new SoundPlayer(mediaFilePath);
+                mPlayer.Play();
+            } catch (Exception e)
+            {
+                DLogger.LogMessage("Cannot play sound file. " + e.Message);
+            }
+            
         }
     }
 }

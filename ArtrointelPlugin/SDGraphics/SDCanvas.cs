@@ -7,40 +7,73 @@ namespace ArtrointelPlugin.SDGraphics
     {
         public const int DEFAULT_IMAGE_SIZE = 144;
 
-        public Graphics mGraphics;
-        public Image mImage;
+        private Image mImage;
+        private Graphics mGraphics;
+
+        public class CreateInfo
+        {
+            internal static readonly CreateInfo DEFAULT = new CreateInfo
+            {
+                CompositingMode = CompositingMode.SourceOver,
+                SmoothingMode = SmoothingMode.HighSpeed,
+                InterpolationMode = InterpolationMode.Default,
+                PixelOffsetMode = PixelOffsetMode.HighSpeed,
+                ClearColor = Color.Empty
+            };
+
+            public CompositingMode CompositingMode;
+            public SmoothingMode SmoothingMode;
+            public InterpolationMode InterpolationMode;
+            public PixelOffsetMode PixelOffsetMode;
+            public Color ClearColor;
+            
+            public CreateInfo()
+            {
+                CompositingMode = CompositingMode.SourceOver;
+                SmoothingMode = SmoothingMode.HighSpeed;
+                InterpolationMode = InterpolationMode.Default;
+                PixelOffsetMode = PixelOffsetMode.HighSpeed;
+                ClearColor = Color.Empty;
+            }
+        }
+
         public SDCanvas(Graphics graphics, Image image)
         {
             mGraphics = graphics;
             mImage = image;
         }
 
-        public static SDCanvas CreateCanvas(int width = DEFAULT_IMAGE_SIZE, int height = DEFAULT_IMAGE_SIZE)
+        public Image getImage()
+        {
+            return mImage;
+        }
+
+        public Graphics getGraphics()
+        {
+            return mGraphics;
+        }
+
+        public static SDCanvas CreateCanvas(CreateInfo info, int width = DEFAULT_IMAGE_SIZE, int height = DEFAULT_IMAGE_SIZE)
         {
             Bitmap bitmap = new Bitmap(width, height);
-            var brush = new SolidBrush(Color.Empty);
             Graphics graphics = Graphics.FromImage(bitmap);
-            graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-
-            graphics.FillRectangle(brush, 0, 0, width, height);
-
+            graphics.CompositingMode = info.CompositingMode;
+            graphics.SmoothingMode = info.SmoothingMode;
+            graphics.InterpolationMode = info.InterpolationMode;
+            graphics.PixelOffsetMode = info.PixelOffsetMode;
+            graphics.Clear(info.ClearColor);
             return new SDCanvas(graphics, bitmap);
         }
 
-        public static SDCanvas CopyCanvas(SDCanvas target)
+        public static SDCanvas CreateCanvas(int width = DEFAULT_IMAGE_SIZE, int height = DEFAULT_IMAGE_SIZE)
         {
-            int width = target.mImage.Width;
-            int height = target.mImage.Height;
-            Bitmap bitmap = new Bitmap(width, height);
-            var brush = new SolidBrush(Color.Empty);
-            Graphics graphics = Graphics.FromImage(bitmap);
-            graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            graphics.DrawImage(target.mImage, Point.Empty);
-            return new SDCanvas(graphics, bitmap);
+            return CreateCanvas(CreateInfo.DEFAULT, width, height);
+        }
+
+        public void Dispose()
+        {
+            mImage.Dispose();
+            mGraphics.Dispose();
         }
     }
 }

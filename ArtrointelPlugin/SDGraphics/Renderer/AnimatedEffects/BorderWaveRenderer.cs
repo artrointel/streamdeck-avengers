@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Collections;
 using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
 using ArtrointelPlugin.Utils;
 
 
@@ -29,14 +30,14 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
 
         private DelayedTask mDelayedTask;
 
-        public class BorderSpinner // border spinner
+        internal class BorderSpinner // border spinner
         {
             public Rectangle mRectangle = new Rectangle();
             private bool mClockwise;
             private int mEndPoint;
             private int mSpinnerSize;
             private int mMovement;
-            public enum State
+            internal enum State
             {
                 TOP = 0,
                 RIGHT,
@@ -132,7 +133,9 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             }
         }
 
-        public BorderWaveRenderer(Color color, double durationInSecond, int thickness = 14, double trailReducer = 0.02, int speed = 3, bool wave4 = true)
+        public BorderWaveRenderer(Color color, double durationInSecond, 
+            int thickness = 14, double trailReducer = 0.02, int speed = 3, bool wave4 = true)
+            : base(new SDCanvas.CreateInfo() { CompositingMode = CompositingMode.SourceCopy })
         {
             mInputColor = color;
             mInputDurationInSecond = durationInSecond;
@@ -156,14 +159,13 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             // mSpinnerImage = FileIOManager.ResizeImage(FileIOManager.LoadSpinner(), thickness, thickness);
             // mSpinnerCanvas = SDCanvas.CreateCanvas();
 
-            mOffscreenCanvas.mGraphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
             mAlphaScaler = new ImageAttributes();
             var cm = new ColorMatrix();
             cm.Matrix33 = (float)(1 - trailReducer); // reduce trails by alpha
             mAlphaScaler.SetColorMatrix(cm);
             mVanishingScaler = new ImageAttributes();
             var vcm = new ColorMatrix();
-            vcm.Matrix33 = 0.8f;
+            vcm.Matrix33 = 0.5f;
             mVanishingScaler.SetColorMatrix(vcm);
 
             int animationDuration = (int)(mInputDurationInSecond * 1000.0);
@@ -193,13 +195,13 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
         {
             if(mVanishing)
             {
-                graphics.DrawImage(mOffscreenCanvas.mImage,
+                graphics.DrawImage(mOffscreenCanvas.getImage(),
                        new Rectangle(0, 0, SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE),
                        0, 0, SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE,
                        GraphicsUnit.Pixel, mVanishingScaler);
             } else
             {
-                graphics.DrawImage(mOffscreenCanvas.mImage,
+                graphics.DrawImage(mOffscreenCanvas.getImage(),
                        new Rectangle(0, 0, SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE),
                        0, 0, SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE,
                        GraphicsUnit.Pixel, mAlphaScaler); 

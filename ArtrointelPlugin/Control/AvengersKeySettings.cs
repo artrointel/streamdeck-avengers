@@ -30,7 +30,7 @@ namespace ArtrointelPlugin.Control
 
         /// <summary>
         /// Load settings from settings object.
-        /// it falls back to default settings if loading is failed.
+        /// It falls back to default settings if loading is failed.
         /// </summary>
         /// <param name="jSettings"></param>
         /// <returns></returns>
@@ -68,6 +68,5 @@ namespace ArtrointelPlugin.Control
             
             return ret;
         }
-
     }
 }

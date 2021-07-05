@@ -18,6 +18,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
         private ValueAnimator mAlphaBlendEndAnimator;
         private Color mAnimFlashColor;
         private DelayedTask mOverlayTask;
+
         private DelayedTask mDelayedTask;
 
         /// <summary>

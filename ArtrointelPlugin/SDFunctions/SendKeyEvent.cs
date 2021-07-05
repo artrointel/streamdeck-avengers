@@ -11,15 +11,13 @@ namespace ArtrointelPlugin.SDFunctions
 {
     public class SendKeyEvent : DelayedExecutable, IExecutable
     {
-        Action<String> mSendKeyAction;
+        Action<string> mSendKeyAction;
         ValueAnimator mKeyEventAnimator;
-        Keyboard mKeyboard;
 
         public SendKeyEvent(bool asciiCode = false)
         {
             if (asciiCode)
             {
-                mKeyboard = new Keyboard();
                 mSendKeyAction = (ascNumbers) =>
                 {
                     string[] ascs = ascNumbers.Split(' ');
@@ -30,7 +28,7 @@ namespace ArtrointelPlugin.SDFunctions
                         ascii[i] = short.Parse(ascs[i]);
                     }
                     
-                    mKeyboard.Send(ascii);
+                    Keyboard.Send(ascii);
                 };
             }
             else

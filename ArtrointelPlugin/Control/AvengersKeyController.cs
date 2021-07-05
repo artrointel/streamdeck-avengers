@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Drawing;
 using Newtonsoft.Json.Linq;
-using BarRaider.SdTools;
 using ArtrointelPlugin.SDGraphics;
 using ArtrointelPlugin.SDGraphics.Renderer;
 using ArtrointelPlugin.Control.Model;
@@ -19,30 +19,35 @@ namespace ArtrointelPlugin.Control
     public class AvengersKeyController
     {
         #region Internal Members
-        private Action<SDCanvas> mRendererUpdatedListener;
-
         // Render engine to render user-customized effects
         private RenderEngine mRenderEngine;
+
+        // Callback action after the Render engine updated the canvas image.
+        private Action<Image> mRendererUpdatedListener;
 
         // Executor of user-customized functions
         private FunctionExecutor mFunctionExecutor;
 
-        // Configuration data created by user (i.e settings).
-        AvengersKeySettings mSettings;
+        // Configuration data created by user
+        private AvengersKeySettings mSettings;
         #endregion
 
-        public AvengersKeyController(JObject settings, Action<SDCanvas> rendererUpdatedListener)
+        /// <summary>
+        /// Creates Avengers Key controller.
+        /// </summary>
+        /// <param name="jSettings">json settings object for the key configurations</param>
+        /// <param name="rendererUpdatedListener">called whenever the effect is updated</param>
+        public AvengersKeyController(JObject jSettings, Action<Image> rendererUpdatedListener)
         {
-            mSettings = AvengersKeySettings.LoadFrom(settings);
+            mSettings = AvengersKeySettings.LoadFrom(jSettings);
             mRendererUpdatedListener = rendererUpdatedListener;
 
             initializeRenderEngine();
-            initializeFunctionExecutor();
-
-            mRenderEngine.run();            
+            initializeFunctionExecutor();  
         }
 
         #region Internal
+        // Refines incoming data from PI to make controller safer.
         private void refineEffectConfigurations()
         {
             var effectCfgs = mSettings.EffectConfigurations;
@@ -55,6 +60,7 @@ namespace ArtrointelPlugin.Control
             }
         }
 
+        // Refines incoming data from PI to make controller safer.
         private void refineFunctionConfigurations()
         {
             var functionCfgs = mSettings.FunctionConfigurations;
@@ -100,6 +106,7 @@ namespace ArtrointelPlugin.Control
 
             foreach (EffectConfig effectCfg in mSettings.EffectConfigurations)
             {
+                DLogger.LogMessage(effectCfg.ToString());
                 var renderer = RendererFactory.CreateRenderer(effectCfg);
                 mRenderEngine.addRenderer(renderer);
             }
@@ -108,16 +115,16 @@ namespace ArtrointelPlugin.Control
         #endregion
 
         /// <summary>
-        /// Handles payload.
+        /// Handles incoming payload regarding avengers key. <see cref="PayloadReader"/>
         /// </summary>
         /// <param name="payload"></param>
         /// <returns>true if handled the payload, else false</returns>
         public bool handlePayload(JObject payload)
         {
             // Handles Effect payload
-            if(PayloadReader.isEffectPayload(payload))
+            if(PayloadReader.IsEffectPayload(payload))
             {
-                int effectCount = PayloadReader.getArrayCount(payload);
+                int effectCount = PayloadReader.GetArrayCount(payload);
                 mSettings.EffectConfigurations = PayloadReader.LoadEffectDataFromPayload(payload, effectCount);
                 refineEffectConfigurations();
                 initializeRenderEngine();
@@ -125,9 +132,9 @@ namespace ArtrointelPlugin.Control
             }
 
             // Handles Function payload
-            if(PayloadReader.isFunctionPayload(payload))
+            if(PayloadReader.IsFunctionPayload(payload))
             {
-                int functionCount = PayloadReader.getArrayCount(payload);
+                int functionCount = PayloadReader.GetArrayCount(payload);
                 mSettings.FunctionConfigurations = PayloadReader.LoadFunctionDataFromPayload(payload, functionCount);
                 refineFunctionConfigurations();
                 initializeFunctionExecutor();
@@ -135,9 +142,9 @@ namespace ArtrointelPlugin.Control
             }
             
             // Handles Image update payload
-            if (PayloadReader.isImageUpdatePayload(payload))
+            if (PayloadReader.IsImageUpdatePayload(payload))
             {
-                string imgPath = PayloadReader.getFilePath(payload);
+                string imgPath = PayloadReader.GetFilePath(payload);
                 if(imgPath != null && File.Exists(imgPath))
                 {
                     mSettings.Base64ImageString = FileIOManager.ProcessImageFileToSDBase64(imgPath);
@@ -146,8 +153,8 @@ namespace ArtrointelPlugin.Control
                 return true;
             }
 
-            // Handles Additional special commands for the Avengers Key.
-            if(PayloadReader.isCommandPayload(payload))
+            // Handles the other special commands for the Avengers Key.
+            if(PayloadReader.IsCommandPayload(payload))
             {
                 return handleCommands(payload);
             }
@@ -158,7 +165,7 @@ namespace ArtrointelPlugin.Control
         private bool handleCommands(JObject payload)
         {
             // Command to use file icon as a base image
-            string data = PayloadReader.getFilePath(payload);
+            string data = PayloadReader.GetFilePath(payload);
             if (data != null && File.Exists(data)) {
                 try
                 {
@@ -171,26 +178,28 @@ namespace ArtrointelPlugin.Control
                 }
                 catch (Exception e)
                 {
-                    DLogger.LogMessage(TracingLevel.DEBUG, "Could not load icon from " + data + ": " + e.Message);
+                    DLogger.LogMessage("Could not load icon from " + data + ": " + e.Message);
                 }
                 return true;
             }
             return false;
         }
         
-        public void actionOnKeyPressed()
+        public async void actionOnKeyPressed()
         {
-            // Execute functions
+            // Execute functions in separated thread.
             for (int i = 0; i < mSettings.FunctionConfigurations.Count; i++)
             {
                 FunctionConfig cfg = (FunctionConfig)mSettings.FunctionConfigurations[i];
                 if (cfg.mTrigger.Equals(FunctionConfig.ETrigger.OnKeyPressed.ToString()))
                 {
-                    mFunctionExecutor.executeFunctionAt(i, cfg.mDelay, cfg.mInterval, cfg.mDuration, cfg.mMetadata);
+                    await Task.Run(() => {
+                        mFunctionExecutor.executeFunctionAt(i, cfg.mDelay, cfg.mInterval, cfg.mDuration, cfg.mMetadata);
+                    });
                 }
             }
 
-            // Animate renderers
+            // Animate renderers in current thread
             for (int i = 0; i < mSettings.EffectConfigurations.Count; i++)
             {
                 EffectConfig cfg = (EffectConfig)mSettings.EffectConfigurations[i];
@@ -202,10 +211,12 @@ namespace ArtrointelPlugin.Control
             }
         }
 
+        /* TODO not used at least now. can be used with long-pressed event in future
         public void actionOnKeyReleased()
         {
-            // TODO not used at least now. for long-pressed event
+            
         }
+        */
 
         public AvengersKeySettings getSettings()
         {

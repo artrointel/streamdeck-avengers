@@ -15,5 +15,10 @@ namespace ArtrointelPlugin.Utils
             Logger.Instance.LogMessage(level, msg);
 #endif
         }
+
+        public static void LogMessage(string msg)
+        {
+            LogMessage(TracingLevel.DEBUG, msg);
+        }
     }
 }

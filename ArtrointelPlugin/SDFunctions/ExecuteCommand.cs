@@ -14,7 +14,7 @@ namespace ArtrointelPlugin.SDFunctions
             executeCommand(metadata, true);
         }
 
-        public void executeCommand(string command, bool hide = false)
+        private void executeCommand(string command, bool hide = false)
         {
             var p = new Process(); 
             var procStartInfo = new ProcessStartInfo("cmd", "/c " + command);

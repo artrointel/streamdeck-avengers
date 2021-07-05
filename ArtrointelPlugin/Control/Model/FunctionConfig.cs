@@ -7,7 +7,7 @@
 
         public string mTrigger;
         public string mType;
-        
+
         public double mDelay;
         public double mInterval;
         public double mDuration;
@@ -28,8 +28,7 @@
         }
         public override string ToString()
         {
-            string ret = $"Trigger:{mTrigger}, Type:{mType}, Delay:{mDelay}, Alpha:{mInterval}, Duration:{mDuration}, Meta:{mMetadata}";
-            return ret;
+            return $"Trigger:{mTrigger}, Type:{mType}, Delay:{mDelay}, Alpha:{mInterval}, Duration:{mDuration}, Meta:{mMetadata}";
         }
     }
 }
