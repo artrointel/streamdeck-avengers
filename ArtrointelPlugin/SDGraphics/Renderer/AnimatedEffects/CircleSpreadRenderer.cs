@@ -12,8 +12,9 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
         private const int CIRCLE_START_RADIUS = SDCanvas.DEFAULT_IMAGE_SIZE / 10;
         
         // input data
-        private Color mInputColor;
-        private int mInputDurationInMillisecond;
+        private readonly Color mInputColor;
+        private readonly double mDelayInSecond;
+        private readonly int mInputDurationInMillisecond;
 
         // for internal logic
         private ValueAnimator mCircleAnimator;
@@ -22,9 +23,10 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
 
         private DelayedTask mDelayedTask;
 
-        public CircleSpreadRenderer(Color color, double durationInSecond)
+        public CircleSpreadRenderer(Color color, double delayInSecond, double durationInSecond)
         {           
             mInputColor = color;
+            mDelayInSecond = delayInSecond;
             mInputDurationInMillisecond = (int)(durationInSecond * 1000);
             initialize();
         }
@@ -58,15 +60,15 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             base.onRender(graphics);
         }
 
-        public void animate(double delayInSecond, bool restart)
+        public void animate(bool restart)
         {
-            if (delayInSecond > 0)
+            if (mDelayInSecond > 0)
             {
                 if(mDelayedTask != null)
                 {
                     mDelayedTask.cancel();
                 }
-                mDelayedTask = new DelayedTask((int)(delayInSecond * 1000), () =>
+                mDelayedTask = new DelayedTask((int)(mDelayInSecond * 1000), () =>
                 {
                     mCircleAnimator.start(restart);
                 });

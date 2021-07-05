@@ -6,7 +6,7 @@ namespace ArtrointelPlugin.Control.Model
     public class EffectConfig
     {
         public enum ETrigger { OnKeyPressed, OnKeyReleased };
-        public enum EType { ImageBlending, Flash, CircleSpread, Pie, BorderWave, ColorOverlay };
+        public enum EType { Flash, CircleSpread, Pie, BorderWave, ColorOverlay, BlendGrayscaleFiltering };
 
         public string mTrigger;
         public string mType;

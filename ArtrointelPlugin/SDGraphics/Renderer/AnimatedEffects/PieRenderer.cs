@@ -10,10 +10,11 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
         private const int PIE_RADIUS = (int)((SDCanvas.DEFAULT_IMAGE_SIZE / 2) * 1.42); // pie tightly covers the canvas
 
         // input data
-        private double mInputDurationInSecond; // animation in second
-        private Color mInputColor; // color of the pie
-        private bool mGrow; // growing or eating the pie
-        private bool mClockwise; // animation direction
+        private readonly double mDelayInSecond;
+        private readonly double mInputDurationInSecond; // animation in second
+        private readonly Color mInputColor; // color of the pie
+        private readonly bool mGrow; // growing or eating the pie
+        private readonly bool mClockwise; // animation direction
 
         // for internal logic
         private ValueAnimator mAngleAnimator;
@@ -24,8 +25,9 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
         Action<Graphics> mRenderPieMethod;
         private DelayedTask mDelayedTask;
 
-        public PieRenderer(Color color, double durationInSecond, bool grow = false, bool clockwise = false)
+        public PieRenderer(Color color, double delayInSecond, double durationInSecond, bool grow = false, bool clockwise = false)
         {
+            mDelayInSecond = delayInSecond;
             mInputDurationInSecond = durationInSecond;
             mInputColor = color;
             mGrow = grow;
@@ -97,15 +99,15 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             base.onRender(graphics);
         }
 
-        public void animate(double delayInSecond, bool restart)
+        public void animate(bool restart)
         {
-            if (delayInSecond > 0)
+            if (mDelayInSecond > 0)
             {
                 if (mDelayedTask != null)
                 {
                     mDelayedTask.cancel();
                 }
-                mDelayedTask = new DelayedTask((int)(delayInSecond * 1000), () =>
+                mDelayedTask = new DelayedTask((int)(mDelayInSecond * 1000), () =>
                 {
                     mAngleAnimator.start(restart);
                 });

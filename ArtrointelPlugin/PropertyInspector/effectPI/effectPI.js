@@ -28,33 +28,59 @@ function onLoad() {
     }
 }
 
-var idx = 1;
+var effectItemIdx = 1;
 
 function onAddNewEffect() {
 	var newEffectItem = document.createElement('div');
 	newEffectItem.innerHTML =
-		`<div class="sdpi-item" id="dEffectContainer${idx}" name="effectItem">
-			<select class="sdpi-item-value" id="sEffectTrigger${idx}" style="width:50px">
+		`<div class="sdpi-item" id="dEffectContainer${effectItemIdx}" name="effectItem">
+			<select class="sdpi-item-value" id="sEffectTrigger${effectItemIdx}" style="width:50px">
 				<option value="OnKeyPressed">OnKeyPressed</option>
 			</select>
-			<select class="sdpi-item-value" id="sEffectType${idx}" onchange="onEffectChanged(${idx})" style="width:50px">
+			<select class="sdpi-item-value" id="sEffectType${effectItemIdx}" onchange="onEffectChanged(${effectItemIdx})" style="width:50px">
 				<option value="Select">Select</option>
 				<option value="Flash">Flash</option>
-				<option value="ColorOverlay">Color overlay</option>
+				<option value="ColorOverlay">Color Overlay</option>
 				<option value="CircleSpread">Circle Spread</option>
 				<option value="Pie">Pie</option>
 				<option value="BorderWave">Border Wave</option>
 			</select>
-
 			<div class="sdpi-item-value avg-container-center">
-				<button class="sdpi-item-value" id="iDelete${idx}" onclick="onBtnDelete(${idx})">Delete</button>
+				<button class="sdpi-item-value" id="iDelete${effectItemIdx}" onclick="onBtnDelete(${effectItemIdx})">Delete</button>
 			</div>
 		</div>`;
 
 	var effectList = document.getElementById('dvEffectList');
 	effectList.appendChild(newEffectItem.firstChild);
 
-	idx++;
+	if (isTopEffectContainer(effectItemIdx)) {
+		var blendOption = document.createElement('option');
+		blendOption.value = "BlendGrayscaleFiltering";
+		blendOption.innerHTML = "Blend Grayscaled Image";
+		document.getElementById(`sEffectType${effectItemIdx}`).appendChild(blendOption);
+	}
+
+	effectItemIdx++;
+}
+
+function isTopEffectContainer(idx) {
+	for (var i = idx-1; i != 0; i--) {
+		var c = document.getElementById(`dEffectContainer${i}`);
+		if (c != null && c.style.display != "none")
+			return false;
+	}
+	return true;
+}
+
+function findTopEffectContainerIdx() {
+	var list = document.getElementById('dvEffectList');
+	for (var i = 1; i <= list.childElementCount; i++) {
+		var c = document.getElementById(`dEffectContainer${i}`);
+		if (c != null && c.style.display != "none") {
+			return i;
+        }
+	}
+	return -1;
 }
 
 function onEffectChanged(idx) {
@@ -88,6 +114,9 @@ function onEffectChanged(idx) {
 		else if (type == 'BorderWave') {
 			optionDiv = createBorderWaveOptionsDiv(idx);
 		}
+		else if (type == 'BlendGrayscaleFiltering') {
+			optionDiv = createBlendGrayscaleFilteringOptionsDiv(idx);
+		}
 
 		// attach the option UI
 		if (optionDiv != null) {
@@ -102,6 +131,19 @@ function onBtnDelete(idx) {
 	setSelectValue('sEffectType', idx, 'Select');
 	onEffectChanged(idx);
 	document.getElementById(`dEffectContainer${idx}`).style.display = "none";
+
+	var topIdx = findTopEffectContainerIdx();
+	if (topIdx != -1) {
+		var select = document.getElementById(`sEffectType${topIdx}`);
+		for (var option in select.childNodes) {
+			if (option.value == "BlendGrayscaleFiltering")
+				return;
+        }
+		var blendOption = document.createElement('option');
+		blendOption.value = "BlendGrayscaleFiltering";
+		blendOption.innerHTML = "Blend Grayscaled Image";
+		select.appendChild(blendOption);
+    }
 }
 
 /// detail options ///
@@ -172,6 +214,22 @@ function onChangePieMetadata(idx) {
 
 function createBorderWaveOptionsDiv(idx) {
 	return _createBasicOptionsDiv(idx);
+}
+
+function createBlendGrayscaleFilteringOptionsDiv(idx) {
+	var openOptionDiv = createSdpiDiv('dOptions', idx, 'avg-container-center');
+	var groupDiv = createSdpiGroupDiv('optionGroup', idx, 'sdpi-item-value');
+	openOptionDiv.appendChild(groupDiv);
+
+	var descDiv = createSdpiChildDiv(groupDiv, 'desc', idx, 'avg-center');
+	descDiv.innerHTML = `It makes Grayscaled image and Blend it with the base image.`;
+
+	var durationDiv = createSdpiChildDiv(groupDiv, 'anim', idx, 'avg-container-center');
+	durationDiv.innerHTML =
+		`<label class="sdpi-item-value avg-label">Duration</label>
+		<input class="sdpi-item-value avg-input-text" id="iEffectDuration${idx}" type="number" min="0.5" step="0.001" placeholder="second" value="1.0"/>`;
+		
+	return openOptionDiv;
 }
 
 /// on apply and cancel button clicked ///

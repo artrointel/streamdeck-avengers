@@ -54,7 +54,7 @@ namespace ArtrointelPlugin.SDGraphics
             mRenderTimer.Start();
         }
 
-        public bool animateRendererAt(int index, double delayInSecond, bool restart = true)
+        public bool animateRendererAt(int index, bool restart = true)
         {
             if(mRenderers == null || mRenderers[index] == null)
             {
@@ -62,7 +62,7 @@ namespace ArtrointelPlugin.SDGraphics
             }
             if (mRenderers[index] is IAnimatableRenderer)
             {
-                ((IAnimatableRenderer)mRenderers[index]).animate(delayInSecond, restart);
+                ((IAnimatableRenderer)mRenderers[index]).animate(restart);
                 return true;
             }
             return false;
@@ -108,6 +108,11 @@ namespace ArtrointelPlugin.SDGraphics
         public void addRenderer(CanvasRendererBase renderer)
         {
             mRenderers.Add(renderer);
+        }
+
+        public void addRendererAt(int index, CanvasRendererBase renderer)
+        {
+            mRenderers.Insert(index, renderer);
         }
 
         /// <summary>

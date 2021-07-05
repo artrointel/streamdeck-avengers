@@ -10,14 +10,15 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
     public class BorderWaveRenderer : CanvasRendererBase, IAnimatableRenderer
     {
         // constants
-        
+
         // input data
-        private double mInputDurationInSecond; // animation in second
-        private Color mInputColor; // color of wave
-        private int mWaveCount;
-        private int mWaveThickness;
-        private int mWaveSpeed;
-        private bool mClockwise = true;
+        private readonly double mDelayInSecond;
+        private readonly double mInputDurationInSecond; // animation in second
+        private readonly Color mInputColor; // color of wave
+        private readonly int mWaveCount;
+        private readonly int mWaveThickness;
+        private readonly int mWaveSpeed;
+        private readonly bool mClockwise = true;
 
         // for internal logic
         private ImageAttributes mAlphaScaler;
@@ -133,11 +134,12 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             }
         }
 
-        public BorderWaveRenderer(Color color, double durationInSecond, 
+        public BorderWaveRenderer(Color color, double delayInSecond, double durationInSecond, 
             int thickness = 14, double trailReducer = 0.02, int speed = 3, bool wave4 = true)
             : base(new SDCanvas.CreateInfo() { CompositingMode = CompositingMode.SourceCopy })
         {
             mInputColor = color;
+            mDelayInSecond = delayInSecond;
             mInputDurationInSecond = durationInSecond;
             mWaveThickness = thickness;
             mWaveSpeed = speed;
@@ -216,15 +218,15 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             base.onRender(graphics);
         }
 
-        public void animate(double delayInSecond, bool restart)
+        public void animate(bool restart)
         {
-            if (delayInSecond > 0)
+            if (mDelayInSecond > 0)
             {
                 if (mDelayedTask != null)
                 {
                     mDelayedTask.cancel();
                 }
-                mDelayedTask = new DelayedTask((int)(delayInSecond * 1000), () =>
+                mDelayedTask = new DelayedTask((int)(mDelayInSecond * 1000), () =>
                 {
                     mSpinnerAnimator.start(restart);
                 });

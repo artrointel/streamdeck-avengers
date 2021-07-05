@@ -5,6 +5,7 @@ using System.Drawing;
 using Newtonsoft.Json.Linq;
 using ArtrointelPlugin.SDGraphics;
 using ArtrointelPlugin.SDGraphics.Renderer;
+using ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects;
 using ArtrointelPlugin.Control.Model;
 using ArtrointelPlugin.Control.Payload;
 using ArtrointelPlugin.Utils;
@@ -30,6 +31,8 @@ namespace ArtrointelPlugin.Control
 
         // Configuration data created by user
         private AvengersKeySettings mSettings;
+
+        private bool mUseBaseImageRenderer;
         #endregion
 
         /// <summary>
@@ -100,15 +103,26 @@ namespace ArtrointelPlugin.Control
             {
                 baseImage = FileIOManager.GetFallbackImage();
             }
-            var imageRenderer = new ImageRenderer(baseImage);
-            imageRenderer.invalidate();
-            mRenderEngine.addRenderer(imageRenderer);
 
+            mUseBaseImageRenderer = true;
             foreach (EffectConfig effectCfg in mSettings.EffectConfigurations)
             {
-                DLogger.LogMessage(effectCfg.ToString());
                 var renderer = RendererFactory.CreateRenderer(effectCfg);
+                if(renderer is AlphaBlendRenderer)
+                {
+                    AlphaBlendRenderer baseImageRenderer = (AlphaBlendRenderer) renderer;
+                    baseImageRenderer.setImages(baseImage);
+                    baseImageRenderer.invalidate();
+                    mUseBaseImageRenderer = false;
+                }
                 mRenderEngine.addRenderer(renderer);
+            }
+
+            if(mUseBaseImageRenderer)
+            {
+                ImageRenderer imageRenderer = new ImageRenderer(baseImage);
+                imageRenderer.invalidate();
+                mRenderEngine.addRendererAt(0, imageRenderer);
             }
             mRenderEngine.run();
         }
@@ -187,7 +201,7 @@ namespace ArtrointelPlugin.Control
         
         public async void actionOnKeyPressed()
         {
-            // Execute functions in separated thread.
+            // Executes functions in separated thread
             for (int i = 0; i < mSettings.FunctionConfigurations.Count; i++)
             {
                 FunctionConfig cfg = (FunctionConfig)mSettings.FunctionConfigurations[i];
@@ -199,14 +213,16 @@ namespace ArtrointelPlugin.Control
                 }
             }
 
-            // Animate renderers in current thread
+            // Animates renderers in current thread
             for (int i = 0; i < mSettings.EffectConfigurations.Count; i++)
             {
                 EffectConfig cfg = (EffectConfig)mSettings.EffectConfigurations[i];
                 if (cfg.mTrigger.Equals(EffectConfig.ETrigger.OnKeyPressed.ToString()))
                 {
-                    // image renderer is always at 0
-                    mRenderEngine.animateRendererAt(i + 1, cfg.mDelay);
+                    if (mUseBaseImageRenderer)
+                        mRenderEngine.animateRendererAt(i+1); // base image renderer is added at 0
+                    else
+                        mRenderEngine.animateRendererAt(i);
                 }
             }
         }
