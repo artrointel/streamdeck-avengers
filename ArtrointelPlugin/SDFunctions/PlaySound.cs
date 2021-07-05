@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Media;
+using System.Windows.Media;
 using ArtrointelPlugin.Utils;
 
 namespace ArtrointelPlugin.SDFunctions
 {
     public class PlaySound : DelayedExecutable, IExecutable
     {
-        SoundPlayer mPlayer;
+        MediaPlayer mPlayer;
         public void execute(double delayInSecond, double intervalInSecond, double durationInSecond, 
             bool restart = true, string metadata = null)
         {
@@ -43,15 +39,15 @@ namespace ArtrointelPlugin.SDFunctions
                 if(mPlayer != null)
                 {
                     mPlayer.Stop();
-                    mPlayer.Dispose();
+                    mPlayer.Close();
                 }
-                mPlayer = new SoundPlayer(mediaFilePath);
+                mPlayer = new MediaPlayer();
+                mPlayer.Open(new Uri(mediaFilePath));
                 mPlayer.Play();
             } catch (Exception e)
             {
                 DLogger.LogMessage("Cannot play sound file. " + e.Message);
             }
-            
         }
     }
 }

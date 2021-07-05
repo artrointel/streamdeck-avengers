@@ -21,7 +21,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
 
         // for internal logic
         private ImageAttributes mAlphaScaler;
-        private ImageAttributes mVanishingScaler;
+        private ImageAttributes mAlphaVanishScaler;
         private double mAnimatorInterval = ValueAnimator.INTERVAL_60_PER_SEC;
         private ValueAnimator mSpinnerAnimator;
         private Brush mWaveBrush;
@@ -163,10 +163,11 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             var cm = new ColorMatrix();
             cm.Matrix33 = (float)(1 - trailReducer); // reduce trails by alpha
             mAlphaScaler.SetColorMatrix(cm);
-            mVanishingScaler = new ImageAttributes();
+            mAlphaVanishScaler = new ImageAttributes();
             var vcm = new ColorMatrix();
             vcm.Matrix33 = 0.5f;
-            mVanishingScaler.SetColorMatrix(vcm);
+            mAlphaVanishScaler.SetColorMatrix(vcm);
+            
 
             int animationDuration = (int)(mInputDurationInSecond * 1000.0);
             mWaveBrush = new SolidBrush(mInputColor);
@@ -198,7 +199,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
                 graphics.DrawImage(mOffscreenCanvas.getImage(),
                        new Rectangle(0, 0, SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE),
                        0, 0, SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE,
-                       GraphicsUnit.Pixel, mVanishingScaler);
+                       GraphicsUnit.Pixel, mAlphaVanishScaler);
             } else
             {
                 graphics.DrawImage(mOffscreenCanvas.getImage(),

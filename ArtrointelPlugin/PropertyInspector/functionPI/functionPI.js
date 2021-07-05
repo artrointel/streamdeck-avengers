@@ -50,6 +50,7 @@ function onAddNewFunction() {
 				<option value="ExecuteCommand">Execute Command</option>
 				<option value="Keycode">Key Combination</option>
 				<option value="Text">Type Text</option>
+				<option value="PlaySound">Play Sound file</option>
 			</select>
 
 			<div class="sdpi-item-value avg-container-center">
@@ -94,6 +95,9 @@ function onFunctionChanged(idx) {
 		else if (type == 'Text') {
 			optionDiv = createTextOptionsDiv(idx);
 		}
+		else if (type == 'PlaySound') {
+			optionDiv = createPlaySoundDiv(idx);
+        }
 
 		// attach the option UI
 		if (optionDiv != null) {
@@ -123,7 +127,7 @@ function createOpenFileOptionsDiv(idx) {
 	var pathDiv = createSdpiChildDiv(groupDiv, 'path', idx, 'avg-container-center');
 	pathDiv.innerHTML =
 		`<input class="sdpi-item-value avg-input-text" id="iFunctionMetadata${idx}" type="text"
-			placeholder="ex) C:\myProgram.exe or C:\MyDownloadFolder"/>`;
+			placeholder="ex) C:\\myProgram.exe or C:\\MyDownloadFolder"/>`;
 
 	var iconDiv = createSdpiChildDiv(groupDiv, 'icon', idx, 'avg-container-center');
 	iconDiv.innerHTML =
@@ -261,6 +265,31 @@ function createTextOptionsDiv(idx) {
 		<input class="sdpi-item-value avg-input-text" id="iFunctionDuration${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>
 		<label class="sdpi-item-value avg-label">Interval</label>
 		<input class="sdpi-item-value avg-input-text" id="iFunctionInterval${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>`;
+	return openOptionDiv;
+}
+
+function createPlaySoundDiv(idx) {
+	var openOptionDiv = createSdpiDiv('dOptions', idx, 'avg-container-center');
+	var groupDiv = createSdpiGroupDiv('optionGroup', idx, 'sdpi-item-value');
+	openOptionDiv.appendChild(groupDiv);
+
+	var descDiv = createSdpiChildDiv(groupDiv, 'desc', idx, 'avg-center');
+	descDiv.innerHTML = `Plays the sound file in background once.`;
+
+	var textDiv = createSdpiChildDiv(groupDiv, 'textString', idx, 'avg-container-center');
+	textDiv.innerHTML =
+		`<input class="sdpi-item-value avg-input-text" id="iFunctionMetadata${idx}" type="text"
+			placeholder="ex) C:\\SoundFiles\\hello.mp3"/>`;
+
+	var loopDiv = createSdpiChildDiv(groupDiv, 'loop', idx, 'avg-container-center');
+	loopDiv.innerHTML =
+		`<label class="sdpi-item-value avg-label">Delay</label>
+		<input class="sdpi-item-value avg-input-text" id="iFunctionDelay${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>
+		<label class="sdpi-item-value avg-label">Duration</label>
+		<input class="sdpi-item-value avg-input-text" id="iFunctionDuration${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>
+		<label class="sdpi-item-value avg-label">Interval</label>
+		<input class="sdpi-item-value avg-input-text" id="iFunctionInterval${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>`;
+	loopDiv.style.display = "none";
 	return openOptionDiv;
 }
 
