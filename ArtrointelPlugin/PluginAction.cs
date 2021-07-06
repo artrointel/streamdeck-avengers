@@ -1,6 +1,7 @@
 ﻿using BarRaider.SdTools;
 using BarRaider.SdTools.Wrappers;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ArtrointelPlugin.Control;
 using ArtrointelPlugin.Utils;
@@ -10,14 +11,24 @@ namespace ArtrointelPlugin
     [PluginActionId("com.artrointel.avengerskey")]
     public class PluginAction : PluginBase
     {
+        private static Dictionary<string, AvengersKeyController> sControllerInstances
+            = new Dictionary<string, AvengersKeyController>();
+
         private AvengersKeyController mController;
         
         public PluginAction(ISDConnection connection, InitialPayload payload) : base(connection, payload)
         {
-            mController = new AvengersKeyController(payload.Settings, async (image) =>
+            if (!sControllerInstances.ContainsKey(connection.ContextId))
             {
-                await Connection.SetImageAsync(image);
-            });
+                sControllerInstances.Add(connection.ContextId,
+                    new AvengersKeyController(payload.Settings, async (image) =>
+                    {
+                        await Connection.SetImageAsync(image);
+                    }));
+            }
+
+            mController = sControllerInstances[connection.ContextId];
+            mController.startRenderEngine();
 
             Connection.OnApplicationDidLaunch += Connection_OnApplicationDidLaunch;
             Connection.OnApplicationDidTerminate += Connection_OnApplicationDidTerminate;
@@ -82,6 +93,7 @@ namespace ArtrointelPlugin
             Connection.OnPropertyInspectorDidDisappear -= Connection_OnPropertyInspectorDidDisappear;
             Connection.OnSendToPlugin -= Connection_OnSendToPlugin;
             Connection.OnTitleParametersDidChange -= Connection_OnTitleParametersDidChange;
+            mController.pauseRenderEngine();
         }
 
         public async override void KeyPressed(KeyPayload payload)

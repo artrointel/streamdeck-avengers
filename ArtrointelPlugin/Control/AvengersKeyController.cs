@@ -49,6 +49,83 @@ namespace ArtrointelPlugin.Control
             initializeFunctionExecutor();  
         }
 
+        public void startRenderEngine()
+        {
+            mRenderEngine.run();
+        }
+
+        public void pauseRenderEngine()
+        {
+            mRenderEngine.pause();
+        }
+
+        public bool handlePayload(JObject payload)
+        {
+            // Handles Effect payload
+            if (PayloadReader.IsEffectPayload(payload))
+            {
+                int effectCount = PayloadReader.GetArrayCount(payload);
+                mSettings.EffectConfigurations = PayloadReader.LoadEffectDataFromPayload(payload, effectCount);
+                refineEffectConfigurations();
+                initializeRenderEngine();
+                return true;
+            }
+
+            // Handles Function payload
+            if (PayloadReader.IsFunctionPayload(payload))
+            {
+                int functionCount = PayloadReader.GetArrayCount(payload);
+                mSettings.FunctionConfigurations = PayloadReader.LoadFunctionDataFromPayload(payload, functionCount);
+                refineFunctionConfigurations();
+                initializeFunctionExecutor();
+                return true;
+            }
+
+            // Handles Image update payload
+            if (PayloadReader.IsImageUpdatePayload(payload))
+            {
+                string imgPath = PayloadReader.GetFilePath(payload);
+                if (imgPath != null && File.Exists(imgPath))
+                {
+                    mSettings.Base64ImageString = FileIOManager.ProcessImageFileToSDBase64(imgPath);
+                    initializeRenderEngine();
+                }
+                return true;
+            }
+
+            // Handles the other special commands for the Avengers Key.
+            if (PayloadReader.IsCommandPayload(payload))
+            {
+                return handleCommands(payload);
+            }
+
+            return false;
+        }
+
+        private bool handleCommands(JObject payload)
+        {
+            // Command to use file icon as a base image
+            string data = PayloadReader.GetFilePath(payload);
+            if (data != null && File.Exists(data))
+            {
+                try
+                {
+                    LoadIconHelper icon = new LoadIconHelper(data);
+                    Image resizedIcon = FileIOManager.ResizeImage(icon.getJumboIcon());
+                    string base64Image = FileIOManager.ImageToBase64(resizedIcon);
+                    resizedIcon.Dispose();
+                    mSettings.Base64ImageString = base64Image;
+                    initializeRenderEngine();
+                }
+                catch (Exception e)
+                {
+                    DLogger.LogMessage("Could not load icon from " + data + ": " + e.Message);
+                }
+                return true;
+            }
+            return false;
+        }
+
         #region Internal
         // Refines incoming data from PI to make controller safer.
         private void refineEffectConfigurations()
@@ -133,71 +210,6 @@ namespace ArtrointelPlugin.Control
         /// </summary>
         /// <param name="payload"></param>
         /// <returns>true if handled the payload, else false</returns>
-        public bool handlePayload(JObject payload)
-        {
-            // Handles Effect payload
-            if(PayloadReader.IsEffectPayload(payload))
-            {
-                int effectCount = PayloadReader.GetArrayCount(payload);
-                mSettings.EffectConfigurations = PayloadReader.LoadEffectDataFromPayload(payload, effectCount);
-                refineEffectConfigurations();
-                initializeRenderEngine();
-                return true;
-            }
-
-            // Handles Function payload
-            if(PayloadReader.IsFunctionPayload(payload))
-            {
-                int functionCount = PayloadReader.GetArrayCount(payload);
-                mSettings.FunctionConfigurations = PayloadReader.LoadFunctionDataFromPayload(payload, functionCount);
-                refineFunctionConfigurations();
-                initializeFunctionExecutor();
-                return true;
-            }
-            
-            // Handles Image update payload
-            if (PayloadReader.IsImageUpdatePayload(payload))
-            {
-                string imgPath = PayloadReader.GetFilePath(payload);
-                if(imgPath != null && File.Exists(imgPath))
-                {
-                    mSettings.Base64ImageString = FileIOManager.ProcessImageFileToSDBase64(imgPath);
-                    initializeRenderEngine();
-                }
-                return true;
-            }
-
-            // Handles the other special commands for the Avengers Key.
-            if(PayloadReader.IsCommandPayload(payload))
-            {
-                return handleCommands(payload);
-            }
-
-            return false;
-        }
-
-        private bool handleCommands(JObject payload)
-        {
-            // Command to use file icon as a base image
-            string data = PayloadReader.GetFilePath(payload);
-            if (data != null && File.Exists(data)) {
-                try
-                {
-                    LoadIconHelper icon = new LoadIconHelper(data);
-                    Image resizedIcon = FileIOManager.ResizeImage(icon.getJumboIcon());
-                    string base64Image = FileIOManager.ImageToBase64(resizedIcon);
-                    resizedIcon.Dispose();
-                    mSettings.Base64ImageString = base64Image;
-                    initializeRenderEngine();
-                }
-                catch (Exception e)
-                {
-                    DLogger.LogMessage("Could not load icon from " + data + ": " + e.Message);
-                }
-                return true;
-            }
-            return false;
-        }
         
         public async void actionOnKeyPressed()
         {

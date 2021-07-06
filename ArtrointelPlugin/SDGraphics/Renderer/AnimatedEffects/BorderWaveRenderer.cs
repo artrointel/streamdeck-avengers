@@ -191,7 +191,8 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
                     spinner.moveNext(mWaveSpeed);
                 }
                 invalidate();
-            });
+                setVisible(true);
+            }, ()=> { setVisible(false); });
         }
 
         public override void onRender(Graphics graphics)
