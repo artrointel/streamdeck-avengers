@@ -36,7 +36,7 @@ Draws Moving waves on the border of the base image.
 
 ### Blend Grayscaled Image
 Blend with grayscaled image of the current base image.  
-Note that this effect can only be shown at top of the list due to rendering order.
+Note that this effect can only be shown at top of the list due to rendering order.  
 ![Sample-Graysacled](./Images/sample_grayscaled.gif)  
 - Configurate duration.
 
