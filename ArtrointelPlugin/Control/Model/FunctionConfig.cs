@@ -3,7 +3,7 @@
     public class FunctionConfig
     {
         public enum ETrigger { OnKeyPressed, OnKeyReleased };
-        public enum EType { Text, Keycode, OpenWebpage, OpenFile, ExecuteCommand, PlaySound };
+        public enum EType { Text, Keycode, OpenWebpage, OpenFile, ExecuteCommand, PlaySound, VolumeControl };
 
         public string mTrigger;
         public string mType;

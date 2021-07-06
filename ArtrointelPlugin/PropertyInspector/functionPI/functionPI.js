@@ -30,6 +30,9 @@ function onLoad() {
 				
 				document.getElementById('iFunctionMetadata' + idx).innerHTML = keyCombination;
 				break;
+			case 'VolumeControl':
+				setSelectValue('sVolumeControl', idx, functionConfig['mMetadata']);
+				break;
         }
 	}
 }
@@ -50,7 +53,8 @@ function onAddNewFunction() {
 				<option value="ExecuteCommand">Execute Command</option>
 				<option value="Keycode">Key Combination</option>
 				<option value="Text">Type Text</option>
-				<option value="PlaySound">Play Sound file</option>
+				<option value="PlaySound">Play Sound File</option>
+				<option value="VolumeControl">Volume Control</option>
 			</select>
 
 			<div class="sdpi-item-value avg-container-center">
@@ -98,7 +102,9 @@ function onFunctionChanged(idx) {
 		else if (type == 'PlaySound') {
 			optionDiv = createPlaySoundDiv(idx);
         }
-
+		else if (type == 'VolumeControl') {
+			optionDiv = createVolumeControlDiv(idx);
+		}
 		// attach the option UI
 		if (optionDiv != null) {
 			var container = document.getElementById('dFunctionContainer' + idx);
@@ -293,6 +299,30 @@ function createPlaySoundDiv(idx) {
 	return openOptionDiv;
 }
 
+function createVolumeControlDiv(idx) {
+	var openOptionDiv = createSdpiDiv('dOptions', idx, 'avg-container-center');
+	var groupDiv = createSdpiGroupDiv('optionGroup', idx, 'sdpi-item-value');
+	openOptionDiv.appendChild(groupDiv);
+
+	var descDiv = createSdpiChildDiv(groupDiv, 'desc', idx, 'avg-center');
+	descDiv.innerHTML = `Controls system volume.`;
+
+	var textDiv = createSdpiChildDiv(groupDiv, 'textString', idx, 'avg-container-center');
+	textDiv.innerHTML =
+		`<input id="iFunctionMetadata${idx}" type="text" style="display:none" value="VolumeUp" />
+		<select class="sdpi-item-value" id="sVolumeControl${idx}" onchange="onVolumeControlChanged(${idx})" style="width:50px">
+				<option value="VolumeUp">Volume Up</option>
+				<option value="VolumeDown">Volume Down</option>
+				<option value="ToggleMute">Toggle Mute</option>
+		</select>`;
+
+	return openOptionDiv;
+}
+
+function onVolumeControlChanged(idx) {
+	var selected = getSelectValue('sVolumeControl', idx);
+	document.getElementById(`iFunctionMetadata${idx}`).value = selected;
+}
 /// on apply and cancel button clicked ///
 
 function onBtnCancelClicked() {

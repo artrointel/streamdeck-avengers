@@ -9,7 +9,7 @@ namespace ArtrointelPlugin.SDFunctions
     public interface IExecutable
     {
         /// <summary>
-        /// 
+        /// execute function can be called by a separated thread.
         /// </summary>
         /// <param name="delayInSecond"></param>
         /// <param name="intervalInSecond"></param>

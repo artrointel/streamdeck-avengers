@@ -49,6 +49,10 @@ namespace ArtrointelPlugin.Control
             {
                 e = new SendKeyEvent(true);
             }
+            else if (cfg.mType.Equals(FunctionConfig.EType.VolumeControl.ToString()))
+            {
+                e = new VolumeControl();
+            }
             return e;
         }
     }
