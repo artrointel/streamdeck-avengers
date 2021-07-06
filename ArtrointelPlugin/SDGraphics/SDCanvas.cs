@@ -18,21 +18,24 @@ namespace ArtrointelPlugin.SDGraphics
                 SmoothingMode = SmoothingMode.HighSpeed,
                 InterpolationMode = InterpolationMode.Default,
                 PixelOffsetMode = PixelOffsetMode.HighSpeed,
-                ClearColor = Color.Empty
+                FlushIntention = FlushIntention.Flush,
+                ClearColor = Color.Empty,
             };
 
             public CompositingMode CompositingMode;
             public SmoothingMode SmoothingMode;
             public InterpolationMode InterpolationMode;
             public PixelOffsetMode PixelOffsetMode;
+            public FlushIntention FlushIntention;
             public Color ClearColor;
-            
+
             public CreateInfo()
             {
                 CompositingMode = CompositingMode.SourceOver;
                 SmoothingMode = SmoothingMode.HighSpeed;
                 InterpolationMode = InterpolationMode.Default;
                 PixelOffsetMode = PixelOffsetMode.HighSpeed;
+                FlushIntention = FlushIntention.Flush;
                 ClearColor = Color.Empty;
             }
         }
@@ -61,6 +64,7 @@ namespace ArtrointelPlugin.SDGraphics
             graphics.SmoothingMode = info.SmoothingMode;
             graphics.InterpolationMode = info.InterpolationMode;
             graphics.PixelOffsetMode = info.PixelOffsetMode;
+            graphics.Flush(info.FlushIntention);
             graphics.Clear(info.ClearColor);
             return new SDCanvas(graphics, bitmap);
         }

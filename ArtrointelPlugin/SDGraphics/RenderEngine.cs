@@ -38,9 +38,8 @@ namespace ArtrointelPlugin.SDGraphics
         public RenderEngine(int frameRate = FRAME_RATE_HINT)
         {
             mFrameDuration = 1000.0 / frameRate;
-            SDCanvas.CreateInfo info = SDCanvas.CreateInfo.DEFAULT;
-            mCompositedCanvas = SDCanvas.CreateCanvas(info);
-            
+            mCompositedCanvas = SDCanvas.CreateCanvas();
+
             mRenderTimer = new Timer(mFrameDuration);
             mRenderTimer.Elapsed += onTimedEvent;
             mRenderTimer.AutoReset = true;
