@@ -32,11 +32,13 @@ Draws Pie with color.
 ### Border Wave
 Draws Moving waves on the border of the base image.  
 ![Sample-BorderWave](./Images/sample_border_wave.gif)  
+- Configurate color/alpha, delay/duration.
 
 ### Blend Grayscaled Image
-Blend with grayscaled image of the current input image.  
-Note that this effect can only be shown at top of the list due to rendering order.
+Blend with grayscaled image of the current base image.  
+Note that this effect can only be shown at top of the list due to rendering order.  
 ![Sample-Graysacled](./Images/sample_grayscaled.gif)  
+- Configurate duration.
 
 
 ## Effect Combination Examples
@@ -50,7 +52,7 @@ Configure every effects on your needs.
 ### Example. Skill Icon like in game
 Example of a Skill icon in game.  
 ![Sample-Skill](./Images/example_skill.gif)  
-Cooltime as pie, Duration as border wave and color overlay, touch feedback as circle spread, Cooltime-end feedback as flash.  
+cooltime as Pie, duration as Border Wave with Color Overlay, touch feedback as Circle Spread, cooltime-end feedback as Flash.  
 
 
 
@@ -60,15 +62,15 @@ Make your own action for your customized icon in stream deck !
 
 ### Open File/Folder
 Opens File or folder.  
-Put path of a file or a folder.  
+- Put path of a file or a folder.  
 
 ### Open Webpage
 Opens webpage like google.com  
-Put address of a website.  
+- Put address of a website.  
 
 ### Execute Command
 Executes a command prompt.  
-Put command like "shutdown -s -t 3600"  
+- Put command like "shutdown -s -t 3600"  
 
 ### Key Combination
 Dispatches Keystroke event. It can be used as a keyboard macro.  
@@ -98,9 +100,10 @@ Use "Base Image : Update" button in the property inspector instead.
 ### Version 1.1.0 is Out !
 - Effect: Added "Blend Grayscaled Image"
 - Function: Added "PlaySound"
+- Function: Updated "Open File/Folder", added a button to extract icon from the file
 - Performance Update for Rendering and Functions
 - Minor Bugfixes around rendering issues
-- It Supports the previous version 1.0.0
+- It Supports the previous versions
 
 ### Version 1.0.0 is Out !
 - Initial release for the Avengers Key.
@@ -111,13 +114,19 @@ Use "Base Image : Update" button in the property inspector instead.
 # Future items
 Just take a look at below items that could be implemented in future.  
 
-- Image: animated gif support as base image (in ver1.x, postponed due to streamdeck issue)
+- Image: animated gif support as base image (in ver2.x, postponed due to streamdeck issue)
 - Image: lottie animation support as base image (in ver2.x)
-- Effect: image blending animation effect (in ver1.x)
-- Others: auto loop the key, dispatch event to the other avengers key
+- Effect: blending two input images animation effect (in ver1.x)
+- Others: toggle key, auto loop the key, dispatch event to the other avengers key
+
+# Technical Informations
+- Graphic Rendering Engine  
+The Avengers Key's Rendering Engine now uses Image and Graphics in System.Drawing assembly, which is using GDI+.  
+It means that the graphic processor is the CPU, not GPU.  
+This rendering engine could be updated using OpenTK for GL rendering in future, but currently I have no plan to do this at least now.
 
 # Known Issues
-- My recreated avengers key keeps previous cached data !
-This can be occurred whenever you try to remove/create/move with same position in stream deck.  
+- My recreated avengers key keeps previous cached data!  
+This can be occurred whenever you try to remove/create/move in a same position in stream deck.  
 This is due to an internal library issue. it will be resolved in future.  
-Please remove the key first and restart streamdeck and create new one manually for this case.  
+In this case, please remove the key at the position first, and then restart streamdeck application to create new one manually.  
