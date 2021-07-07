@@ -27,31 +27,31 @@ namespace ArtrointelPlugin.Control
 
             if (cfg.mType.Equals(FunctionConfig.EType.ExecuteCommand.ToString()))
             {
-                e = new ExecuteCommand();
+                e = new ExecuteCommand(cfg.mMetadata);
             }
             else if(cfg.mType.Equals(FunctionConfig.EType.OpenFile.ToString()))
             {
-                e = new OpenFile();
+                e = new OpenFile(cfg.mMetadata);
             }
             else if (cfg.mType.Equals(FunctionConfig.EType.OpenWebpage.ToString()))
             {
-                e = new OpenWebpage();
+                e = new OpenWebpage(cfg.mMetadata);
             }
             else if (cfg.mType.Equals(FunctionConfig.EType.PlaySound.ToString()))
             {
-                e = new PlaySound();
+                e = new PlaySound(cfg.mMetadata);
             }
             else if (cfg.mType.Equals(FunctionConfig.EType.Text.ToString()))
             {
-                e = new SendKeyEvent();
+                e = new SendKeyEvent(false, cfg.mMetadata, cfg.mDelay, cfg.mDuration, cfg.mInterval);
             }
             else if (cfg.mType.Equals(FunctionConfig.EType.Keycode.ToString()))
             {
-                e = new SendKeyEvent(true);
+                e = new SendKeyEvent(true, cfg.mMetadata, cfg.mDelay, cfg.mDuration, cfg.mInterval);
             }
             else if (cfg.mType.Equals(FunctionConfig.EType.VolumeControl.ToString()))
             {
-                e = new VolumeControl();
+                e = new VolumeControl(cfg.mMetadata);
             }
             return e;
         }

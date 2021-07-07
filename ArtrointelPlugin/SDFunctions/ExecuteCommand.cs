@@ -6,12 +6,17 @@ namespace ArtrointelPlugin.SDFunctions
     /// <summary>
     /// Executes a command
     /// </summary>
-    class ExecuteCommand : IExecutable
+    internal class ExecuteCommand : FunctionBase
     {
-        public void execute(double delayInSecond, double intervalInSecond, double durationInSecond, 
-            bool restart, string metadata)
+        internal ExecuteCommand(string metadata)
+            : base(metadata)
         {
-            executeCommand(metadata, true);
+            
+        }
+
+        public override void execute(bool restart)
+        {
+            executeCommand(mMetadata, true);
         }
 
         private void executeCommand(string command, bool hide = false)

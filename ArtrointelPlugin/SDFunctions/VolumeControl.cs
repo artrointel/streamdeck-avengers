@@ -8,13 +8,14 @@ using System.Windows.Forms;
 
 namespace ArtrointelPlugin.SDFunctions
 {
-    class VolumeControl : IExecutable
+    internal class VolumeControl : FunctionBase
     {
-        public void execute(double delayInSecond = 0, 
-            double intervalInSecond = 33, double durationInSecond = 0, 
-            bool restart = true, string metadata = null)
+        internal VolumeControl(string metadata)
+            : base(metadata) { }
+
+        public override void execute(bool restart)
         {
-            switch(metadata)
+            switch(mMetadata)
             {
                 case "VolumeUp":
                     VolumeUp();

@@ -27,7 +27,7 @@ namespace ArtrointelPlugin.SDFunctions
             {
                 return false;
             }
-            ((IExecutable)mExecutables[index]).execute(delayInSecond, interval, duration, true, metadata);
+            ((IExecutable)mExecutables[index]).execute(true);
             return true;
         }
         

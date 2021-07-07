@@ -4,28 +4,33 @@ using BarRaider.SdTools;
 
 namespace ArtrointelPlugin.SDFunctions
 {
-    class OpenWebpage : IExecutable
+    internal class OpenWebpage : FunctionBase
     {
-        private const String HTTP = "http://";
-        private const String HTTPS = "https://";
-        public void execute(double delayInSecond, double intervalInSecond, double durationInSecond, 
-            bool restart, string metadata)
-        {
-            String addr = metadata;
-            if(!metadata.Contains(HTTP) && !metadata.Contains(HTTPS))
-            {
-                addr = HTTP + addr;
-            }
+        private const string HTTP = "http://";
+        private const string HTTPS = "https://";
 
+        private string mAddr;
+        internal OpenWebpage(string metadata)
+            : base(metadata)
+        {
+            mAddr = mMetadata;
+            if (!mMetadata.Contains(HTTP) && !mMetadata.Contains(HTTPS))
+            {
+                mAddr = HTTP + mAddr;
+            }
+        }
+
+        public override void execute(bool restart)
+        {
             try
             {
                 Uri uri;
-                bool result = Uri.TryCreate(addr, UriKind.Absolute, out uri) && (uri.Scheme == Uri.UriSchemeHttp);
-                Process.Start(addr);
+                bool result = Uri.TryCreate(mAddr, UriKind.Absolute, out uri) && (uri.Scheme == Uri.UriSchemeHttp);
+                Process.Start(mAddr);
             }
             catch
             {
-                Logger.Instance.LogMessage(TracingLevel.ERROR, "Couldn't open page : " + metadata);
+                Logger.Instance.LogMessage(TracingLevel.ERROR, "Couldn't open page : " + mMetadata);
             }
             
         }

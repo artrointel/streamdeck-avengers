@@ -7,9 +7,12 @@ using ArtrointelPlugin.Utils;
 
 namespace ArtrointelPlugin.SDFunctions
 {
-    public class DelayedExecutable
+    internal abstract class DelayedExecutable : FunctionBase
     {
         protected DelayedTask mDelayedTask;
+
+        internal DelayedExecutable(string metadata, double delayInSecond, double durationInSecond, double intervalInSecond)
+            : base(metadata, delayInSecond, durationInSecond, intervalInSecond) { }
 
         public void cancel()
         {

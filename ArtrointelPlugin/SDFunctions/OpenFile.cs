@@ -3,25 +3,29 @@ using BarRaider.SdTools;
 
 namespace ArtrointelPlugin.SDFunctions
 {
-    class OpenFile : DelayedExecutable, IExecutable
+    internal class OpenFile : FunctionBase
     {
-        public void execute(double delayInSecond, double intervalInSecond, double durationInSecond, 
-            bool restart, string metadata)
+        internal OpenFile(string metadata)
+            : base(metadata)
+        {
+
+        }
+        public override void execute(bool restart)
         {
             try
             {
-                if (System.IO.Directory.Exists(metadata) || System.IO.File.Exists(metadata))
+                if (System.IO.Directory.Exists(mMetadata) || System.IO.File.Exists(mMetadata))
                 {
-                    Process.Start(metadata);
+                    Process.Start(mMetadata);
                 }
                 else
                 {
-                    Logger.Instance.LogMessage(TracingLevel.WARN, "OpenFile: " + metadata + " does not exists.");
+                    Logger.Instance.LogMessage(TracingLevel.WARN, "OpenFile: " + mMetadata + " does not exists.");
                 }
             } 
             catch
             {
-                Logger.Instance.LogMessage(TracingLevel.ERROR, "Couldn't open :" + metadata);
+                Logger.Instance.LogMessage(TracingLevel.ERROR, "Couldn't open :" + mMetadata);
             }
         }
     }

@@ -4,49 +4,30 @@ using ArtrointelPlugin.Utils;
 
 namespace ArtrointelPlugin.SDFunctions
 {
-    public class PlaySound : DelayedExecutable, IExecutable
+    internal class PlaySound : FunctionBase
     {
-        MediaPlayer mPlayer;
-        public void execute(double delayInSecond, double intervalInSecond, double durationInSecond, 
-            bool restart = true, string metadata = null)
+        private double mVolume = 1.0;
+        private string mFilePath;
+
+        internal PlaySound(string metadata)
+            : base(metadata)
+        {
+            
+        }
+
+        public override void execute(bool restart)
         {
             if(restart)
             {
-                if(mDelayedTask != null)
-                {
-                    mDelayedTask.cancel();
-                }
-            }
-
-            int dms = (int)(delayInSecond * 1000);
-            if(dms == 0)
-            {
-                playSound(metadata);
+                var player = new MediaPlayer();
+                player.Open(new Uri(mFilePath));
+                player.Volume = mVolume;
+                player.Play();
+                // TODO call Close(). and use mPlayer.Dispatcher for threading
             }
             else
             {
-                mDelayedTask = new DelayedTask(dms, () =>
-                {
-                    playSound(metadata);
-                });
-            }
-        }
-
-        private void playSound(string mediaFilePath) 
-        {
-            try
-            {
-                if(mPlayer != null)
-                {
-                    mPlayer.Stop();
-                    mPlayer.Close();
-                }
-                mPlayer = new MediaPlayer();
-                mPlayer.Open(new Uri(mediaFilePath));
-                mPlayer.Play();
-            } catch (Exception e)
-            {
-                DLogger.LogMessage("Cannot play sound file. " + e.Message);
+                
             }
         }
     }

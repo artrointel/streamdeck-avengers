@@ -4,13 +4,16 @@ using ArtrointelPlugin.Utils;
 
 namespace ArtrointelPlugin.SDFunctions
 {
-    public class SendKeyEvent : DelayedExecutable, IExecutable
+    internal class SendKeyEvent : DelayedExecutable, IExecutable
     {
-        Action<string> mSendKeyAction;
-        ValueAnimator mKeyEventAnimator;
+        private Action<string> mSendKeyAction;
+        private ValueAnimator mKeyEventAnimator;
 
-        public SendKeyEvent(bool asciiCode = false)
+        public SendKeyEvent(bool asciiCode, string metadata,
+            double delayInSecond, double durationInSecond, double intervalInSecond)
+            : base(metadata, delayInSecond, durationInSecond, intervalInSecond)
         {
+            // build action
             if (asciiCode)
             {
                 mSendKeyAction = (ascNumbers) =>
@@ -35,8 +38,7 @@ namespace ArtrointelPlugin.SDFunctions
             }
         }
 
-        public void execute(double delayInSecond, double intervalInSecond, double durationInSecond,
-            bool restart, string metadata)
+        public override void execute(bool restart)
         {
             if(restart)
             {
@@ -51,18 +53,18 @@ namespace ArtrointelPlugin.SDFunctions
                 }
             }
 
-            int delms = (int)(delayInSecond * 1000);
-            double ims = (int)(intervalInSecond * 1000);
-            int durms = (int)(durationInSecond * 1000);
+            int delms = (int)(mDelayInSecond * 1000);
+            double ims = (int)(mIntervalInSecond * 1000);
+            int durms = (int)(mDurationInSecond * 1000);
             if (delms == 0)
             {
-                sendKeyEvent(ims, durms, metadata);
+                sendKeyEvent(ims, durms, mMetadata);
                 return;
             }
 
             mDelayedTask = new DelayedTask(delms, () =>
             {
-                sendKeyEvent(ims, durms, metadata);
+                sendKeyEvent(ims, durms, mMetadata);
             });
         }
 
