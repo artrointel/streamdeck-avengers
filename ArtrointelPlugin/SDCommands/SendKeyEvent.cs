@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using ArtrointelPlugin.Utils;
 
-namespace ArtrointelPlugin.SDFunctions
+namespace ArtrointelPlugin.SDCommands
 {
     internal class SendKeyEvent : DelayedExecutable, IExecutable
     {

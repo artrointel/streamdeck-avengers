@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ArtrointelPlugin.Utils;
+﻿using ArtrointelPlugin.Utils;
 
-namespace ArtrointelPlugin.SDFunctions
+namespace ArtrointelPlugin.SDCommands
 {
-    internal abstract class DelayedExecutable : FunctionBase
+    internal abstract class DelayedExecutable : CommandBase
     {
         protected DelayedTask mDelayedTask;
 

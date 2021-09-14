@@ -3,24 +3,24 @@ function onLoad() {
 	if (cfg == null || cfg.length == 0) {
 		return;
 	}
-	// refer to FunctionConfigs.cs
+	// refer to CommandConfigs.cs
 	for (var idx = 1; idx <= cfg.length; idx++) {
-        onAddNewFunction();
-		var functionConfig = cfg[idx - 1];
-		setSelectValue('sFunctionTrigger', idx, functionConfig['mTrigger']);
-        setSelectValue('sFunctionType', idx, functionConfig['mType']);
-        onFunctionChanged(idx);
+        onAddNewCommand();
+		var commandConfig = cfg[idx - 1];
+		setSelectValue('sCommandTrigger', idx, commandConfig['mTrigger']);
+        setSelectValue('sCommandType', idx, commandConfig['mType']);
+        onCommandChanged(idx);
 
-        setValue('iFunctionDelay', idx, functionConfig['mDelay']);
-        setValue('iFunctionDuration', idx, functionConfig['mDuration']);
-        setValue('iFunctionInterval', idx, functionConfig['mInterval']);
-		setValue('iFunctionMetadata', idx, functionConfig['mMetadata']);
+        setValue('iCommandDelay', idx, commandConfig['mDelay']);
+        setValue('iCommandDuration', idx, commandConfig['mDuration']);
+        setValue('iCommandInterval', idx, commandConfig['mInterval']);
+        setValue('iCommandMetadata', idx, commandConfig['mMetadata']);
 
 		// for each options
-		switch (functionConfig['mType']) {
+        switch (commandConfig['mType']) {
 			case 'Keycode':
 				var keyCombination = "";
-				var keycodes = functionConfig['mMetadata'].split(' '); // metadata contains keycodes with spaces. 
+                var keycodes = commandConfig['mMetadata'].split(' '); // metadata contains keycodes with spaces. 
 				for (var ki = 0; ki < keycodes.length; ki++) { // last index will be empty.
 					keyCombination += gKeyboardMap[Number(keycodes[ki])] + '+';
 				}
@@ -28,10 +28,10 @@ function onLoad() {
 					keyCombination = keyCombination.slice(0, -1); // removes last char '+'
                 }
 				
-				document.getElementById('iFunctionMetadata' + idx).innerHTML = keyCombination;
+				document.getElementById('iCommandMetadata' + idx).innerHTML = keyCombination;
 				break;
 			case 'VolumeControl':
-				setSelectValue('sVolumeControl', idx, functionConfig['mMetadata']);
+                setSelectValue('sVolumeControl', idx, commandConfig['mMetadata']);
 				break;
         }
 	}
@@ -39,14 +39,14 @@ function onLoad() {
 
 var idx = 1;
 
-function onAddNewFunction() {
-	var newFunctionItem = document.createElement('div');
-	newFunctionItem.innerHTML =
-		`<div class="sdpi-item" id="dFunctionContainer${idx}" name="functionItem">
-			<select class="sdpi-item-value" id="sFunctionTrigger${idx}" style="width:50px">
+function onAddNewCommand() {
+    var newCommandItem = document.createElement('div');
+	newCommandItem.innerHTML =
+		`<div class="sdpi-item" id="dCommandContainer${idx}" name="commandItem">
+			<select class="sdpi-item-value" id="sCommandTrigger${idx}" style="width:50px">
 				<option value="OnKeyPressed">OnKeyPressed</option>
 			</select>
-			<select class="sdpi-item-value" id="sFunctionType${idx}" onchange="onFunctionChanged(${idx})" style="width:50px">
+			<select class="sdpi-item-value" id="sCommandType${idx}" onchange="onCommandChanged(${idx})" style="width:50px">
 				<option value="Select">Select</option>
 				<option value="OpenFile">Open File/Folder</option>
 				<option value="OpenWebpage">Open Webpage</option>
@@ -62,13 +62,13 @@ function onAddNewFunction() {
 			</div>
 		</div>`;
 
-	var effectList = document.getElementById('dvFunctionList');
-	effectList.appendChild(newFunctionItem.firstChild);
+	var effectList = document.getElementById('dvCommandList');
+    effectList.appendChild(newCommandItem.firstChild);
 
 	idx++;
 }
 
-function onFunctionChanged(idx) {
+function onCommandChanged(idx) {
 	// remove prev option UI
 	var prevOptions = document.getElementById('dOptions' + idx);
 	var prevOptionsHr = document.getElementById('dOptionsHr' + idx);
@@ -78,7 +78,7 @@ function onFunctionChanged(idx) {
 		prevOptionsHr.remove();
 	}
 
-	var type = getSelectValue('sFunctionType', idx);
+    var type = getSelectValue('sCommandType', idx);
 	if (type != null) {
 		// Creates option UI
 		var optionDiv = null;
@@ -107,7 +107,7 @@ function onFunctionChanged(idx) {
 		}
 		// attach the option UI
 		if (optionDiv != null) {
-			var container = document.getElementById('dFunctionContainer' + idx);
+            var container = document.getElementById('dCommandContainer' + idx);
 			container.parentNode.insertBefore(optionDiv, container.nextSibling);
 			optionDiv.parentNode.insertBefore(optionHr, optionDiv.nextSibling);
         }
@@ -115,9 +115,9 @@ function onFunctionChanged(idx) {
 }
 
 function onBtnDelete(idx) {
-    setSelectValue('sFunctionType', idx, 'Select');
-    onFunctionChanged(idx);
-    document.getElementById(`dFunctionContainer${idx}`).style.display = "none";
+    setSelectValue('sCommandType', idx, 'Select');
+    onCommandChanged(idx);
+    document.getElementById(`dCommandContainer${idx}`).style.display = "none";
 }
 
 /// detail options ///
@@ -132,12 +132,12 @@ function createOpenFileOptionsDiv(idx) {
 
 	var pathDiv = createSdpiChildDiv(groupDiv, 'path', idx, 'avg-container-center');
 	pathDiv.innerHTML =
-		`<input class="sdpi-item-value avg-input-text" id="iFunctionMetadata${idx}" type="text"
+		`<input class="sdpi-item-value avg-input-text" id="iCommandMetadata${idx}" type="text"
 			placeholder="ex) C:\\myProgram.exe or C:\\MyDownloadFolder"/>`;
 
 	var iconDiv = createSdpiChildDiv(groupDiv, 'icon', idx, 'avg-container-center');
 	iconDiv.innerHTML =
-		`<button type="button" value="Confirm" onclick="onUploadIconFromFile(${idx})">Upload this file's icon as base image</button>`;
+		`<button type="button" value="Confirm" onclick="onUploadImageFromFileIcon(${idx})">Upload this file's icon as base image</button>`;
 	return optionDiv;
 }
 
@@ -151,7 +151,7 @@ function createOpenWebpageOptionsDiv(idx) {
 
 	var addrDiv = createSdpiChildDiv(groupDiv, 'addr', idx, 'avg-container-center');
 	addrDiv.innerHTML =
-		`<input class="sdpi-item-value avg-input-text" id="iFunctionMetadata${idx}" type="text"
+		`<input class="sdpi-item-value avg-input-text" id="iCommandMetadata${idx}" type="text"
 			placeholder="ex) google.com"/>`;
 
 	return optionDiv;
@@ -167,7 +167,7 @@ function createExecuteCommandOptionsDiv(idx) {
 
 	var cmdDiv = createSdpiChildDiv(groupDiv, 'cmd', idx, 'avg-container-center');
 	cmdDiv.innerHTML =
-		`<textarea class="sdpi-item-value" id="iFunctionMetadata${idx}"
+		`<textarea class="sdpi-item-value" id="iCommandMetadata${idx}"
 			placeholder="ex) shutdown -s -t 3600 or shutdown -a"></textarea>`;
 
 	// TODO add check button whether in background or not
@@ -182,7 +182,7 @@ class KeyRecorder {
 
 	onKeyDown(idx) {
 		this.map[event.keyCode] = event.type == 'keydown';
-		var meta = document.getElementById('iFunctionMetadata' + idx);
+        var meta = document.getElementById('iCommandMetadata' + idx);
 		this.recordResult();
 		meta.value = this.recordedKeycodeASC;
 		meta.innerHTML = this.recordedKeycode;
@@ -237,16 +237,16 @@ function createKeyCombinationOptionsDiv(idx) {
 			placeholder="Record key here"
 			onkeydown="keyRecorder.onKeyDown(${idx})" 
 			onkeyup="keyRecorder.onKeyUp(${idx})"/>
-		<label class="sdpi-item-value avg-label" id="iFunctionMetadata${idx}">(Type Any key)</label>`;
+		<label class="sdpi-item-value avg-label" id="iCommandMetadata${idx}">(Type Any key)</label>`;
 	
 	var loopDiv = createSdpiChildDiv(groupDiv, 'loop', idx, 'avg-container-center');
 	loopDiv.innerHTML =
         `<label class="sdpi-item-value avg-label">Delay</label>
-		<input class="sdpi-item-value avg-input-text" id="iFunctionDelay${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>
+		<input class="sdpi-item-value avg-input-text" id="iCommandDelay${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>
 		<label class="sdpi-item-value avg-label">Duration</label>
-		<input class="sdpi-item-value avg-input-text" id="iFunctionDuration${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>
+		<input class="sdpi-item-value avg-input-text" id="iCommandDuration${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>
 		<label class="sdpi-item-value avg-label">Interval</label>
-		<input class="sdpi-item-value avg-input-text" id="iFunctionInterval${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>`;
+		<input class="sdpi-item-value avg-input-text" id="iCommandInterval${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>`;
 	return openOptionDiv;
 }
 
@@ -260,17 +260,17 @@ function createTextOptionsDiv(idx) {
 
 	var textDiv = createSdpiChildDiv(groupDiv, 'textString', idx, 'avg-container-center');
 	textDiv.innerHTML =
-		`<input class="sdpi-item-value avg-input-text" id="iFunctionMetadata${idx}" type="text"
+		`<input class="sdpi-item-value avg-input-text" id="iCommandMetadata${idx}" type="text"
 			placeholder="write any text here."/>`;
 
 	var loopDiv = createSdpiChildDiv(groupDiv, 'loop', idx, 'avg-container-center');
 	loopDiv.innerHTML =
         `<label class="sdpi-item-value avg-label">Delay</label>
-		<input class="sdpi-item-value avg-input-text" id="iFunctionDelay${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>
+		<input class="sdpi-item-value avg-input-text" id="iCommandDelay${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>
 		<label class="sdpi-item-value avg-label">Duration</label>
-		<input class="sdpi-item-value avg-input-text" id="iFunctionDuration${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>
+		<input class="sdpi-item-value avg-input-text" id="iCommandDuration${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>
 		<label class="sdpi-item-value avg-label">Interval</label>
-		<input class="sdpi-item-value avg-input-text" id="iFunctionInterval${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>`;
+		<input class="sdpi-item-value avg-input-text" id="iCommandInterval${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>`;
 	return openOptionDiv;
 }
 
@@ -284,17 +284,17 @@ function createPlaySoundDiv(idx) {
 
 	var textDiv = createSdpiChildDiv(groupDiv, 'textString', idx, 'avg-container-center');
 	textDiv.innerHTML =
-		`<input class="sdpi-item-value avg-input-text" id="iFunctionMetadata${idx}" type="text"
+		`<input class="sdpi-item-value avg-input-text" id="iCommandMetadata${idx}" type="text"
 			placeholder="ex) C:\\SoundFiles\\hello.mp3"/>`;
 
 	var loopDiv = createSdpiChildDiv(groupDiv, 'loop', idx, 'avg-container-center');
 	loopDiv.innerHTML =
 		`<label class="sdpi-item-value avg-label">Delay</label>
-		<input class="sdpi-item-value avg-input-text" id="iFunctionDelay${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>
+		<input class="sdpi-item-value avg-input-text" id="iCommandDelay${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>
 		<label class="sdpi-item-value avg-label">Duration</label>
-		<input class="sdpi-item-value avg-input-text" id="iFunctionDuration${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>
+		<input class="sdpi-item-value avg-input-text" id="iCommandDuration${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>
 		<label class="sdpi-item-value avg-label">Interval</label>
-		<input class="sdpi-item-value avg-input-text" id="iFunctionInterval${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>`;
+		<input class="sdpi-item-value avg-input-text" id="iCommandInterval${idx}" type="number" min="0.0" step="0.001" placeholder="second" value="0.0"/>`;
 	loopDiv.style.display = "none";
 	return openOptionDiv;
 }
@@ -309,7 +309,7 @@ function createVolumeControlDiv(idx) {
 
 	var textDiv = createSdpiChildDiv(groupDiv, 'textString', idx, 'avg-container-center');
 	textDiv.innerHTML =
-		`<input id="iFunctionMetadata${idx}" type="text" style="display:none" value="VolumeUp" />
+		`<input id="iCommandMetadata${idx}" type="text" style="display:none" value="VolumeUp" />
 		<select class="sdpi-item-value" id="sVolumeControl${idx}" onchange="onVolumeControlChanged(${idx})" style="width:50px">
 				<option value="VolumeUp">Volume Up</option>
 				<option value="VolumeDown">Volume Down</option>
@@ -321,7 +321,7 @@ function createVolumeControlDiv(idx) {
 
 function onVolumeControlChanged(idx) {
 	var selected = getSelectValue('sVolumeControl', idx);
-	document.getElementById(`iFunctionMetadata${idx}`).value = selected;
+    document.getElementById(`iCommandMetadata${idx}`).value = selected;
 }
 /// on apply and cancel button clicked ///
 
@@ -331,33 +331,33 @@ function onBtnCancelClicked() {
 
 function onBtnApplyClicked() {
 	// process saving all changes
-	var payload = buildFunctionPayload();
+    var payload = buildCommandPayload();
 	window.opener.sendPayloadToPlugin(payload);
 	window.close();
 }
 
-function onUploadIconFromFile(idx) {
-	var metadata = document.getElementById('iFunctionMetadata' + idx);
+function onUploadImageFromFileIcon(idx) {
+    var metadata = document.getElementById('iCommandMetadata' + idx);
 	var payload = {};
-	payload['payload_commands'] = 'true';
+    payload['payload_updateImageFromFile'] = 'true';
 	payload['meta_filePath'] = metadata.value;
 	window.opener.sendPayloadToPlugin(payload);
 }
 
-function buildFunctionPayload() {
+function buildCommandPayload() {
 	var payload = {};
-	var count = document.getElementsByName('functionItem').length;
-	payload['payload_updateFunctions'] = 'true';
+	var count = document.getElementsByName('commandItem').length;
+    payload['payload_updateCommands'] = 'true';
 	payload['meta_arrayCount'] = count;
 	if (count > 0) {
 		for (var i = 1; i <= count; i++) {
-			payload['sFunctionTrigger' + i] = getSelectValue('sFunctionTrigger', i);
-			payload['sFunctionType' + i] = getSelectValue('sFunctionType', i);
+            payload['sCommandTrigger' + i] = getSelectValue('sCommandTrigger', i);
+            payload['sCommandType' + i] = getSelectValue('sCommandType', i);
 
-			payload['iFunctionInterval' + i] = getValue('iFunctionInterval', i);
-			payload['iFunctionDelay' + i] = getValue('iFunctionDelay', i);
-			payload['iFunctionDuration' + i] = getValue('iFunctionDuration', i);
-			payload['iFunctionMetadata' + i] = getValue('iFunctionMetadata', i);
+            payload['iCommandInterval' + i] = getValue('iCommandInterval', i);
+            payload['iCommandDelay' + i] = getValue('iCommandDelay', i);
+			payload['iCommandDuration' + i] = getValue('iCommandDuration', i);
+            payload['iCommandMetadata' + i] = getValue('iCommandMetadata', i);
 		}
 	}
 	return payload;

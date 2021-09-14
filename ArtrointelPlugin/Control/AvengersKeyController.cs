@@ -9,13 +9,13 @@ using ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects;
 using ArtrointelPlugin.Control.Model;
 using ArtrointelPlugin.Control.Payload;
 using ArtrointelPlugin.Utils;
-using ArtrointelPlugin.SDFunctions;
+using ArtrointelPlugin.SDCommands;
 
 namespace ArtrointelPlugin.Control
 {
     /// <summary>
     /// Controller of the avengers key.
-    /// It controls icon rendering and functions to be executed.
+    /// It controls icon rendering and commands to be executed.
     /// </summary>
     public class AvengersKeyController
     {
@@ -26,8 +26,8 @@ namespace ArtrointelPlugin.Control
         // Callback action after the Render engine updated the canvas image.
         private Action<Image> mRendererUpdatedListener;
 
-        // Executor of user-customized functions
-        private FunctionExecutor mFunctionExecutor;
+        // Executor of user-customized commands
+        private CommandExecutor mCommandExecutor;
 
         // Configuration data created by user
         private AvengersKeySettings mSettings;
@@ -46,7 +46,7 @@ namespace ArtrointelPlugin.Control
             mRendererUpdatedListener = rendererUpdatedListener;
 
             initializeRenderEngine();
-            initializeFunctionExecutor();  
+            initializeCommandExecutor();  
         }
 
         public void startRenderEngine()
@@ -71,13 +71,13 @@ namespace ArtrointelPlugin.Control
                 return true;
             }
 
-            // Handles Function payload
-            if (PayloadReader.IsFunctionPayload(payload))
+            // Handles Command payload
+            if (PayloadReader.IsCommandPayload(payload))
             {
-                int functionCount = PayloadReader.GetArrayCount(payload);
-                mSettings.FunctionConfigurations = PayloadReader.LoadFunctionDataFromPayload(payload, functionCount);
-                refineFunctionConfigurations();
-                initializeFunctionExecutor();
+                int commandCount = PayloadReader.GetArrayCount(payload);
+                mSettings.CommandConfigurations = PayloadReader.LoadCommandDataFromPayload(payload, commandCount);
+                refineCommandConfigurations();
+                initializeCommandExecutor();
                 return true;
             }
 
@@ -93,16 +93,16 @@ namespace ArtrointelPlugin.Control
                 return true;
             }
 
-            // Handles the other special commands for the Avengers Key.
-            if (PayloadReader.IsCommandPayload(payload))
+            // Handles special things for the Avengers Key below.
+            if (PayloadReader.IsImageUpdateFromFilePayload(payload))
             {
-                return handleCommands(payload);
+                return updateImageFromFileIcon(payload);
             }
 
             return false;
         }
 
-        private bool handleCommands(JObject payload)
+        private bool updateImageFromFileIcon(JObject payload)
         {
             // Command to use file icon as a base image
             string data = PayloadReader.GetFilePath(payload);
@@ -141,29 +141,29 @@ namespace ArtrointelPlugin.Control
         }
 
         // Refines incoming data from PI to make controller safer.
-        private void refineFunctionConfigurations()
+        private void refineCommandConfigurations()
         {
-            var functionCfgs = mSettings.FunctionConfigurations;
-            for (int i = functionCfgs.Count - 1; i != -1; i--)
+            var commandCfgs = mSettings.CommandConfigurations;
+            for (int i = commandCfgs.Count - 1; i != -1; i--)
             {
-                if (!FunctionFactory.IsSupported((FunctionConfig)functionCfgs[i]))
+                if (!CommandFactory.IsSupported((CommandConfig)commandCfgs[i]))
                 {
-                    functionCfgs.RemoveAt(i);
+                    commandCfgs.RemoveAt(i);
                 }
             }
         }
 
-        private void initializeFunctionExecutor()
+        private void initializeCommandExecutor()
         {
-            if (mFunctionExecutor != null)
+            if (mCommandExecutor != null)
             {
-                mFunctionExecutor.destroyAll();
+                mCommandExecutor.destroyAll();
             }
-            mFunctionExecutor = new FunctionExecutor();
-            foreach (FunctionConfig cfg in mSettings.FunctionConfigurations)
+            mCommandExecutor = new CommandExecutor();
+            foreach (CommandConfig cfg in mSettings.CommandConfigurations)
             {
-                var executable = FunctionFactory.CreateExecutable(cfg);
-                mFunctionExecutor.addExecutable(executable);
+                var executable = CommandFactory.CreateExecutable(cfg);
+                mCommandExecutor.addExecutable(executable);
             }
         }
 
@@ -213,14 +213,15 @@ namespace ArtrointelPlugin.Control
         
         public async void actionOnKeyPressed()
         {
-            // Executes functions in separated thread
-            for (int i = 0; i < mSettings.FunctionConfigurations.Count; i++)
+            // Executes commands in separated threads
+            for (int i = 0; i < mSettings.CommandConfigurations.Count; i++)
             {
-                FunctionConfig cfg = (FunctionConfig)mSettings.FunctionConfigurations[i];
-                if (cfg.mTrigger.Equals(FunctionConfig.ETrigger.OnKeyPressed.ToString()))
+                CommandConfig cfg = (CommandConfig)mSettings.CommandConfigurations[i];
+                if (cfg.mTrigger.Equals(CommandConfig.ETrigger.OnKeyPressed.ToString()))
                 {
                     await Task.Run(() => {
-                        mFunctionExecutor.executeFunctionAt(i, cfg.mDelay, cfg.mInterval, cfg.mDuration, cfg.mMetadata);
+                        mCommandExecutor.executeCommandAt(
+                            i, cfg.mDelay, cfg.mInterval, cfg.mDuration, cfg.mMetadata);
                     });
                 }
             }
@@ -232,7 +233,7 @@ namespace ArtrointelPlugin.Control
                 if (cfg.mTrigger.Equals(EffectConfig.ETrigger.OnKeyPressed.ToString()))
                 {
                     if (mUseBaseImageRenderer)
-                        mRenderEngine.animateRendererAt(i+1); // base image renderer is added at 0
+                        mRenderEngine.animateRendererAt(i + 1); // base image renderer is added at 0
                     else
                         mRenderEngine.animateRendererAt(i);
                 }

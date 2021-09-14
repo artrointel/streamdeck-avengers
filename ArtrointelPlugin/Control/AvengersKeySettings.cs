@@ -11,7 +11,7 @@ namespace ArtrointelPlugin.Control
     {
         public string Base64ImageString { get; set; }
 
-        public ArrayList FunctionConfigurations { get; set; } // Arraylist of FunctionConfig
+        public ArrayList CommandConfigurations { get; set; } // Arraylist of CommandConfig
 
         public ArrayList EffectConfigurations { get; set; } // Arraylist of EffectConfig
 
@@ -22,7 +22,7 @@ namespace ArtrointelPlugin.Control
             AvengersKeySettings instance = new AvengersKeySettings
             {
                 Base64ImageString = FileIOManager.GetFallbackBase64Image(),
-                FunctionConfigurations = new ArrayList(),
+                CommandConfigurations = new ArrayList(),
                 EffectConfigurations = new ArrayList()
             };
             return instance;
@@ -45,11 +45,11 @@ namespace ArtrointelPlugin.Control
 
                     ret.Base64ImageString = s.Base64ImageString;
 
-                    if (s.FunctionConfigurations != null)
+                    if (s.CommandConfigurations != null)
                     {
-                        foreach (JObject cfg in s.FunctionConfigurations)
+                        foreach (JObject cfg in s.CommandConfigurations)
                         {
-                            ret.FunctionConfigurations.Add(cfg.ToObject<FunctionConfig>());
+                            ret.CommandConfigurations.Add(cfg.ToObject<CommandConfig>());
                         }
                     }
 

@@ -10,9 +10,9 @@ namespace ArtrointelPlugin.Control.Payload
     {
         // constants from property inspector written in javascript.
         public const string PAYLOAD_IMAGE_UPDATE_KEY = "payload_updateImage";
+        public const string PAYLOAD_IMAGE_UPDATE_FROM_FILE_KEY = "payload_updateImageFromFile";
         public const string PAYLOAD_EFFECT_KEY = "payload_updateEffects";
-        public const string PAYLOAD_FUNCTION_KEY = "payload_updateFunctions";
-        public const string PAYLOAD_COMMAND_KEY = "payload_commands";
+        public const string PAYLOAD_COMMAND_KEY = "payload_updateCommands";
 
         public const string META_DATA_COUNT = "meta_arrayCount";
         public const string META_FILE_PATH = "meta_filePath";
@@ -25,26 +25,30 @@ namespace ArtrointelPlugin.Control.Payload
         public const string KEY_EFFECT_DURATION = "iEffectDuration";
         public const string KEY_EFFECT_METADATA = "iEffectMetadata";
 
-        public const string KEY_FUNCTION_TRIGGER = "sFunctionTrigger";
-        public const string KEY_FUNCTION_TYPE = "sFunctionType";
-        public const string KEY_FUNCTION_DELAY = "iFunctionDelay";
-        public const string KEY_FUNCTION_INTERVAL = "iFunctionInterval"; // in millisecond
-        public const string KEY_FUNCTION_DURATION = "iFunctionDuration";
-        public const string KEY_FUNCTION_METADATA = "iFunctionMetadata"; // handled by the type
+        public const string KEY_COMMAND_TRIGGER = "sCommandTrigger";
+        public const string KEY_COMMAND_TYPE = "sCommandType";
+        public const string KEY_COMMAND_DELAY = "iCommandDelay";
+        public const string KEY_COMMAND_INTERVAL = "iCommandInterval"; // in millisecond
+        public const string KEY_COMMAND_DURATION = "iCommandDuration";
+        public const string KEY_COMMAND_METADATA = "iCommandMetadata"; // handled by the type
 
         private PayloadReader()
         {
 
         }
+        public static bool IsImageUpdatePayload(JObject payload)
+        {
+            return IdentifyPayload(payload, PAYLOAD_IMAGE_UPDATE_KEY);
+        }
+
+        public static bool IsImageUpdateFromFilePayload(JObject payload)
+        {
+            return IdentifyPayload(payload, PAYLOAD_IMAGE_UPDATE_FROM_FILE_KEY);
+        }
 
         public static bool IsEffectPayload(JObject payload)
         {
             return IdentifyPayload(payload, PAYLOAD_EFFECT_KEY);
-        }
-
-        public static bool IsFunctionPayload(JObject payload)
-        {
-            return IdentifyPayload(payload, PAYLOAD_FUNCTION_KEY);
         }
 
         public static bool IsCommandPayload(JObject payload)
@@ -66,11 +70,6 @@ namespace ArtrointelPlugin.Control.Payload
         public static int GetArrayCount(JObject payload)
         {
             return payload.Value<int>(META_DATA_COUNT);
-        }
-
-        public static bool IsImageUpdatePayload(JObject payload)
-        {
-            return IdentifyPayload(payload, PAYLOAD_IMAGE_UPDATE_KEY);
         }
 
         public static string GetFilePath(JObject payload)
@@ -111,27 +110,27 @@ namespace ArtrointelPlugin.Control.Payload
             return null;
         }
 
-        public static ArrayList LoadFunctionDataFromPayload(JObject payload, int count)
+        public static ArrayList LoadCommandDataFromPayload(JObject payload, int count)
         {
             try
             {
-                ArrayList newFunctionList = new ArrayList();
+                ArrayList newCommandList = new ArrayList();
                 for (int i = 1; i <= count; i++)
                 {
-                    string trigger = payload.Value<string>(KEY_FUNCTION_TRIGGER + i);
-                    string type = payload.Value<string>(KEY_FUNCTION_TYPE + i);
-                    double delay = payload.Value<double>(KEY_FUNCTION_DELAY + i);
-                    double interval = payload.Value<double>(KEY_FUNCTION_INTERVAL + i);
-                    double duration = payload.Value<double>(KEY_FUNCTION_DURATION + i);
-                    string metadata = payload.Value<string>(KEY_FUNCTION_METADATA + i);
-                    newFunctionList.Add(FunctionConfig.Load(
+                    string trigger = payload.Value<string>(KEY_COMMAND_TRIGGER + i);
+                    string type = payload.Value<string>(KEY_COMMAND_TYPE + i);
+                    double delay = payload.Value<double>(KEY_COMMAND_DELAY + i);
+                    double interval = payload.Value<double>(KEY_COMMAND_INTERVAL + i);
+                    double duration = payload.Value<double>(KEY_COMMAND_DURATION + i);
+                    string metadata = payload.Value<string>(KEY_COMMAND_METADATA + i);
+                    newCommandList.Add(CommandConfig.Load(
                         trigger, type, delay, interval, duration, metadata));
                 }
-                return newFunctionList;
+                return newCommandList;
             }
             catch (Exception e)
             {
-                Logger.Instance.LogMessage(TracingLevel.ERROR, "Input effect data is wrong: " + e.ToString());
+                Logger.Instance.LogMessage(TracingLevel.ERROR, "Input command data is wrong: " + e.ToString());
             }
             return null;
         }

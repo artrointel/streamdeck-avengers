@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
 using BarRaider.SdTools;
 
-namespace ArtrointelPlugin.SDFunctions
+namespace ArtrointelPlugin.SDCommands
 {
-    internal class OpenFile : FunctionBase
+    internal class OpenFile : CommandBase
     {
         internal OpenFile(string metadata)
             : base(metadata)

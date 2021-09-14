@@ -1,14 +1,13 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
-namespace ArtrointelPlugin.SDFunctions
+namespace ArtrointelPlugin.SDCommands
 {
     /// <summary>
     /// Executes a command
     /// </summary>
-    internal class ExecuteCommand : FunctionBase
+    internal class ExecuteCommandPrompt : CommandBase
     {
-        internal ExecuteCommand(string metadata)
+        internal ExecuteCommandPrompt(string metadata)
             : base(metadata)
         {
             

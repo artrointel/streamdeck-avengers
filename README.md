@@ -1,6 +1,6 @@
 # Avengers Key Plugin
 
-#### Make your own key with animatable graphic effects. Multiple functions are also supported.
+#### Make your own key with animatable graphic effects. Multiple Commands are also supported.
 
 
 
@@ -9,7 +9,7 @@ You can add multiple animation effects **ordered by layer** in the effect proper
 Make your own animation effects for your customized icon in stream deck !  
 
 ### Circle Spread
-Spreads out with a circle. It can be used as touch feedback effect in your icon.  
+Spreads out with a circle. It can be used as touch feedback effect on your base image.  
 ![Sample-CircleSpread](./Images/sample_circle_spread.gif)
 - Configurate color/alpha, delay/duration.
 
@@ -19,7 +19,7 @@ Makes Color overlay layer on your base image.
 - Configurate color/alpha, delay/duration.
 
 ### Flash
-Flash the icon with color. It can be used as touch feedback effect in your icon.  
+Flash the icon with color. It can be used as touch feedback effect on your base image.  
 ![Sample-Flash](./Images/sample_flash.gif)
 - Configurate color/alpha, delay/duration.
 
@@ -56,19 +56,20 @@ cooltime as Pie, duration as Border Wave with Color Overlay, touch feedback as C
 
 
 
-## Functions
-You can add multiple functions **ordered by layer** in the function property inspector.  
+## Commands
+You can add multiple commands **ordered by layer** in the command property inspector.  
 Make your own action for your customized icon in stream deck !  
 
 ### Open File/Folder
 Opens File or folder.  
+Tip: you can also run your own batch script file through this command.  
 - Put path of a file or a folder.  
 
 ### Open Webpage
 Opens webpage like google.com  
 - Put address of a website.  
 
-### Execute Command
+### Execute Command Prompt
 Executes a command prompt.  
 - Put command like "shutdown -s -t 3600"  
 
@@ -99,9 +100,9 @@ Use "Base Image : Update" button in the property inspector instead.
 # Change Log
 ### Version 1.1.0 is Out !
 - Effect: Added "Blend Grayscaled Image"
-- Function: Added "PlaySound"
-- Function: Updated "Open File/Folder", added a button to extract icon from the file
-- Performance Update for Rendering and Functions
+- Command: Added "PlaySound"
+- Command: Updated "Open File/Folder", added a button to extract icon from the file
+- Performance Update for Rendering and Commands
 - Minor Bugfixes around rendering issues
 - It Supports the previous versions
 

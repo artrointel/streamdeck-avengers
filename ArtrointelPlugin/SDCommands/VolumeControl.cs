@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace ArtrointelPlugin.SDFunctions
+namespace ArtrointelPlugin.SDCommands
 {
-    internal class VolumeControl : FunctionBase
+    internal class VolumeControl : CommandBase
     {
         internal VolumeControl(string metadata)
             : base(metadata) { }

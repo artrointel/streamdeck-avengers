@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using BarRaider.SdTools;
 
-namespace ArtrointelPlugin.SDFunctions
+namespace ArtrointelPlugin.SDCommands
 {
-    internal class OpenWebpage : FunctionBase
+    internal class OpenWebpage : CommandBase
     {
         private const string HTTP = "http://";
         private const string HTTPS = "https://";

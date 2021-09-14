@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Collections;
 using System.Timers;
 using ArtrointelPlugin.SDGraphics.Renderer;

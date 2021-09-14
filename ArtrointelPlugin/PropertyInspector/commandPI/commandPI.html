@@ -5,7 +5,7 @@
 	<meta charset="utf-8" />
 	<meta name=apple-mobile-web-app-capable content=yes>
 	<meta name=apple-mobile-web-app-status-bar-style content=black>
-	<title>Avengers key function Settings</title>
+	<title>Avengers key command Settings</title>
 
 	<link rel="stylesheet" href="../sdpi.css">
 	<link rel="stylesheet" href="../avengers.css">
@@ -55,40 +55,40 @@
 	<script src="../utils/common.js"></script>
 	<script src="../utils/sdpi.creator.js"></script>
 	<script src="keyboardMap.js"></script>
-	<script src="functionPI.js"></script>
+	<script src="commandPI.js"></script>
 </head>
 
 <body onload="onLoad()">
 	<div class="sdpi-wrapper">
 		<div class="sdpi-heading">INFORMATION</div>
 		<div class="wrap">
-			<p>
-				You can add or remove your function of the avengers key.
-				Make your functions in the below section and press apply button after done.
-			</p>
+            <p>
+                You can add or remove your command of the avengers key.
+                Make your commands in the below section and press apply button after done.
+            </p>
 			<p>Since the program uses Microsoft .Net Framework, install and restart stream deck if the plugin does not work.</p>
 			<p><a href="https://dotnet.microsoft.com/download/dotnet-framework" target="_blank">Install MS .Net Framework</a></p>
 			
-			<p><a href="https://github.com/artrointel/streamdeck-avengers#functions" target="_blank">Open Function Explanation</a></p>
+			<p><a href="https://github.com/artrointel/streamdeck-avengers#commands" target="_blank">Open Command Explanation</a></p>
 		</div>
 
-		<div class="sdpi-heading">Function List</div>
+		<div class="sdpi-heading">Command List</div>
 		<!-- Label -->
         <div class="sdpi-item">
             <div class="sdpi-item-value" style="text-align: center;">
                 <label>Trigger</label>
             </div>
             <div class="sdpi-item-value" style="text-align: center;">
-                <label>Function</label>
+                <label>Command</label>
             </div>
             <div class="sdpi-item-value"></div>
         </div>
-		<!-- Function List -->
-		<div id="dvFunctionList"></div>
+		<!-- Command List -->
+		<div id="dvCommandList"></div>
 		
-		<!-- ADD New Function  -->
+		<!-- ADD New Command  -->
 		<div class="sdpi-item">
-			<button class="sdpi-item-value sdProperty" id="btnAddNewFunction" onclick="onAddNewFunction()">Add New Function</button>
+			<button class="sdpi-item-value sdProperty" id="btnAddNewCommand" onclick="onAddNewCommand()">Add New Command</button>
 		</div>
 		<hr />
 		<div class="wrap" style="text-align: right;">

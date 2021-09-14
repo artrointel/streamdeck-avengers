@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Collections;
 
-namespace ArtrointelPlugin.SDFunctions
+namespace ArtrointelPlugin.SDCommands
 {
-    public class FunctionExecutor
+    public class CommandExecutor
     {
         ArrayList mExecutables = new ArrayList();
 
-        public FunctionExecutor()
+        public CommandExecutor()
         {
 
         }
@@ -21,7 +17,7 @@ namespace ArtrointelPlugin.SDFunctions
             mExecutables.Add(executable);
         }
 
-        public bool executeFunctionAt(int index, double delayInSecond, double interval, double duration, String metadata)
+        public bool executeCommandAt(int index, double delayInSecond, double interval, double duration, String metadata)
         {
             if(mExecutables == null || mExecutables[index] == null)
             {

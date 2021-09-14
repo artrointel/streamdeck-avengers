@@ -5,11 +5,11 @@ using NAudio.Wave;
 using ArtrointelPlugin.Utils;
 
 // https://github.com/naudio/NAudio/blob/master/Docs/PlayAudioFileConsoleApp.md
-namespace ArtrointelPlugin.SDFunctions
+namespace ArtrointelPlugin.SDCommands
 {
     // TODO In 2.0 Update, playsound will have more detail options with toggle key feature;
     // volume, loop, pause/stop/restart
-    internal class PlaySound : FunctionBase
+    internal class PlaySound : CommandBase
     {
         
         internal PlaySound(string metadata)

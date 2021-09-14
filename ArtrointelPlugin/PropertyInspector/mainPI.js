@@ -1,16 +1,16 @@
 ﻿// on avgSettings is updated
 window.addEventListener('onSettingsUpdated', function (e) {
     document.getElementById('btnSelect').innerHTML = 'Update';
-    document.getElementById('btnFunctionEdit').disabled = false;
+    document.getElementById('btnCommandEdit').disabled = false;
     document.getElementById('btnEffectEdit').disabled = false;
 
-    var fCount = avgSettings.mFunctionConfigurations.length;
+    var fCount = avgSettings.mCommandConfigurations.length;
     var eCount = avgSettings.mEffectConfigurations.length;
     
     if (fCount > 0) {
-        document.getElementById('btnFunctionEdit').innerHTML = 'Edit  (' + fCount + ')';
+        document.getElementById('btnCommandEdit').innerHTML = 'Edit  (' + fCount + ')';
     } else {
-        document.getElementById('btnFunctionEdit').innerHTML = 'Edit';
+        document.getElementById('btnCommandEdit').innerHTML = 'Edit';
     }
     if (eCount > 0) {
         document.getElementById('btnEffectEdit').innerHTML = 'Edit  (' + eCount + ')';
@@ -37,13 +37,13 @@ function buildImageUpdatePayload(path) {
     return payload;
 }
 
-// open external function window and effect window with loaded settings data if it exists
-function onBtnFunctionEditClicked() {
-    var functionWindow = window.open('functionPI/functionPI.html', 'Avengers Function Configuration');
-    functionWindow.cfg = avgSettings.mFunctionConfigurations;
+// open external command window and effect window with loaded settings data if it exists
+function onBtnCommandEditClicked() {
+    var commandWindow = window.open('commandPI/commandPI.html', 'Avengers Command Configuration');
+    commandWindow.cfg = avgSettings.mCommandConfigurations;
 }
 
 function onBtnEffectEditClicked() {
-    var effectWindow = window.open('effectPI/effectPI.html', 'Avengers Function Configuration');
+    var effectWindow = window.open('effectPI/effectPI.html', 'Avengers Command Configuration');
     effectWindow.cfg = avgSettings.mEffectConfigurations;
 }

@@ -1,6 +1,6 @@
 ﻿namespace ArtrointelPlugin.Control.Model
 {
-    public class FunctionConfig
+    public class CommandConfig
     {
         public enum ETrigger { OnKeyPressed, OnKeyReleased };
         public enum EType { Text, Keycode, OpenWebpage, OpenFile, ExecuteCommand, PlaySound, VolumeControl };
@@ -13,11 +13,11 @@
         public double mDuration;
         public string mMetadata;
 
-        private FunctionConfig() {}
+        private CommandConfig() {}
 
-        public static FunctionConfig Load(string trigger, string type, double delay, double interval, double duration, string metadata)
+        public static CommandConfig Load(string trigger, string type, double delay, double interval, double duration, string metadata)
         {
-            FunctionConfig cfg = new FunctionConfig();
+            CommandConfig cfg = new CommandConfig();
             cfg.mTrigger = trigger;
             cfg.mType = type;
             cfg.mDelay = delay;

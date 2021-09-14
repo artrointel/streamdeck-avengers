@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ArtrointelPlugin.SDFunctions
+﻿namespace ArtrointelPlugin.SDCommands
 {
-    internal abstract class FunctionBase : IExecutable
+    internal abstract class CommandBase : IExecutable
     {
         protected readonly double mDelayInSecond;
         protected readonly double mDurationInSecond;
         protected readonly double mIntervalInSecond;
         protected readonly string mMetadata;
 
-        internal FunctionBase(string metadata = null, 
+        internal CommandBase(string metadata = null, 
             double delayInSecond = 0, double durationInSecond = 0, double intervalInSecond = 33)
         {
             mDelayInSecond = delayInSecond;
