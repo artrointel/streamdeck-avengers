@@ -280,7 +280,7 @@ function createPlaySoundDiv(idx) {
 	openOptionDiv.appendChild(groupDiv);
 
 	var descDiv = createSdpiChildDiv(groupDiv, 'desc', idx, 'avg-center');
-	descDiv.innerHTML = `Plays the sound file in background once.`;
+	descDiv.innerHTML = `Play a sound file in background once.`;
 
 	var textDiv = createSdpiChildDiv(groupDiv, 'textString', idx, 'avg-container-center');
 	textDiv.innerHTML =

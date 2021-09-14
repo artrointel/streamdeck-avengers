@@ -2,7 +2,7 @@
   "Actions": [
     {
       "Icon": "Images/avengersIcon",
-      "Name": "Avengers Key",
+      "Name": "Avengers Key 1.1.0",
       "States": [
         {
           "Image": "Images/avengersIcon",
@@ -11,7 +11,7 @@
         }
       ],
       "SupportedInMultiActions": false,
-      "Tooltip": "Avengers Key tooltip",
+      "Tooltip": "Avengers Key: Make your own actions with graphic effects!",
       "UUID": "com.artrointel.avengerskey",
       "PropertyInspectorPath": "PropertyInspector/mainPI.html"
     }
