@@ -1,0 +1,101 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name=apple-mobile-web-app-capable content=yes>
+	<meta name=apple-mobile-web-app-status-bar-style content=black>
+	<title>Avengers key option Settings</title>
+
+	<link rel="stylesheet" href="../sdpi.css">
+	<link rel="stylesheet" href="../avengers.css">
+	<style>
+
+		body {
+			background-color: transparent;
+		}
+
+		.sdpi-item {
+			max-width: none !important;
+		}
+
+		.sdpi-heading {
+			margin: 16px 0;
+		}
+
+		ul {
+			max-height: none;
+		}
+
+		li * {
+			min-height: 18px;
+			padding: 4px;
+			display: flex;
+			align-items: center;
+		}
+
+		.wrap {
+			margin: 8px;
+		}
+
+		.title {
+			font-weight: bold;
+			padding-bottom: 2px;
+			margin-bottom: 6px;
+			border-bottom: 1px solid rgba(255,255,255,0.1);
+			text-transform: uppercase;
+		}
+
+		.wrap {
+			text-align: center;
+		}
+	</style>
+
+	<script src="../sdtools.common.js"></script>
+	<script src="../utils/common.js"></script>
+	<script src="../utils/sdpi.creator.js"></script>
+	<script src="optionPI.js"></script>
+</head>
+
+<body onload="onLoad()">
+	<div class="sdpi-wrapper">
+		<div class="sdpi-heading">INFORMATION</div>
+		<div class="wrap">
+            <p>
+                You can setup key behaviors (pause/resume/restart/stop) by its status.
+                Make the key to meet your needs in this option settings.
+                Customize your avengers key option in the below section and press apply button after done.
+            </p>
+			
+			<p><a href="https://github.com/artrointel/streamdeck-avengers#options" target="_blank">Open Option Explanation</a></p>
+		</div>
+
+		<div class="sdpi-heading">Option List</div>
+		<!-- Label -->
+        <div class="sdpi-item">
+            <div class="sdpi-item-value" style="text-align: center;">
+                <label>Condition</label>
+            </div>
+            <div class="sdpi-item-value" style="text-align: center;">
+                <label>Behavior</label>
+            </div>
+            <div class="sdpi-item-value"></div>
+        </div>
+		<!-- Condition List -->
+		<div id="dvOptionList"></div>
+		
+		<!-- ADD New Option  -->
+		<div class="sdpi-item">
+			<button class="sdpi-item-value sdProperty" id="btnAddNewOption" onclick="onAddNewOption()">Add New Option</button>
+		</div>
+		<hr />
+		<div class="wrap" style="text-align: right;">
+			<button type="button" value="Confirm" onclick="onBtnApplyClicked()">Apply</button>
+			<button type="button" value="Cancel" onclick="onBtnCancelClicked()">Cancel</button>
+			<p>If any helps, please visit web-site below and make an issue or send an e-mail.</p>
+			<p><a href="https://github.com/artrointel/streamdeck-avengers" target="_blank">Open GitHub Page</a></p>
+		</div>
+	</div>
+</body>
+
+</html>

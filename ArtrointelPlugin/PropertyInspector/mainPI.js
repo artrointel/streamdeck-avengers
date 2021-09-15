@@ -3,6 +3,7 @@ window.addEventListener('onSettingsUpdated', function (e) {
     document.getElementById('btnSelect').innerHTML = 'Update';
     document.getElementById('btnCommandEdit').disabled = false;
     document.getElementById('btnEffectEdit').disabled = false;
+    document.getElementById('btnOptionEdit').disabled = false;
 
     var fCount = avgSettings.mCommandConfigurations.length;
     var eCount = avgSettings.mEffectConfigurations.length;
@@ -17,6 +18,8 @@ window.addEventListener('onSettingsUpdated', function (e) {
     } else {
         document.getElementById('btnEffectEdit').innerHTML = 'Edit';
     }
+
+    document.getElementById('btnOptionEdit').innerHTML = 'Edit';
 });
 
 // to upload image functions
@@ -37,13 +40,19 @@ function buildImageUpdatePayload(path) {
     return payload;
 }
 
-// open external command window and effect window with loaded settings data if it exists
+// open an external window with loaded settings data if it exists
+
 function onBtnCommandEditClicked() {
     var commandWindow = window.open('commandPI/commandPI.html', 'Avengers Command Configuration');
     commandWindow.cfg = avgSettings.mCommandConfigurations;
 }
 
 function onBtnEffectEditClicked() {
-    var effectWindow = window.open('effectPI/effectPI.html', 'Avengers Command Configuration');
+    var effectWindow = window.open('effectPI/effectPI.html', 'Avengers Effect Configuration');
     effectWindow.cfg = avgSettings.mEffectConfigurations;
+}
+
+function onBtnOptionEditClicked() {
+    var effectWindow = window.open('optionPI/optionPI.html', 'Avengers Option Configuration');
+    effectWindow.cfg = avgSettings.mOptionConfigurations;
 }
