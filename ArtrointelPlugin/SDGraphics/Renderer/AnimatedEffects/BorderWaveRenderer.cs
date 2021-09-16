@@ -7,7 +7,7 @@ using ArtrointelPlugin.Utils;
 
 namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
 {
-    public class BorderWaveRenderer : CanvasRendererBase, IAnimatableRenderer
+    public class BorderWaveRenderer : CanvasRendererAnimatable
     {
         // constants
 
@@ -193,6 +193,14 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
                 invalidate();
                 setVisible(true);
             }, ()=> { setVisible(false); });
+
+            mDelayedTask = new DelayedTask((int)(mDelayInSecond * 1000), () =>
+            {
+                mSpinnerAnimator.start();
+            });
+
+            setStartItems(mDelayedTask);
+            setControllableItems(mDelayedTask, mSpinnerAnimator);
         }
 
         public override void onRender(Graphics graphics)
@@ -218,31 +226,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             }
             base.onRender(graphics);
         }
-
-        public void animate(bool restart)
-        {
-            if (mDelayInSecond > 0)
-            {
-                if (mDelayedTask != null)
-                {
-                    mDelayedTask.cancel();
-                }
-                mDelayedTask = new DelayedTask((int)(mDelayInSecond * 1000), () =>
-                {
-                    mSpinnerAnimator.start(restart);
-                });
-            }
-            else
-            {
-                mSpinnerAnimator.start(restart);
-            }
-        }
-
-        public void pause()
-        {
-            mSpinnerAnimator.pause();
-        }
-
+        
         public override void onDestroy()
         {
             if (mDelayedTask != null)

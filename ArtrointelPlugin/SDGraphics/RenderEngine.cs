@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Collections;
 using System.Timers;
 using ArtrointelPlugin.SDGraphics.Renderer;
+using ArtrointelPlugin.Utils;
 
 namespace ArtrointelPlugin.SDGraphics
 {
@@ -15,7 +16,7 @@ namespace ArtrointelPlugin.SDGraphics
     /// SDGRenderEngine composites each canvas in the renderer, ordered by array list.
     /// Result of the composition will be drawn at mCompositedCanvas.
     /// </summary>
-    public class RenderEngine
+    public class RenderEngine : IControllable
     {
         // Aims to be 60fps as default, but it may not reach to the 60 fps
         // due to the system performance and due to the timer library.
@@ -47,9 +48,17 @@ namespace ArtrointelPlugin.SDGraphics
         /// <summary>
         /// starts the rendering engine.
         /// </summary>
-        public void run()
+        public void startRenderLoop()
         {
             mRenderTimer.Start();
+        }
+
+        /// <summary>
+        /// pause the internal rendering loop. it can be restarted by calling run().
+        /// </summary>
+        public void pauseRenderLoop()
+        {
+            mRenderTimer.Stop();
         }
 
         public bool animateRendererAt(int index, bool restart = true)
@@ -58,20 +67,13 @@ namespace ArtrointelPlugin.SDGraphics
             {
                 return false;
             }
-            if (mRenderers[index] is IAnimatableRenderer)
+            if (mRenderers[index] is CanvasRendererAnimatable)
             {
-                ((IAnimatableRenderer)mRenderers[index]).animate(restart);
+                ((CanvasRendererAnimatable)mRenderers[index]).start();
                 return true;
             }
-            return false;
-        }
 
-        /// <summary>
-        /// pause the internal rendering loop. it can be restarted by calling run().
-        /// </summary>
-        public void pause()
-        {
-            mRenderTimer.Stop();
+            return false;
         }
 
         /// <summary>
@@ -171,6 +173,47 @@ namespace ArtrointelPlugin.SDGraphics
                 return true;
             }
             return false;
+        }
+
+        public void start()
+        {
+            startRenderLoop();
+        }
+
+        public void pause()
+        {
+            foreach (CanvasRendererBase renderer in mRenderers)
+            {
+                if(renderer is CanvasRendererAnimatable)
+                {
+                    ((CanvasRendererAnimatable)renderer).pause();
+                }
+            }
+            pauseRenderLoop();
+        }
+
+        public void resume()
+        {
+            foreach (CanvasRendererBase renderer in mRenderers)
+            {
+                if (renderer is CanvasRendererAnimatable)
+                {
+                    ((CanvasRendererAnimatable)renderer).resume();
+                }
+            }
+            startRenderLoop();
+        }
+
+        public void stop()
+        {
+            foreach (CanvasRendererBase renderer in mRenderers)
+            {
+                if (renderer is CanvasRendererAnimatable)
+                {
+                    ((CanvasRendererAnimatable)renderer).stop();
+                }
+            }
+            pauseRenderLoop();
         }
     }
 }

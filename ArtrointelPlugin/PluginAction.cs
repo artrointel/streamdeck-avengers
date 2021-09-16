@@ -100,7 +100,7 @@ namespace ArtrointelPlugin
         {
             await Task.Run(() =>
             {
-                mController.actionOnKeyPressed();
+                mController.onKeyPressed();
             });
         }
 

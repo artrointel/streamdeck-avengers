@@ -13,6 +13,7 @@ namespace ArtrointelPlugin.Control.Payload
         public const string PAYLOAD_IMAGE_UPDATE_FROM_FILE_KEY = "payload_updateImageFromFile";
         public const string PAYLOAD_EFFECT_KEY = "payload_updateEffects";
         public const string PAYLOAD_COMMAND_KEY = "payload_updateCommands";
+        public const string PAYLOAD_OPTION_KEY = "payload_updateOptions";
 
         public const string META_DATA_COUNT = "meta_arrayCount";
         public const string META_FILE_PATH = "meta_filePath";
@@ -32,10 +33,15 @@ namespace ArtrointelPlugin.Control.Payload
         public const string KEY_COMMAND_DURATION = "iCommandDuration";
         public const string KEY_COMMAND_METADATA = "iCommandMetadata"; // handled by the type
 
+        public const string KEY_OPTION_CONDITION = "sCondition";
+        public const string KEY_OPTION_BEHAVIOR = "sBehavior";
+        public const string KEY_OPTION_METADATA = "iOptionMetadata"; // not used yet
+
         private PayloadReader()
         {
 
         }
+
         public static bool IsImageUpdatePayload(JObject payload)
         {
             return IdentifyPayload(payload, PAYLOAD_IMAGE_UPDATE_KEY);
@@ -54,6 +60,11 @@ namespace ArtrointelPlugin.Control.Payload
         public static bool IsCommandPayload(JObject payload)
         {
             return IdentifyPayload(payload, PAYLOAD_COMMAND_KEY);
+        }
+
+        public static bool IsOptionPayload(JObject payload)
+        {
+            return IdentifyPayload(payload, PAYLOAD_OPTION_KEY);
         }
 
         private static bool IdentifyPayload(JObject payload, string key)
@@ -131,6 +142,27 @@ namespace ArtrointelPlugin.Control.Payload
             catch (Exception e)
             {
                 Logger.Instance.LogMessage(TracingLevel.ERROR, "Input command data is wrong: " + e.ToString());
+            }
+            return null;
+        }
+
+        public static ArrayList LoadOptionDataFromPayload(JObject payload, int count)
+        {
+            try
+            {
+                ArrayList newOptionList = new ArrayList();
+                for (int i = 1; i <= count; i++)
+                {
+                    string condition = payload.Value<string>(KEY_OPTION_CONDITION + i);
+                    string behavior = payload.Value<string>(KEY_OPTION_BEHAVIOR + i);
+                    newOptionList.Add(OptionConfig.Create(
+                        condition, behavior, ""));
+                }
+                return newOptionList;
+            }
+            catch (Exception e)
+            {
+                Logger.Instance.LogMessage(TracingLevel.ERROR, "Input option data is wrong: " + e.ToString());
             }
             return null;
         }

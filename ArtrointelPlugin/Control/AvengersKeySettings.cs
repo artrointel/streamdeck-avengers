@@ -15,6 +15,8 @@ namespace ArtrointelPlugin.Control
 
         public ArrayList EffectConfigurations { get; set; } // Arraylist of EffectConfig
 
+        public ArrayList OptionConfigurations { get; set; } // Arraylist of OptionConfig
+
         private AvengersKeySettings() { }
 
         public static AvengersKeySettings CreateDefaultSettings()
@@ -23,7 +25,8 @@ namespace ArtrointelPlugin.Control
             {
                 Base64ImageString = FileIOManager.GetFallbackBase64Image(),
                 CommandConfigurations = new ArrayList(),
-                EffectConfigurations = new ArrayList()
+                EffectConfigurations = new ArrayList(),
+                OptionConfigurations = new ArrayList()
             };
             return instance;
         }
@@ -60,8 +63,17 @@ namespace ArtrointelPlugin.Control
                             ret.EffectConfigurations.Add(cfg.ToObject<EffectConfig>());
                         }
                     }
+
+                    if (s.OptionConfigurations != null)
+                    {
+                        foreach (JObject cfg in s.OptionConfigurations)
+                        {
+                            ret.EffectConfigurations.Add(cfg.ToObject<OptionConfig>());
+                        }
+                    }
                 }
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Logger.Instance.LogMessage(TracingLevel.ERROR, "Cannot read settings." + e.Message);
             }

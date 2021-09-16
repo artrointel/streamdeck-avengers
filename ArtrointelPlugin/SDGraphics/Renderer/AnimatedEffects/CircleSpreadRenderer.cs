@@ -6,7 +6,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
     /// <summary>
     /// Animates a circle spreading from center of the canvas.
     /// </summary>
-    public class CircleSpreadRenderer : CanvasRendererBase, IAnimatableRenderer
+    public class CircleSpreadRenderer : CanvasRendererAnimatable
     {
         // constants
         private const int CIRCLE_START_RADIUS = SDCanvas.DEFAULT_IMAGE_SIZE / 10;
@@ -51,6 +51,14 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
                 mAnimCircleColor = Color.FromArgb(mInputColor.A - (int)(progress * mInputColor.A), mInputColor);
                 invalidate();
             });
+
+            mDelayedTask = new DelayedTask((int)(mDelayInSecond * 1000), () =>
+            {
+                mCircleAnimator.start();
+            });
+
+            setStartItems(mDelayedTask);
+            setControllableItems(mDelayedTask, mCircleAnimator);
         }
 
         public override void onRender(Graphics graphics)
@@ -59,31 +67,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             graphics.FillEllipse(new SolidBrush(mAnimCircleColor), mRectCircleGeometry);
             base.onRender(graphics);
         }
-
-        public void animate(bool restart)
-        {
-            if (mDelayInSecond > 0)
-            {
-                if(mDelayedTask != null)
-                {
-                    mDelayedTask.cancel();
-                }
-                mDelayedTask = new DelayedTask((int)(mDelayInSecond * 1000), () =>
-                {
-                    mCircleAnimator.start(restart);
-                });
-            }
-            else
-            {
-                mCircleAnimator.start(restart);
-            }
-        }
-
-        public void pause()
-        {
-            mCircleAnimator.pause();
-        }
-
+        
         public override void onDestroy()
         {
             if(mDelayedTask != null)

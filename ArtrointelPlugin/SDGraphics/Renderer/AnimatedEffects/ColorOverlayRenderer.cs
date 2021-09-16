@@ -6,7 +6,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
     /// <summary>
     /// Flashes with input color with animated alpha value.
     /// </summary>
-    class ColorOverlayRenderer : CanvasRendererBase, IAnimatableRenderer
+    class ColorOverlayRenderer : CanvasRendererAnimatable
     {
         // input data
         private readonly Color mInputColor;
@@ -36,7 +36,6 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
 
         private void initialize()
         {
-            
             mAlphaBlendStartAnimator = new ValueAnimator(0, 1, ALPHA_DURATION, ValueAnimator.INTERVAL_60_PER_SEC);
             mAlphaBlendEndAnimator = new ValueAnimator(1, 0, ALPHA_DURATION, ValueAnimator.INTERVAL_60_PER_SEC);
 
@@ -50,51 +49,24 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
                 mAnimFlashColor = Color.FromArgb((int)(mInputColor.A * value), mInputColor);
                 invalidate();
             });
-        }
 
-        private void startAnimations(bool restart)
-        {
-            mAlphaBlendEndAnimator.stop();
-            mAlphaBlendStartAnimator.start(restart);
-            if(mOverlayTask != null)
-            {
-                mOverlayTask.cancel();
-            }
             mOverlayTask = new DelayedTask(mInputDurationInMillisecond, () => {
                 mAlphaBlendEndAnimator.start();
             });
+
+            mDelayedTask = new DelayedTask((int)(mDelayInSecond * 1000), () =>
+            {
+                mAlphaBlendStartAnimator.start();
+            });
+
+            setStartItems(mDelayedTask, mOverlayTask);
+            setControllableItems(mDelayedTask, mAlphaBlendStartAnimator, mAlphaBlendEndAnimator, mOverlayTask);
         }
 
         public override void onRender(Graphics graphics)
         {
             graphics.Clear(mAnimFlashColor);
             base.onRender(graphics);
-        }
-
-        public void animate(bool restart)
-        {
-            if (mDelayInSecond > 0)
-            {
-                if (mDelayedTask != null)
-                {
-                    mDelayedTask.cancel();
-                }
-                mDelayedTask = new DelayedTask((int)(mDelayInSecond * 1000), () =>
-                {
-                    startAnimations(restart);
-                });
-            }
-            else
-            {
-                startAnimations(restart);
-            }
-        }
-
-        public void pause()
-        {
-            mAlphaBlendStartAnimator.pause();
-            mAlphaBlendEndAnimator.pause();
-            mOverlayTask.cancel();
         }
 
         public override void onDestroy()

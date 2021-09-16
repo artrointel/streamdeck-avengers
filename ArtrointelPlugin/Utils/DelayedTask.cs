@@ -4,24 +4,24 @@ using System.Threading;
 
 namespace ArtrointelPlugin.Utils
 {
-    public class DelayedTask
+    public class DelayedTask : IControllable
     {
-        CancellationTokenSource mCts;
-        Task mTask;
+        private Task mTask;
+        private CancellationTokenSource mCts;
 
+        private int mDelayMs;
+        private Action mActionOnTask;
+
+        private int mLastStartedTimeMs;
+        private int mRemainedDelayMs;
+        
         public DelayedTask(int delayInMillisecond, Action task)
         {
-            if (delayInMillisecond < 0) 
-                delayInMillisecond = 0;
+            if (mDelayMs < 0)
+                mDelayMs = 0;
 
-            mCts = new CancellationTokenSource();
-            mTask = Task.Delay(delayInMillisecond, mCts.Token).ContinueWith(t =>
-            {
-                if(task != null && !mCts.Token.IsCancellationRequested)
-                {
-                    task();
-                }
-            });
+            mDelayMs = delayInMillisecond;
+            mActionOnTask = task;
         }
 
         /// <summary>
@@ -29,7 +29,9 @@ namespace ArtrointelPlugin.Utils
         /// </summary>
         public async void cancel()
         {
-            lock(mCts)
+            if (mTask == null || mTask.IsCompleted) return;
+
+            lock (mCts)
             {
                 if (mCts.IsCancellationRequested)
                 {
@@ -52,6 +54,48 @@ namespace ArtrointelPlugin.Utils
             }
 
             mCts.Dispose();
+        }
+
+        private void startDelayedTask(int ms)
+        {
+            mCts = new CancellationTokenSource();
+            mTask = Task.Delay(ms, mCts.Token).ContinueWith(t =>
+            {
+                if (mActionOnTask != null && !mCts.Token.IsCancellationRequested)
+                {
+                    mActionOnTask();
+                }
+            });
+            mLastStartedTimeMs = DateTime.Now.Millisecond;
+        }
+
+        public void start()
+        {
+            mRemainedDelayMs = mDelayMs;
+            cancel();
+            startDelayedTask(mRemainedDelayMs);
+        }
+
+        public void pause()
+        {
+            // if not started ever, nothing should be done.
+            if (mRemainedDelayMs == 0) return;
+
+            mRemainedDelayMs -= DateTime.Now.Millisecond - mLastStartedTimeMs;
+            cancel();
+        }
+
+        public void resume()
+        {
+            if(mRemainedDelayMs > 0)
+            {
+                startDelayedTask(mRemainedDelayMs);
+            }
+        }
+
+        public void stop()
+        {
+            cancel();
         }
     }
 }

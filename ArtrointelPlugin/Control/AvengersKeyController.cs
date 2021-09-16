@@ -17,7 +17,7 @@ namespace ArtrointelPlugin.Control
     /// Controller of the avengers key.
     /// It controls icon rendering and commands to be executed.
     /// </summary>
-    public class AvengersKeyController
+    public class AvengersKeyController : IControllable
     {
         #region Internal Members
         // Render engine to render user-customized effects
@@ -33,8 +33,18 @@ namespace ArtrointelPlugin.Control
         private AvengersKeySettings mSettings;
 
         private bool mUseBaseImageRenderer;
-        #endregion
 
+        // State of the key
+        private enum KeyState
+        {
+            READY,
+            RUNNING,
+            PAUSED
+        }
+        private KeyState mState;
+
+        #endregion
+        
         /// <summary>
         /// Creates Avengers Key controller.
         /// </summary>
@@ -51,12 +61,12 @@ namespace ArtrointelPlugin.Control
 
         public void startRenderEngine()
         {
-            mRenderEngine.run();
+            mRenderEngine.startRenderLoop();
         }
 
         public void pauseRenderEngine()
         {
-            mRenderEngine.pause();
+            mRenderEngine.pauseRenderLoop();
         }
 
         public bool handlePayload(JObject payload)
@@ -81,6 +91,15 @@ namespace ArtrointelPlugin.Control
                 return true;
             }
 
+            // Handles Option payload
+            if (PayloadReader.IsOptionPayload(payload))
+            {
+                int optionCount = PayloadReader.GetArrayCount(payload);
+                mSettings.OptionConfigurations = PayloadReader.LoadOptionDataFromPayload(payload, optionCount);
+                // TODO reset the key state and update the options
+                return true;
+            }
+
             // Handles Image update payload
             if (PayloadReader.IsImageUpdatePayload(payload))
             {
@@ -101,7 +120,8 @@ namespace ArtrointelPlugin.Control
 
             return false;
         }
-
+        
+        #region Internal Functions
         private bool updateImageFromFileIcon(JObject payload)
         {
             // Command to use file icon as a base image
@@ -126,7 +146,6 @@ namespace ArtrointelPlugin.Control
             return false;
         }
 
-        #region Internal
         // Refines incoming data from PI to make controller safer.
         private void refineEffectConfigurations()
         {
@@ -201,17 +220,68 @@ namespace ArtrointelPlugin.Control
                 imageRenderer.invalidate();
                 mRenderEngine.addRendererAt(0, imageRenderer);
             }
-            mRenderEngine.run();
+            mRenderEngine.startRenderLoop();
+        }
+
+        private void actionOnDemand(string behavior)
+        {
+            if (behavior.Equals(OptionConfig.EBehavior.Restart.ToString()))
+            {
+                start();
+            }
+            else if (behavior.Equals(OptionConfig.EBehavior.PauseResume.ToString()))
+            {
+                if (mState == KeyState.RUNNING)
+                    pause();
+                else if (mState == KeyState.PAUSED)
+                    resume();
+            }
+            else if (behavior.Equals(OptionConfig.EBehavior.Stop.ToString()))
+            {
+                stop();
+            }
         }
         #endregion
 
-        /// <summary>
-        /// Handles incoming payload regarding avengers key. <see cref="PayloadReader"/>
-        /// </summary>
-        /// <param name="payload"></param>
-        /// <returns>true if handled the payload, else false</returns>
-        
-        public async void actionOnKeyPressed()
+        #region Implement of Key Events
+        public void onKeyPressed()
+        {
+            if (mState == KeyState.READY)
+            {
+                start();
+            }
+            else if (mState == KeyState.RUNNING)
+            {
+                for (int i = 0; i < mSettings.OptionConfigurations.Count; i++)
+                {
+                    OptionConfig cfg = (OptionConfig)mSettings.OptionConfigurations[i];
+                    // Action on key pressed while running
+                    if (cfg.mCondition.Equals(OptionConfig.ECondition.
+                        OnKeyPressedWhileRunning.ToString()))
+                    {
+                        actionOnDemand(cfg.mBehavior);
+                    }
+                }
+            }
+        }
+
+        public void onKeyLongPressed()
+        {
+            for (int i = 0; i < mSettings.OptionConfigurations.Count; i++)
+            {
+                OptionConfig cfg = (OptionConfig)mSettings.OptionConfigurations[i];
+                // Action on key pressed while running
+                if (cfg.mCondition.Equals(OptionConfig.ECondition.
+                    OnKeyLongPressed.ToString()))
+                {
+                    actionOnDemand(cfg.mBehavior);
+                }
+            }
+        }
+        #endregion
+
+        #region Implement of IControllable Interface
+        public async void start()
         {
             // Executes commands in separated threads
             for (int i = 0; i < mSettings.CommandConfigurations.Count; i++)
@@ -238,18 +308,35 @@ namespace ArtrointelPlugin.Control
                         mRenderEngine.animateRendererAt(i);
                 }
             }
+
+            mState = KeyState.RUNNING;
         }
 
-        /* TODO not used at least now. can be used with long-pressed event in future
-        public void actionOnKeyReleased()
+        public void pause()
         {
-            
+            // mCommandExecutor.pause();
+            mRenderEngine.pause();
+            mState = KeyState.PAUSED;
         }
-        */
+
+        public void resume()
+        {
+            // mCommandExecutor.resume();
+            mRenderEngine.resume();
+            mState = KeyState.RUNNING;
+        }
+
+        public void stop()
+        {
+            // mCommandExecutor.stop();
+            mRenderEngine.stop();
+            mState = KeyState.READY;
+        }
 
         public AvengersKeySettings getSettings()
         {
             return mSettings;
         }
+        #endregion
     }
 }

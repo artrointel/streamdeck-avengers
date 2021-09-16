@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections;
+using System.Drawing;
 using System.Drawing.Imaging;
 using ArtrointelPlugin.Utils;
 
@@ -7,7 +8,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
     /// <summary>
     /// Animates alpha blending between input images.
     /// </summary>
-    public class AlphaBlendRenderer : CanvasRendererBase, IAnimatableRenderer
+    public class AlphaBlendRenderer : CanvasRendererAnimatable
     {
         public const int DURATION_ALPHA_BLEND_ANIMATION = 200;
 
@@ -78,6 +79,14 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
                 mSecondaryImageAlpha.SetColorMatrix(new ColorMatrix() { Matrix33 = 1.0f - (float)value });
                 invalidate();
             });
+
+            mDelayedTask = new DelayedTask((int)(mDelayInSecond * 1000), () =>
+            {
+                mAlphaStartAnimator.start();
+            });
+
+            setStartItems(mDelayedTask);
+            setControllableItems(mAlphaStartAnimator, mAlphaEndAnimator, mBlendDurationTask, mDelayedTask);
         }
 
         public override void onRender(Graphics graphics)
@@ -97,32 +106,6 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             }
 
             base.onRender(graphics);
-        }
-
-        public void animate(bool restart = true)
-        {
-            if (mDelayInSecond > 0)
-            {
-                if (mDelayedTask != null)
-                {
-                    mDelayedTask.cancel();
-                }
-                mDelayedTask = new DelayedTask((int)(mDelayInSecond * 1000), () =>
-                {
-                    mAlphaStartAnimator.start(restart);
-                });
-            }
-            else
-            {
-                mAlphaStartAnimator.start(restart);
-            }
-        }
-
-        public void pause()
-        {
-            // TODO no way to stop the delayed task yet.
-            mAlphaStartAnimator.stop();
-            mAlphaEndAnimator.start();
         }
 
         public override void onDestroy()

@@ -6,7 +6,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
     /// <summary>
     /// Flashes with input color with animated alpha value.
     /// </summary>
-    class FlashRenderer : CanvasRendererBase, IAnimatableRenderer
+    class FlashRenderer : CanvasRendererAnimatable
     {
         // input data
         private readonly Color mInputColor;
@@ -52,6 +52,15 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
                 mAnimFlashColor = Color.FromArgb((int)(mInputColor.A * value), mInputColor);
                 invalidate();
             });
+
+            mDelayedTask = new DelayedTask((int)(mDelayInSecond * 1000), () =>
+            {
+                mFlashEndAnimator.stop();
+                mFlashStartAnimator.start();
+            });
+
+            setStartItems(mDelayedTask);
+            setControllableItems(mDelayedTask, mFlashStartAnimator, mFlashEndAnimator);
         }
 
         public override void onRender(Graphics graphics)
@@ -59,33 +68,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             graphics.Clear(mAnimFlashColor);
             base.onRender(graphics);
         }
-
-        public void animate(bool restart)
-        {
-            if (mDelayInSecond > 0)
-            {
-                if (mDelayedTask != null)
-                {
-                    mDelayedTask.cancel();
-                }
-                mDelayedTask = new DelayedTask((int)(mDelayInSecond * 1000), () =>
-                {
-                    mFlashEndAnimator.stop();
-                    mFlashStartAnimator.start(restart);
-                });
-            }
-            else
-            {
-                mFlashEndAnimator.stop();
-                mFlashStartAnimator.start(restart);
-            }
-        }
-
-        public void pause()
-        {
-            // do nothing. it is more natural that not pausing the flash animation.
-        }
-
+        
         public override void onDestroy()
         {
             if (mDelayedTask != null)

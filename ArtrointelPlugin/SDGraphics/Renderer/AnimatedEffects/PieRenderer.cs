@@ -4,7 +4,7 @@ using ArtrointelPlugin.Utils;
 
 namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
 {
-    public class PieRenderer : CanvasRendererBase, IAnimatableRenderer
+    public class PieRenderer : CanvasRendererAnimatable
     {
         // constants
         private const int PIE_RADIUS = (int)((SDCanvas.DEFAULT_IMAGE_SIZE / 2) * 1.42); // pie tightly covers the canvas
@@ -89,38 +89,21 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
                         graphics.FillPie(mPieBrush, mRectPieGeometry, -90, 360.0f - (float)mAnimSweepAngle);
                     };
                 }
-                
             }
+
+            mDelayedTask = new DelayedTask((int)(mDelayInSecond * 1000), () =>
+            {
+                mAngleAnimator.start();
+            });
+
+            setStartItems(mDelayedTask);
+            setControllableItems(mDelayedTask, mAngleAnimator);
         }
 
         public override void onRender(Graphics graphics)
         {
             mRenderPieMethod(graphics);
             base.onRender(graphics);
-        }
-
-        public void animate(bool restart)
-        {
-            if (mDelayInSecond > 0)
-            {
-                if (mDelayedTask != null)
-                {
-                    mDelayedTask.cancel();
-                }
-                mDelayedTask = new DelayedTask((int)(mDelayInSecond * 1000), () =>
-                {
-                    mAngleAnimator.start(restart);
-                });
-            }
-            else
-            {
-                mAngleAnimator.start(restart);
-            }
-        }
-
-        public void pause()
-        {
-            mAngleAnimator.pause();
         }
 
         public override void onDestroy()

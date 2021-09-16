@@ -3,7 +3,7 @@ using System.Timers;
 
 namespace ArtrointelPlugin.Utils
 {
-    public class ValueAnimator
+    public class ValueAnimator : IControllable
     {
         public const double INTERVAL_30_PER_SEC = 1000 / 30.0;
         public const double INTERVAL_60_PER_SEC = 1000 / 60.0;
@@ -71,19 +71,18 @@ namespace ArtrointelPlugin.Utils
             mOnFinishedAction = onFinished;
         }
 
-        // TODO add enable dispose itself ?
         /// <summary>
-        /// Start the animator. animation will be re-played if restart is true, 
-        /// else it will keep the state of the animation.
+        /// Start the animator.
         /// </summary>
-        /// <param name="restart"></param>
-        public void start(bool restart = true)
+        public void start()
         {
-            if(restart)
-            {
-                mCurrentDuration = 0;
-                mPrevDateTime = DateTime.Now;
-            }
+            mCurrentDuration = 0;
+            mPrevDateTime = DateTime.Now;
+            mTimer.Start();
+        }
+
+        public void resume()
+        {
             mTimer.Start();
         }
 
