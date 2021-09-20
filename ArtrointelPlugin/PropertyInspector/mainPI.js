@@ -7,6 +7,7 @@ window.addEventListener('onSettingsUpdated', function (e) {
 
     var fCount = avgSettings.mCommandConfigurations.length;
     var eCount = avgSettings.mEffectConfigurations.length;
+    var oCount = avgSettings.mOptionConfigurations.length;
     
     if (fCount > 0) {
         document.getElementById('btnCommandEdit').innerHTML = 'Edit  (' + fCount + ')';
@@ -19,7 +20,12 @@ window.addEventListener('onSettingsUpdated', function (e) {
         document.getElementById('btnEffectEdit').innerHTML = 'Edit';
     }
 
-    document.getElementById('btnOptionEdit').innerHTML = 'Edit';
+    if (oCount > 0) {
+        document.getElementById('btnOptionEdit').innerHTML = 'Edit  (' + oCount + ')';
+    } else {
+        document.getElementById('btnOptionEdit').innerHTML = 'Edit';
+    }
+    
 });
 
 // to upload image functions

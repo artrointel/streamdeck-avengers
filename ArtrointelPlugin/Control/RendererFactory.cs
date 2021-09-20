@@ -28,11 +28,11 @@ namespace ArtrointelPlugin.Control.Model
             // Creates a renderer
             if(cfg.mType.Equals(EffectConfig.EType.Flash.ToString()))
             {
-                renderer = new FlashRenderer(cfg.getColor(), cfg.mDelay, cfg.mDuration);
+                renderer = new FlashRenderer(cfg.mDelay, cfg.mDuration, cfg.getColor());
             } 
             else if (cfg.mType.Equals(EffectConfig.EType.CircleSpread.ToString()))
             {
-                renderer = new CircleSpreadRenderer(cfg.getColor(), cfg.mDelay, cfg.mDuration);
+                renderer = new CircleSpreadRenderer(cfg.mDelay, cfg.mDuration, cfg.getColor());
             } 
             else if (cfg.mType.Equals(EffectConfig.EType.Pie.ToString()))
             {
@@ -45,15 +45,15 @@ namespace ArtrointelPlugin.Control.Model
                     clockwise = bool.Parse(meta[1]);
                 } catch { }
                 
-                renderer = new PieRenderer(cfg.getColor(), cfg.mDelay, cfg.mDuration, grow, clockwise);
+                renderer = new PieRenderer(cfg.mDelay, cfg.mDuration, cfg.getColor(), grow, clockwise);
             }
             else if (cfg.mType.Equals(EffectConfig.EType.BorderWave.ToString()))
             {
-                renderer = new BorderWaveRenderer(cfg.getColor(), cfg.mDelay, cfg.mDuration);
+                renderer = new BorderWaveRenderer(cfg.mDelay, cfg.mDuration, cfg.getColor());
             }
             else if (cfg.mType.Equals(EffectConfig.EType.ColorOverlay.ToString()))
             {
-                renderer = new ColorOverlayRenderer(cfg.getColor(), cfg.mDelay, cfg.mDuration);
+                renderer = new ColorOverlayRenderer(cfg.mDelay, cfg.mDuration, cfg.getColor());
             }
             else if (cfg.mType.Equals(EffectConfig.EType.BlendGrayscaleFiltering.ToString()))
             {

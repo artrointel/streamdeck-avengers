@@ -12,8 +12,6 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
         // constants
 
         // input data
-        private readonly double mDelayInSecond;
-        private readonly double mInputDurationInSecond; // animation in second
         private readonly Color mInputColor; // color of wave
         private readonly int mWaveCount;
         private readonly int mWaveThickness;
@@ -23,7 +21,6 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
         // for internal logic
         private ImageAttributes mAlphaScaler;
         private ImageAttributes mAlphaVanishScaler;
-        private double mAnimatorInterval = ValueAnimator.INTERVAL_60_PER_SEC;
         private ValueAnimator mSpinnerAnimator;
         private Brush mWaveBrush;
         private ArrayList mSpinners;
@@ -134,13 +131,12 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             }
         }
 
-        public BorderWaveRenderer(Color color, double delayInSecond, double durationInSecond, 
-            int thickness = 14, double trailReducer = 0.02, int speed = 3, bool wave4 = true)
-            : base(new SDCanvas.CreateInfo() { CompositingMode = CompositingMode.SourceCopy })
+        public BorderWaveRenderer(double delayInSecond, double durationInSecond,
+            Color color, int thickness = 14, double trailReducer = 0.02, int speed = 3, bool wave4 = true)
+            : base(new SDCanvas.CreateInfo() { CompositingMode = CompositingMode.SourceCopy }, 
+                  delayInSecond, durationInSecond)
         {
             mInputColor = color;
-            mDelayInSecond = delayInSecond;
-            mInputDurationInSecond = durationInSecond;
             mWaveThickness = thickness;
             mWaveSpeed = speed;
             mSpinners = new ArrayList();
@@ -167,18 +163,16 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             mAlphaScaler.SetColorMatrix(cm);
             mAlphaVanishScaler = new ImageAttributes();
             var vcm = new ColorMatrix();
-            vcm.Matrix33 = 0.5f;
+            vcm.Matrix33 = 0.7f; // alpha reducer on every frame rendering
             mAlphaVanishScaler.SetColorMatrix(vcm);
             
-
-            int animationDuration = (int)(mInputDurationInSecond * 1000.0);
             mWaveBrush = new SolidBrush(mInputColor);
-
-            mSpinnerAnimator = new ValueAnimator(0, 1, animationDuration, mAnimatorInterval);
+            
+            mSpinnerAnimator = CreateValueAnimator(0, 1, toMillisecond(mDurationInSecond));
             mSpinnerAnimator.setAnimationListeners((value, duration) =>
             {
-                double remainedDuration = animationDuration - duration;
-                if(remainedDuration < 500)
+                double remainedDuration = toMillisecond(mDurationInSecond) - duration;
+                if(remainedDuration < 200)
                 {
                     mVanishing = true;
                 } else
@@ -203,7 +197,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             setControllableItems(mDelayedTask, mSpinnerAnimator);
         }
 
-        public override void onRender(Graphics graphics)
+        protected override void onRenderImpl(Graphics graphics)
         {
             if(mVanishing)
             {
@@ -224,9 +218,8 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
 
                 graphics.FillRectangles(mWaveBrush, geometries);
             }
-            base.onRender(graphics);
         }
-        
+
         public override void onDestroy()
         {
             if (mDelayedTask != null)

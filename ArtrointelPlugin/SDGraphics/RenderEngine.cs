@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Drawing;
-using System.Collections;
+using System.Collections.Generic;
 using System.Timers;
 using ArtrointelPlugin.SDGraphics.Renderer;
 using ArtrointelPlugin.Utils;
@@ -23,13 +23,13 @@ namespace ArtrointelPlugin.SDGraphics
         public const int FRAME_RATE_HINT = 60;
 
         private double mFrameDuration;
-        private Timer mRenderTimer;
+        private TimerControl mRenderTimer;
 
-        private ArrayList mRenderers = new ArrayList();
+        private List<CanvasRendererBase> mRenderers = new List<CanvasRendererBase>();
         private SDCanvas mCompositedCanvas;
         private bool mNeedComposition;
 
-        Action<Image> mOnUpdatedCanvas;
+        private Action<Image> mOnUpdatedCanvas;
 
         /// <summary>
         /// It renders and composites per input frameRate.
@@ -39,29 +39,11 @@ namespace ArtrointelPlugin.SDGraphics
         {
             mFrameDuration = 1000.0 / frameRate;
             mCompositedCanvas = SDCanvas.CreateCanvas();
-
-            mRenderTimer = new Timer(mFrameDuration);
-            mRenderTimer.Elapsed += onTimedEvent;
-            mRenderTimer.AutoReset = true;
+            mRenderTimer = new TimerControl(mFrameDuration, onTimedEvent);
         }
 
-        /// <summary>
-        /// starts the rendering engine.
-        /// </summary>
-        public void startRenderLoop()
-        {
-            mRenderTimer.Start();
-        }
-
-        /// <summary>
-        /// pause the internal rendering loop. it can be restarted by calling run().
-        /// </summary>
-        public void pauseRenderLoop()
-        {
-            mRenderTimer.Stop();
-        }
-
-        public bool animateRendererAt(int index, bool restart = true)
+        #region Interfaces
+        public bool animateRendererAt(int index)
         {
             if(mRenderers == null || mRenderers[index] == null)
             {
@@ -69,27 +51,12 @@ namespace ArtrointelPlugin.SDGraphics
             }
             if (mRenderers[index] is CanvasRendererAnimatable)
             {
-                ((CanvasRendererAnimatable)mRenderers[index]).start();
+                CanvasRendererAnimatable renderer = (CanvasRendererAnimatable)mRenderers[index];
+                renderer.start();
                 return true;
             }
 
             return false;
-        }
-
-        /// <summary>
-        /// Destroys all resources including attached renderers.
-        /// </summary>
-        public void destroyAll()
-        {
-            mOnUpdatedCanvas = null;
-            mRenderTimer.Stop();
-            mRenderTimer.Dispose();
-            foreach (CanvasRendererBase renderer in mRenderers)
-            {
-                renderer.onDestroy();
-            }
-            mRenderers.Clear();
-            mCompositedCanvas.Dispose();
         }
 
         /// <summary>
@@ -133,17 +100,49 @@ namespace ArtrointelPlugin.SDGraphics
             }
         }
 
-        public ArrayList getRenderers()
+        public List<CanvasRendererBase> getRenderers()
         {
             return mRenderers;
         }
 
+        public double getTotalDurationAt(int index)
+        {
+            return mRenderers[index].getTotalDuration();
+        }
+
+        /// <summary>
+        /// stop the rendering preserving internal threaded tasks
+        /// </summary>
+        public void preserve()
+        {
+            mRenderTimer.stop();
+        }
+
+        /// <summary>
+        /// Destroys all resources including attached renderers.
+        /// </summary>
+        public void destroyAll()
+        {
+            mRenderTimer.stop();
+            foreach (CanvasRendererBase renderer in mRenderers)
+            {
+                renderer.onDestroy();
+            }
+            mRenderers.Clear();
+            lock (mCompositedCanvas)
+            {
+                mCompositedCanvas.Dispose();
+            }
+        }
+        #endregion
+
+        #region Internal logics
         private void onTimedEvent(object sender, ElapsedEventArgs e)
         {
             doRender();
-            if (doComposite() && (mOnUpdatedCanvas != null))
+            if (doComposite())
             {
-                mOnUpdatedCanvas(mCompositedCanvas.getImage());
+                updateCanvasLocked();
             }
         }
 
@@ -164,20 +163,33 @@ namespace ArtrointelPlugin.SDGraphics
         {
             if(mNeedComposition)
             {
-                mCompositedCanvas.getGraphics().Clear(Color.Empty);
-                foreach (CanvasRendererBase renderer in mRenderers)
+                lock (mCompositedCanvas)
                 {
-                    if(renderer.isVisible())
-                        mCompositedCanvas.getGraphics().DrawImage(renderer.mOffscreenCanvas.getImage(), new Point(0, 0));
+                    mCompositedCanvas.getGraphics().Clear(Color.Empty);
+                    foreach (CanvasRendererBase renderer in mRenderers)
+                    {
+                        if (renderer.isVisible())
+                            mCompositedCanvas.getGraphics().DrawImage(renderer.mOffscreenCanvas.getImage(), new Point(0, 0));
+                    }
                 }
                 return true;
             }
             return false;
         }
 
+        private void updateCanvasLocked()
+        {
+            lock (mCompositedCanvas)
+            {
+                mOnUpdatedCanvas?.Invoke(mCompositedCanvas.getImage());
+            }
+        }
+        #endregion
+
+        #region Implements IControllable
         public void start()
         {
-            startRenderLoop();
+            mRenderTimer.start();
         }
 
         public void pause()
@@ -189,7 +201,7 @@ namespace ArtrointelPlugin.SDGraphics
                     ((CanvasRendererAnimatable)renderer).pause();
                 }
             }
-            pauseRenderLoop();
+            mRenderTimer.pause();
         }
 
         public void resume()
@@ -201,7 +213,7 @@ namespace ArtrointelPlugin.SDGraphics
                     ((CanvasRendererAnimatable)renderer).resume();
                 }
             }
-            startRenderLoop();
+            mRenderTimer.resume();
         }
 
         public void stop()
@@ -213,7 +225,8 @@ namespace ArtrointelPlugin.SDGraphics
                     ((CanvasRendererAnimatable)renderer).stop();
                 }
             }
-            pauseRenderLoop();
+            mRenderTimer.stop();
         }
+        #endregion
     }
 }

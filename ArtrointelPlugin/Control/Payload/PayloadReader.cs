@@ -134,7 +134,7 @@ namespace ArtrointelPlugin.Control.Payload
                     double interval = payload.Value<double>(KEY_COMMAND_INTERVAL + i);
                     double duration = payload.Value<double>(KEY_COMMAND_DURATION + i);
                     string metadata = payload.Value<string>(KEY_COMMAND_METADATA + i);
-                    newCommandList.Add(CommandConfig.Load(
+                    newCommandList.Add(CommandConfig.Create(
                         trigger, type, delay, interval, duration, metadata));
                 }
                 return newCommandList;
@@ -155,8 +155,9 @@ namespace ArtrointelPlugin.Control.Payload
                 {
                     string condition = payload.Value<string>(KEY_OPTION_CONDITION + i);
                     string behavior = payload.Value<string>(KEY_OPTION_BEHAVIOR + i);
+                    string metadata = payload.Value<string>(KEY_OPTION_METADATA + i);
                     newOptionList.Add(OptionConfig.Create(
-                        condition, behavior, ""));
+                        condition, behavior, metadata));
                 }
                 return newOptionList;
             }

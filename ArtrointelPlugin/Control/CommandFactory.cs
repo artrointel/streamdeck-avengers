@@ -18,12 +18,12 @@ namespace ArtrointelPlugin.Control
             return false;
         }
 
-        internal static IExecutable CreateExecutable(CommandConfig cfg)
+        internal static CommandBase CreateCommand(CommandConfig cfg)
         {
             if (cfg.mType == null)
                 return null;
 
-            IExecutable e = null;
+            CommandBase e = null;
 
             if (cfg.mType.Equals(CommandConfig.EType.ExecuteCommand.ToString()))
             {

@@ -10,13 +10,11 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
     /// </summary>
     public class AlphaBlendRenderer : CanvasRendererAnimatable
     {
-        public const int DURATION_ALPHA_BLEND_ANIMATION = 200;
+        private const int DURATION_ALPHA_BLEND_ANIMATION = 200;
 
         // input data
         private Image mFirstImage;
         private Image mSecondaryImage;
-        private readonly double mDelayInSecond;
-        private readonly int mInputDurationInMillisecond;
 
         // for internal logic
         private ImageAttributes mFirstImageAlpha;
@@ -29,10 +27,8 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
         private DelayedTask mDelayedTask;
 
         public AlphaBlendRenderer(double delayInSecond, double durationInSecond)
-        {
-            mDelayInSecond = delayInSecond;
-            mInputDurationInMillisecond = (int)(durationInSecond * 1000);
-        }
+            : base(delayInSecond, durationInSecond)
+        {}
 
         /// <summary>
         /// Set images and initializes the renderer. If secondary image is null, it uses grayscaled image of the first image.
@@ -66,10 +62,12 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
                 {
                     mBlendDurationTask.cancel();
                 }
-                mBlendDurationTask = new DelayedTask(mInputDurationInMillisecond - DURATION_ALPHA_BLEND_ANIMATION * 2, () =>
-                {
-                    mAlphaEndAnimator.start();
-                });
+                mBlendDurationTask = new DelayedTask(
+                    toMillisecond(mDurationInSecond) - DURATION_ALPHA_BLEND_ANIMATION * 2, () =>
+                    {
+                        mAlphaEndAnimator.start();
+                    });
+                mBlendDurationTask.start();
             });
             
             mAlphaEndAnimator = new ValueAnimator(0, 1, DURATION_ALPHA_BLEND_ANIMATION);
@@ -89,7 +87,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             setControllableItems(mAlphaStartAnimator, mAlphaEndAnimator, mBlendDurationTask, mDelayedTask);
         }
 
-        public override void onRender(Graphics graphics)
+        protected override void onRenderImpl(Graphics graphics)
         {
             graphics.Clear(Color.Empty);
             if (mFirstImage != null && mSecondaryImage != null)
@@ -104,8 +102,14 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
                        0, 0, SDCanvas.DEFAULT_IMAGE_SIZE, SDCanvas.DEFAULT_IMAGE_SIZE,
                        GraphicsUnit.Pixel, mFirstImageAlpha);
             }
+        }
 
-            base.onRender(graphics);
+        protected sealed override void onAnimationStopped()
+        {
+            // in this renderer first image should be appeared after animation stop.
+            mFirstImageAlpha.SetColorMatrix(new ColorMatrix() { Matrix33 = 1.0f });
+            mSecondaryImageAlpha.SetColorMatrix(new ColorMatrix() { Matrix33 = 0.0f });
+            invalidate();
         }
 
         public override void onDestroy()

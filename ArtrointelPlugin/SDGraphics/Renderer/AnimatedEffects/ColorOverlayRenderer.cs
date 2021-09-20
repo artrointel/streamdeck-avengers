@@ -10,8 +10,6 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
     {
         // input data
         private readonly Color mInputColor;
-        private readonly double mDelayInSecond;
-        private readonly int mInputDurationInMillisecond;
 
         // for internal logic
         private const int ALPHA_DURATION = 100;
@@ -26,18 +24,17 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
         /// Flash with the color. alpha value will be used for brightest moment.
         /// </summary>
         /// <param name="color"></param>
-        public ColorOverlayRenderer(Color color, double delayInSecond, double durationInSecond)
+        public ColorOverlayRenderer(double delayInSecond, double durationInSecond, Color color)
+            : base(delayInSecond, durationInSecond)
         {
             mInputColor = color;
-            mDelayInSecond = delayInSecond;
-            mInputDurationInMillisecond = (int)(durationInSecond * 1000);
             initialize();
         }
 
         private void initialize()
         {
-            mAlphaBlendStartAnimator = new ValueAnimator(0, 1, ALPHA_DURATION, ValueAnimator.INTERVAL_60_PER_SEC);
-            mAlphaBlendEndAnimator = new ValueAnimator(1, 0, ALPHA_DURATION, ValueAnimator.INTERVAL_60_PER_SEC);
+            mAlphaBlendStartAnimator = CreateValueAnimator(0, 1, ALPHA_DURATION);
+            mAlphaBlendEndAnimator = CreateValueAnimator(1, 0, ALPHA_DURATION);
 
             mAlphaBlendStartAnimator.setAnimationListeners((value, duration) => {
                 mAnimFlashColor = Color.FromArgb((int)(mInputColor.A * value), mInputColor);
@@ -50,11 +47,11 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
                 invalidate();
             });
 
-            mOverlayTask = new DelayedTask(mInputDurationInMillisecond, () => {
+            mOverlayTask = new DelayedTask(toMillisecond(mDurationInSecond), () => {
                 mAlphaBlendEndAnimator.start();
             });
 
-            mDelayedTask = new DelayedTask((int)(mDelayInSecond * 1000), () =>
+            mDelayedTask = new DelayedTask(toMillisecond(mDelayInSecond), () =>
             {
                 mAlphaBlendStartAnimator.start();
             });
@@ -63,10 +60,9 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             setControllableItems(mDelayedTask, mAlphaBlendStartAnimator, mAlphaBlendEndAnimator, mOverlayTask);
         }
 
-        public override void onRender(Graphics graphics)
+        protected override void onRenderImpl(Graphics graphics)
         {
             graphics.Clear(mAnimFlashColor);
-            base.onRender(graphics);
         }
 
         public override void onDestroy()

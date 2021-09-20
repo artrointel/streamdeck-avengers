@@ -3,7 +3,7 @@
     public interface IExecutable
     {
         /// <summary>
-        /// execute command can be called by a separated thread.
+        /// Execute commands that can be done in separated threads.
         /// </summary>
         void execute(bool restart);
     }

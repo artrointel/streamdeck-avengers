@@ -13,8 +13,6 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
         
         // input data
         private readonly Color mInputColor;
-        private readonly double mDelayInSecond;
-        private readonly int mInputDurationInMillisecond;
 
         // for internal logic
         private ValueAnimator mCircleAnimator;
@@ -23,11 +21,10 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
 
         private DelayedTask mDelayedTask;
 
-        public CircleSpreadRenderer(Color color, double delayInSecond, double durationInSecond)
+        public CircleSpreadRenderer(double delayInSecond, double durationInSecond, Color color)
+            : base(delayInSecond, durationInSecond)
         {           
             mInputColor = color;
-            mDelayInSecond = delayInSecond;
-            mInputDurationInMillisecond = (int)(durationInSecond * 1000);
             initialize();
         }
 
@@ -36,9 +33,10 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             int center = SDCanvas.DEFAULT_IMAGE_SIZE / 2;
             mRectCircleGeometry = new Rectangle(center, center, 0, 0);
 
-            mCircleAnimator = new ValueAnimator(
-                CIRCLE_START_RADIUS, SDCanvas.DEFAULT_IMAGE_SIZE * 1.42f, // maximum circle radius should be (IMAGE_SIZE * sqrt(2)) to fit the rect.
-                mInputDurationInMillisecond, ValueAnimator.INTERVAL_60_PER_SEC);
+            mCircleAnimator = CreateValueAnimator(
+                CIRCLE_START_RADIUS, 
+                SDCanvas.DEFAULT_IMAGE_SIZE * 1.42f, // maximum circle radius should be (IMAGE_SIZE * sqrt(2)) to fit the rect.
+                toMillisecond(mDurationInSecond));
 
             mCircleAnimator.setAnimationListeners((value, duration) => {
                 // circle grows
@@ -47,7 +45,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
                 mRectCircleGeometry.Width = (int)value * 2;
                 mRectCircleGeometry.Height = (int)value * 2;
                 // circle disappears
-                double progress = duration / mInputDurationInMillisecond;
+                double progress = duration / toMillisecond(mDurationInSecond);
                 mAnimCircleColor = Color.FromArgb(mInputColor.A - (int)(progress * mInputColor.A), mInputColor);
                 invalidate();
             });
@@ -61,13 +59,12 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             setControllableItems(mDelayedTask, mCircleAnimator);
         }
 
-        public override void onRender(Graphics graphics)
+        protected override void onRenderImpl(Graphics graphics)
         {
             graphics.Clear(Color.Empty);
             graphics.FillEllipse(new SolidBrush(mAnimCircleColor), mRectCircleGeometry);
-            base.onRender(graphics);
         }
-        
+
         public override void onDestroy()
         {
             if(mDelayedTask != null)

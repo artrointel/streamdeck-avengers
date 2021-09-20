@@ -42,7 +42,7 @@ namespace ArtrointelPlugin.Control
             PAUSED
         }
         private KeyState mState;
-
+        private DelayedTask mTaskOnFinished;
         #endregion
         
         /// <summary>
@@ -58,17 +58,7 @@ namespace ArtrointelPlugin.Control
             initializeRenderEngine();
             initializeCommandExecutor();  
         }
-
-        public void startRenderEngine()
-        {
-            mRenderEngine.startRenderLoop();
-        }
-
-        public void pauseRenderEngine()
-        {
-            mRenderEngine.pauseRenderLoop();
-        }
-
+        
         public bool handlePayload(JObject payload)
         {
             // Handles Effect payload
@@ -181,8 +171,8 @@ namespace ArtrointelPlugin.Control
             mCommandExecutor = new CommandExecutor();
             foreach (CommandConfig cfg in mSettings.CommandConfigurations)
             {
-                var executable = CommandFactory.CreateExecutable(cfg);
-                mCommandExecutor.addExecutable(executable);
+                var executable = CommandFactory.CreateCommand(cfg);
+                mCommandExecutor.addCommand(executable);
             }
         }
 
@@ -220,13 +210,14 @@ namespace ArtrointelPlugin.Control
                 imageRenderer.invalidate();
                 mRenderEngine.addRendererAt(0, imageRenderer);
             }
-            mRenderEngine.startRenderLoop();
+            mRenderEngine.start();
         }
 
         private void actionOnDemand(string behavior)
         {
             if (behavior.Equals(OptionConfig.EBehavior.Restart.ToString()))
             {
+                stop();
                 start();
             }
             else if (behavior.Equals(OptionConfig.EBehavior.PauseResume.ToString()))
@@ -244,10 +235,26 @@ namespace ArtrointelPlugin.Control
         #endregion
 
         #region Implement of Key Events
+        public void onKeyAppeared()
+        {
+            mRenderEngine.start();
+        }
+
+        public void onKeyDisappeared()
+        {
+            mRenderEngine.preserve();
+        }
+
+        public void onKeyRemoved()
+        {
+            // TODO on key removed permanently. dispose all
+        }
+
         public void onKeyPressed()
         {
             if (mState == KeyState.READY)
             {
+                stop();
                 start();
             }
             else if (mState == KeyState.RUNNING)
@@ -283,39 +290,54 @@ namespace ArtrointelPlugin.Control
         #region Implement of IControllable Interface
         public async void start()
         {
-            // Executes commands in separated threads
+            mTaskOnFinished?.stop();
+
+            double coolTime = 0;
+            // Executes commands in separated threads, but keeps current sequence of the commands
             for (int i = 0; i < mSettings.CommandConfigurations.Count; i++)
             {
                 CommandConfig cfg = (CommandConfig)mSettings.CommandConfigurations[i];
                 if (cfg.mTrigger.Equals(CommandConfig.ETrigger.OnKeyPressed.ToString()))
                 {
+                    int _i = i;
                     await Task.Run(() => {
-                        mCommandExecutor.executeCommandAt(
-                            i, cfg.mDelay, cfg.mInterval, cfg.mDuration, cfg.mMetadata);
+                        mCommandExecutor.executeCommandAt(_i);
                     });
                 }
+                double dur = mCommandExecutor.getTotalDurationAt(i);
+                coolTime = (dur > coolTime) ? dur : coolTime;
             }
 
             // Animates renderers in current thread
+            mRenderEngine.start();
             for (int i = 0; i < mSettings.EffectConfigurations.Count; i++)
             {
                 EffectConfig cfg = (EffectConfig)mSettings.EffectConfigurations[i];
                 if (cfg.mTrigger.Equals(EffectConfig.ETrigger.OnKeyPressed.ToString()))
                 {
-                    if (mUseBaseImageRenderer)
-                        mRenderEngine.animateRendererAt(i + 1); // base image renderer is added at 0
-                    else
-                        mRenderEngine.animateRendererAt(i);
+                    int _i = i;
+                    if (mUseBaseImageRenderer) // base image renderer is added at 0
+                        _i += 1;
+                    
+                    double dur = mRenderEngine.getTotalDurationAt(_i);
+                    coolTime = (dur > coolTime) ? dur : coolTime;
+                    mRenderEngine.animateRendererAt(_i);
                 }
             }
 
             mState = KeyState.RUNNING;
+            
+            mTaskOnFinished = new DelayedTask((int)(coolTime * 1000), () => {
+                mState = KeyState.READY;
+            });
+            mTaskOnFinished.start();
         }
 
         public void pause()
         {
             // mCommandExecutor.pause();
             mRenderEngine.pause();
+            mTaskOnFinished?.pause();
             mState = KeyState.PAUSED;
         }
 
@@ -323,6 +345,7 @@ namespace ArtrointelPlugin.Control
         {
             // mCommandExecutor.resume();
             mRenderEngine.resume();
+            mTaskOnFinished?.resume();
             mState = KeyState.RUNNING;
         }
 
@@ -330,6 +353,7 @@ namespace ArtrointelPlugin.Control
         {
             // mCommandExecutor.stop();
             mRenderEngine.stop();
+            mTaskOnFinished?.stop();
             mState = KeyState.READY;
         }
 

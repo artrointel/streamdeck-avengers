@@ -2,11 +2,11 @@
 
 namespace ArtrointelPlugin.SDCommands
 {
-    internal abstract class DelayedExecutable : CommandBase
+    internal abstract class DelayedCommandBase : CommandBase
     {
         protected DelayedTask mDelayedTask;
 
-        internal DelayedExecutable(string metadata, double delayInSecond, double durationInSecond, double intervalInSecond)
+        internal DelayedCommandBase(string metadata, double delayInSecond, double durationInSecond, double intervalInSecond)
             : base(metadata, delayInSecond, durationInSecond, intervalInSecond) { }
 
         public void cancel()

@@ -10,8 +10,6 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
         private const int PIE_RADIUS = (int)((SDCanvas.DEFAULT_IMAGE_SIZE / 2) * 1.42); // pie tightly covers the canvas
 
         // input data
-        private readonly double mDelayInSecond;
-        private readonly double mInputDurationInSecond; // animation in second
         private readonly Color mInputColor; // color of the pie
         private readonly bool mGrow; // growing or eating the pie
         private readonly bool mClockwise; // animation direction
@@ -25,10 +23,9 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
         Action<Graphics> mRenderPieMethod;
         private DelayedTask mDelayedTask;
 
-        public PieRenderer(Color color, double delayInSecond, double durationInSecond, bool grow = false, bool clockwise = false)
+        public PieRenderer(double delayInSecond, double durationInSecond, Color color, bool grow = false, bool clockwise = false)
+            : base(delayInSecond, durationInSecond)
         {
-            mDelayInSecond = delayInSecond;
-            mInputDurationInSecond = durationInSecond;
             mInputColor = color;
             mGrow = grow;
             mClockwise = clockwise;
@@ -37,9 +34,9 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
 
         private void initialize()
         {
-            int animationDuration = (int)(mInputDurationInSecond * 1000.0);
+            int animationDuration = toMillisecond(mDurationInSecond);
             // for better performance, animation interval can be loosen.
-            double loosenAnimationInterval = 500.0 * mInputDurationInSecond / 720.0;
+            double loosenAnimationInterval = 500.0 * mDurationInSecond / 720.0;
             mAnimatorInterval = 
                 mAnimatorInterval < loosenAnimationInterval ? 
                 loosenAnimationInterval : mAnimatorInterval;
@@ -48,7 +45,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             mPieBrush = new SolidBrush(mInputColor);
             mRectPieGeometry = new Rectangle(center - PIE_RADIUS, center - PIE_RADIUS, PIE_RADIUS * 2, PIE_RADIUS * 2);
 
-            mAngleAnimator = new ValueAnimator(0, 360, animationDuration, mAnimatorInterval);
+            mAngleAnimator = CreateValueAnimator(0, 360, animationDuration, mAnimatorInterval);
             mAngleAnimator.setAnimationListeners((angle, duration) =>
             {
                 mAnimSweepAngle = angle;
@@ -100,10 +97,9 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             setControllableItems(mDelayedTask, mAngleAnimator);
         }
 
-        public override void onRender(Graphics graphics)
+        protected override void onRenderImpl(Graphics graphics)
         {
             mRenderPieMethod(graphics);
-            base.onRender(graphics);
         }
 
         public override void onDestroy()

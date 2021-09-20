@@ -27,52 +27,39 @@ namespace ArtrointelPlugin.Utils
         /// <summary>
         /// the delayed task will be canceled and also be disposed
         /// </summary>
-        public async void cancel()
+        public void cancel()
         {
-            if (mTask == null || mTask.IsCompleted) return;
+            if (mTask == null || mTask.IsCompleted || mCts == null) return;
 
-            lock (mCts)
+            if (mCts.IsCancellationRequested)
             {
-                if (mCts.IsCancellationRequested)
-                {
-                    return;
-                }
-                mCts.Cancel();
+                return;
             }
-
-            try
-            {
-                await mTask.ConfigureAwait(false);
-            }
-            catch (OperationCanceledException)
-            {
-                // this exception is raised by design by the cancellation
-            }
-            catch (Exception)
-            {
-                // an error has occurred in the asynchronous work before cancellation was requested
-            }
-
+            mCts.Cancel();
             mCts.Dispose();
+            mCts = null;
+            mTask = null;
         }
 
         private void startDelayedTask(int ms)
         {
             mCts = new CancellationTokenSource();
-            mTask = Task.Delay(ms, mCts.Token).ContinueWith(t =>
+            CancellationToken token = mCts.Token;
+            mTask = Task.Delay(ms, token).ContinueWith(t =>
             {
-                if (mActionOnTask != null && !mCts.Token.IsCancellationRequested)
+                if (!token.IsCancellationRequested)
                 {
-                    mActionOnTask();
+                    mActionOnTask?.Invoke();
                 }
             });
+            
             mLastStartedTimeMs = DateTime.Now.Millisecond;
         }
 
         public void start()
         {
-            mRemainedDelayMs = mDelayMs;
             cancel();
+            mRemainedDelayMs = mDelayMs;
             startDelayedTask(mRemainedDelayMs);
         }
 

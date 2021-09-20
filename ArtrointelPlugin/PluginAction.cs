@@ -15,6 +15,9 @@ namespace ArtrointelPlugin
             = new Dictionary<string, AvengersKeyController>();
 
         private AvengersKeyController mController;
+        private DelayedTask mLongPressTask;
+
+        private const int LONG_PRESS_TIME = 1000;
         
         public PluginAction(ISDConnection connection, InitialPayload payload) : base(connection, payload)
         {
@@ -28,7 +31,7 @@ namespace ArtrointelPlugin
             }
 
             mController = sControllerInstances[connection.ContextId];
-            mController.startRenderEngine();
+            mController.onKeyAppeared();
 
             Connection.OnApplicationDidLaunch += Connection_OnApplicationDidLaunch;
             Connection.OnApplicationDidTerminate += Connection_OnApplicationDidTerminate;
@@ -93,7 +96,7 @@ namespace ArtrointelPlugin
             Connection.OnPropertyInspectorDidDisappear -= Connection_OnPropertyInspectorDidDisappear;
             Connection.OnSendToPlugin -= Connection_OnSendToPlugin;
             Connection.OnTitleParametersDidChange -= Connection_OnTitleParametersDidChange;
-            mController.pauseRenderEngine();
+            mController.onKeyDisappeared();
         }
 
         public async override void KeyPressed(KeyPayload payload)
@@ -102,11 +105,25 @@ namespace ArtrointelPlugin
             {
                 mController.onKeyPressed();
             });
+            mLongPressTask = new DelayedTask(LONG_PRESS_TIME, () =>
+            {
+                KeyLongPressed(payload);
+            });
         }
 
         public async override void KeyReleased(KeyPayload payload) 
         {
             // TODO mController.actionOnKeyReleased();
+            if(mLongPressTask != null)
+                mLongPressTask.cancel();
+        }
+
+        public async void KeyLongPressed(KeyPayload payload)
+        {
+            await Task.Run(() =>
+            {
+                mController.onKeyLongPressed();
+            });
         }
 
         public override void OnTick() { }

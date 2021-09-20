@@ -15,7 +15,7 @@
 
         private CommandConfig() {}
 
-        public static CommandConfig Load(string trigger, string type, double delay, double interval, double duration, string metadata)
+        public static CommandConfig Create(string trigger, string type, double delay, double interval, double duration, string metadata)
         {
             CommandConfig cfg = new CommandConfig();
             cfg.mTrigger = trigger;

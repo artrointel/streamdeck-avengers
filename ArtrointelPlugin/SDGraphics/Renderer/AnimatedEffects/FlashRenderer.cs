@@ -10,8 +10,6 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
     {
         // input data
         private readonly Color mInputColor;
-        private readonly double mDelayInSecond;
-        private readonly int mInputDurationInMillisecond;
 
         // for internal logic
         private ValueAnimator mFlashStartAnimator;
@@ -23,20 +21,19 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
         /// Flash with the color. alpha value will be used for brightest moment.
         /// </summary>
         /// <param name="color"></param>
-        public FlashRenderer(Color color, double delayInSecond, double durationInSecond)
+        public FlashRenderer(double delayInSecond, double durationInSecond, Color color)
+            : base(delayInSecond, durationInSecond)
         {
             mInputColor = color;
-            mDelayInSecond = delayInSecond;
-            mInputDurationInMillisecond = (int)(durationInSecond * 1000);
             initialize();
         }
 
         private void initialize()
         {
-            int flashStartDuration = (int)(mInputDurationInMillisecond * 0.25);
-            int flashEndDuration = (int)(mInputDurationInMillisecond * 0.75);
-            mFlashStartAnimator = new ValueAnimator(0, 1, flashStartDuration, ValueAnimator.INTERVAL_60_PER_SEC);
-            mFlashEndAnimator = new ValueAnimator(1, 0, flashEndDuration, ValueAnimator.INTERVAL_60_PER_SEC);
+            int flashStartDuration = (int)(toMillisecond(mDurationInSecond) * 0.25);
+            int flashEndDuration = (int)(toMillisecond(mDurationInSecond) * 0.75);
+            mFlashStartAnimator = CreateValueAnimator(0, 1, flashStartDuration);
+            mFlashEndAnimator = CreateValueAnimator(1, 0, flashEndDuration);
 
             mFlashStartAnimator.setAnimationListeners((value, duration) => {
                 mAnimFlashColor = Color.FromArgb((int)(mInputColor.A * value), mInputColor);
@@ -53,7 +50,7 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
                 invalidate();
             });
 
-            mDelayedTask = new DelayedTask((int)(mDelayInSecond * 1000), () =>
+            mDelayedTask = new DelayedTask(toMillisecond(mDelayInSecond), () =>
             {
                 mFlashEndAnimator.stop();
                 mFlashStartAnimator.start();
@@ -63,12 +60,11 @@ namespace ArtrointelPlugin.SDGraphics.Renderer.AnimatedEffects
             setControllableItems(mDelayedTask, mFlashStartAnimator, mFlashEndAnimator);
         }
 
-        public override void onRender(Graphics graphics)
+        protected override void onRenderImpl(Graphics graphics)
         {
             graphics.Clear(mAnimFlashColor);
-            base.onRender(graphics);
         }
-        
+
         public override void onDestroy()
         {
             if (mDelayedTask != null)

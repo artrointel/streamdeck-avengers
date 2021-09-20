@@ -5,7 +5,7 @@ function onLoad() {
 	}
 	// refer to ConditionConfigs.cs
 	for (var idx = 1; idx <= cfg.length; idx++) {
-        onAddNewCondition();
+        onAddNewOption();
 		var conditionConfig = cfg[idx - 1];
 		setSelectValue('sCondition', idx, conditionConfig['mCondition']);
         setSelectValue('sBehavior', idx, conditionConfig['mBehavior']);
@@ -20,7 +20,7 @@ function onAddNewOption() {
 	newOptionItem.innerHTML =
 		`<div class="sdpi-item" id="dOptionContainer${idx}" name="conditionItem">
 			<select class="sdpi-item-value" id="sCondition${idx}" style="width:50px">
-				<option value="OnInterruption">OnKeyPressedWhileRunning</option>
+				<option value="OnKeyPressedWhileRunning">OnKeyPressedWhileRunning</option>
                 <option value="OnKeyLongPressed">OnKeyLongPressed</option>
 			</select>
 			<select class="sdpi-item-value" id="sBehavior${idx}" onchange="onBehaviorChanged(${idx})" style="width:50px">

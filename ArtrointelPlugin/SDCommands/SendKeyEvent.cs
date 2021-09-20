@@ -4,7 +4,7 @@ using ArtrointelPlugin.Utils;
 
 namespace ArtrointelPlugin.SDCommands
 {
-    internal class SendKeyEvent : DelayedExecutable, IExecutable
+    internal class SendKeyEvent : DelayedCommandBase, IExecutable
     {
         private Action<string> mSendKeyAction;
         private ValueAnimator mKeyEventAnimator;
@@ -53,9 +53,9 @@ namespace ArtrointelPlugin.SDCommands
                 }
             }
 
-            int delms = (int)(mDelayInSecond * 1000);
-            double ims = (int)(mIntervalInSecond * 1000);
-            int durms = (int)(mDurationInSecond * 1000);
+            int delms = toMillisecond(mDelayInSecond);
+            double ims = toMillisecond(mIntervalInSecond);
+            int durms = toMillisecond(mDurationInSecond);
             if (delms == 0)
             {
                 sendKeyEvent(ims, durms, mMetadata);

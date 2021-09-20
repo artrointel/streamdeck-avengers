@@ -5,57 +5,58 @@ namespace ArtrointelPlugin.Utils
 {
     public class ValueAnimator : IControllable
     {
+        // constants
         public const double INTERVAL_30_PER_SEC = 1000 / 30.0;
         public const double INTERVAL_60_PER_SEC = 1000 / 60.0;
-        public Timer mTimer;
-        public double mInterval;
-        public double mTotalDuration;
-        public double mCurrentDuration;
+
+        private TimerControl mTimer;
+        private readonly double mInterval;
+        private readonly double mDuration;
+        private double mCurrentDuration;
         private DateTime mPrevDateTime;
         
-        public float mFromValue;
-        public float mToValue;
+        private readonly float mFromValue;
+        private readonly float mToValue;
 
-        Action<double, double> mOnValueUpdatedAction;
-        Action mOnFinishedAction;
+        // on animation update listeners
+        private Action<double, double> mOnValueUpdatedAction;
+        private Action mOnFinishedAction;
+
+        // IControllable listeners
+        private Action mOnStarted;
 
         public ValueAnimator(float from, float to, int durationInMillisecond, double animationInterval = INTERVAL_30_PER_SEC)
         {
             mFromValue = from;
             mToValue = to;
 
-            mTotalDuration = durationInMillisecond;
+            mDuration = durationInMillisecond;
             mInterval = animationInterval;
 
-            mTimer = new Timer(mInterval);
-            mTimer.Elapsed += onTimedEvent;
-            mTimer.AutoReset = true;
+            mTimer = new TimerControl(mInterval, onTimedEvent);
         }
-        protected void onTimedEvent(object sender, ElapsedEventArgs e)
+
+        private void onTimedEvent(object sender, ElapsedEventArgs e)
         {
             // linear interpolation
-            var currentValue = mFromValue + (mToValue - mFromValue) * (mCurrentDuration / mTotalDuration);
+            var currentValue = mFromValue + (mToValue - mFromValue) * (mCurrentDuration / mDuration);
            
-            if (mOnValueUpdatedAction != null)
+            mOnValueUpdatedAction?.Invoke(currentValue, mCurrentDuration);
+
+            if(mCurrentDuration == mDuration)
             {
-                mOnValueUpdatedAction(currentValue, mCurrentDuration);
-            }
-            if(mCurrentDuration == mTotalDuration)
-            {
-                if (mOnFinishedAction != null)
-                {
-                    mOnFinishedAction();
-                }
-                this.stop();
+                mOnFinishedAction?.Invoke();
+                mCurrentDuration = 0;
+                mTimer.stop();
             }
 
             // updates current duration
             double diffDuration = (e.SignalTime - mPrevDateTime).TotalMilliseconds;
             mPrevDateTime = e.SignalTime;
             mCurrentDuration += diffDuration;
-            if (mCurrentDuration > mTotalDuration)
+            if (mCurrentDuration > mDuration)
             {   // note that the last value should be mToValue.
-                mCurrentDuration = mTotalDuration;
+                mCurrentDuration = mDuration;
             }
         }
 
@@ -70,37 +71,39 @@ namespace ArtrointelPlugin.Utils
             mOnValueUpdatedAction = onUpdated;
             mOnFinishedAction = onFinished;
         }
+                
+        public void setStartListener(Action onStarted)
+        {
+            mOnStarted = onStarted;
+        }
 
-        /// <summary>
-        /// Start the animator.
-        /// </summary>
         public void start()
         {
             mCurrentDuration = 0;
             mPrevDateTime = DateTime.Now;
-            mTimer.Start();
+            mTimer.start();
+            mOnStarted?.Invoke();
         }
 
         public void resume()
         {
-            mTimer.Start();
+            mTimer.resume();
         }
 
         public void pause()
         {
-            mTimer.Stop();
+            mTimer.pause();
         }
 
         public void stop()
         {
             mCurrentDuration = 0;
-            mTimer.Stop();
+            mTimer.stop();
         }
 
         public void destroy()
         {
-            mTimer.Stop();
-            mTimer.Dispose();
+            mTimer.stop();
         }
     }
 }
